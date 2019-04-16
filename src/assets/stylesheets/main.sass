@@ -1,0 +1,204 @@
+@import "./animation"
+@import "./fontello"
+
+@mixin shadow
+  border: 1px solid grey
+  box-shadow: 2px 2px 20px 4px rgba(0, 0, 0, 0.2)
+
+.sp-main-wrapper
+
+  .T-I-atl
+    min-width: 70px !important
+
+  font-size: 13px
+
+  .icon-spin6
+    @extend .animate-spin
+  button:not([disabled])
+    > .icon-spin6
+      display: none
+  $border-color: #e7e7e7
+  $separator: 1px solid darken($border-color, 20%)
+
+  .sp-absolute-list
+    position: absolute
+
+  .sp-list-header
+    font-weight: bold
+  .J-N
+    cursor: default
+  .J-JK-JT
+    cursor: pointer
+
+  @mixin sp-absolute-holder($width)
+    $padding: 30px
+    $dpadding: $padding * 2
+    padding: 15px $padding
+    background-color: white
+    position: absolute
+    max-width: calc(100vw - #{$dpadding})
+    width: $width
+    left: 50px - $width
+    @include shadow
+
+  .sp-btn-small
+    min-width: 40px !important
+    width: 40px !important
+  .sp-add-mails-holder
+    @include sp-absolute-holder(600px)
+    padding: 15px 15px 15px 25px
+
+  .sp-login-holder
+    @include sp-absolute-holder(260px)
+
+  &::-webkit-scrollbar
+    background-color: rgba(0, 0, 0, 0.1)
+    width: 8px
+    height: 8px
+  &::-webkit-scrollbar-thumb
+    background-color: #a2a2a2
+    border-radius: 3px
+
+  %sp-text-inside
+    height: initial
+    padding: 6px 12px
+    font-size: 13px
+    border-radius: 0
+
+  .sp-checkbox
+    width: 15px
+    height: 15px
+
+  .sp-input
+    @extend %sp-text-inside
+    width: calc(100% - 24px)
+    border: 1px solid #ccc
+    background-color: white
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075)
+    color: #555
+    &[type="date"]
+      height: 14px
+    &:focus
+      border-color: #66afe9
+      outline: 0
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6)
+
+  select.sp-input
+    width: 100%
+    padding-left: 4px
+
+  @mixin sp-btn($color)
+    @extend %sp-text-inside
+    background-color: $color
+    border: 1px solid darken($color, 5%)
+    font-weight: 400
+
+    color: white
+    &:focus
+      outline: none
+      cursor: pointer
+    &:hover
+      background-color: darken($color, 5%)
+      border-color: darken($color, 15%)
+      cursor: pointer
+    &:active
+      background-color: darken($color, 15%)
+      border-color: darken($color, 25%)
+    &:disabled
+      background-color: lighten($color, 15%)
+      border-color: lighten($color, 15%)
+      cursor: not-allowed
+
+  .sp-label
+    padding-left: 3px
+    font-weight: bold
+    padding-bottom: 2px
+    text-align: left
+    color: #333333
+
+  .sp-required.sp-label:after
+    text-align: left
+    color: red
+    padding-left: 3px
+    content: '*'
+
+  .sp-header
+    font-weight: bold
+
+  .sp-table
+    width: 100%
+    margin: 5px 0
+    text-align: left
+    td
+      padding: 2px 8px !important
+      &:first-child
+        padding-left: 0 !important
+        > *
+          margin-left: 0
+      &:last-child
+        padding-right: 0 !important
+        > *
+          margin-right: 0
+
+  .sp-btn-action
+    @include sp-btn(#337ab7)
+    width: 90px
+    margin: auto
+
+  .sp-btn-simple
+    @include sp-btn(#337ab7)
+    display: inline-block
+    margin: 0 5px
+
+  .sp-error
+    color: #a94442
+    word-break: break-all
+    white-space: normal
+
+  .sp-link
+    color: #592bc5
+    text-decoration: underline
+    cursor: pointer
+    &:active
+      color: red
+
+  .sp-list
+    list-style-type: none
+    margin: 0px
+    margin-top: 5px
+    padding: 0px
+
+  @mixin spinner($size)
+    width: $size * 7
+    height: $size * 7
+    -webkit-animation: sp-rotate 1s infinite linear
+    border-radius: $size * 15
+    border-bottom: $size solid black
+
+  @-webkit-keyframes sp-rotate
+    to
+      -webkit-transform: rotate(360deg)
+
+  .sp-loading
+    .sp-loading-text
+      display: inline-block
+      padding-bottom: 10px
+      padding-left: 10px
+
+    .sp-spinner
+      display: inline-block
+      @include spinner(3px)
+
+  .sp-loader
+    position: absolute
+    left: 0
+    top: 0
+    bottom: 0
+    right: 0
+    padding-left: 50%
+    padding-top: 50%
+    background-color: rgba(0, 0, 0, 0.31)
+    color: #3d6d13
+    .sp-spinner-big
+      margin-left: -35px
+      @include spinner(10px)
