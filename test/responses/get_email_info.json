@@ -1,0 +1,18 @@
+{
+  "email": "test@test.com",
+  "abook_id": "34",
+  "status": "1",
+  "status_explain": "Active",
+  "variables": [
+    {
+      "name": "firstName",
+      "type": "string",
+      "value": "firstNameValue"
+    },
+    {
+      "name": "lastName",
+      "type": "string",
+      "value": "lastNameValue"
+    }
+  ]
+}

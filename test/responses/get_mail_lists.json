@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1144963,
+    "name": "My emails",
+    "all_email_qty": 3,
+    "active_email_qty": 1,
+    "inactive_email_qty": 2,
+    "creationdate": "2017-07-26 14:28:03",
+    "status": 0,
+    "status_explain": "Active"
+  }
+]

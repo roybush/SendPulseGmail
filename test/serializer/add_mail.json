@@ -1,0 +1,15 @@
+[
+  {
+    "email": "test@test.com",
+    "variables": {
+      "var1": "val1",
+      "var2": "val2"
+    }
+  },
+  {
+    "email": "test2@test.com",
+    "variables": {
+      "var3": "val3"
+    }
+  }
+]
