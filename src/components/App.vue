@@ -19,10 +19,10 @@
 </template>
 <script lang='ts'>
   import {gmailTracker, api} from '../helpers/utils';
-  import MailLists from './MailLists';
-  import Login from './Login';
-  import Hovered from './Hovered';
-  import AddMails from './AddMails';
+  import MailLists from './MailLists.vue';
+  import Login from './Login.vue';
+  import Hovered from './Hovered.vue';
+  import AddMails from './AddMails.vue';
   import Vue, { ComponentOptions }  from 'vue';
   import SpBtn from './SpBtn.vue';
   import {MailList, Page} from '../model';

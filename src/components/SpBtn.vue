@@ -17,7 +17,7 @@
 </style>
 <script lang="ts">
 
-  import Hovered from './Hovered';
+  import Hovered from './Hovered.vue';
 
   export default {
     name: 'sp-btn',

@@ -2,7 +2,7 @@
   "name": "SendPulse Gmail Extension",
   "author": "Andrew Koidan <akoidan@tcgsi.com>, Trasparen",
   "description": "The SendPulse Gmail Gadget is an extension that you can use while working in Gmail.",
-  "version": "0.2",
+  "version": "0.5",
   "permissions": [ "cookies", "https://www.facebook.com/", "https://api.sendpulse.com/"],
   "manifest_version": 2,
   "background": {
