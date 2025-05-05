@@ -1,5 +1,5 @@
 import {
-  API_URL, FB_ACCESS_TOKEN, LS_CLIENT_ID, LS_TOKEN_EXPIRES,
+  CORS_URL, API_URL, FB_ACCESS_TOKEN, LS_CLIENT_ID, LS_TOKEN_EXPIRES,
   LS_TOKEN_NAME
 } from './constants';
 import serialize from './serializer';
@@ -132,7 +132,7 @@ export default class Api {
   }
 
   login(clientId: string, clientSecret: string, cb: Response<string>): void {
-    this._submit<TokenResponse>(Method.POST, `${API_URL}oauth/access_token`, {
+    this._submit<TokenResponse>(Method.POST, `${CORS_URL}${API_URL}oauth/access_token`, {
       grant_type: 'client_credentials',
       client_id: clientId,
       client_secret: clientSecret
@@ -162,7 +162,7 @@ export default class Api {
     if (!this.token || this.expires < Date.now()) {
       callback(null, 'Auth token doesn\'t exist or expired, login again');
     } else {
-      this._submit<any>(method, API_URL + url, data, {'Authorization': this.token}, (ok, err) => {
+      this._submit<any>(method, CORS_URL + API_URL + url, data, {'Authorization': this.token}, (ok, err) => {
         if (err && ok && ok.error === 'access_denied') {
           callback(null, 'Token has expired. Please login again');
         } else {

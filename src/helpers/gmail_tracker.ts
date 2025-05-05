@@ -5,9 +5,11 @@ export default class GMailTracker {
   _growlText: any;
   _listener: any;
 
+  /*
   get trackElement(): any  {
     return this.querySelector('_trackElement', '.ae4 .F.cf.zt');
   }
+  */
 
   querySelector(elName: string, selector: string) {
     if (!this[elName]) {
@@ -43,7 +45,9 @@ export default class GMailTracker {
 
   getCheckedEmails(): string[] {
     try {
-      let nodes = this.trackElement.querySelectorAll('tr.x7 span[email]');
+      // this.trackElement.querySelectorAll('tr.x7 span[email]');
+      let nodes = document.querySelectorAll('tr.x7 span[email]');
+      console.log(nodes);
       let emails: string[] = Array.prototype.slice.call(nodes)
         .map(e => e.getAttribute('email'));
       return Array.from(new Set(emails)); // remove duplicates

@@ -25,7 +25,7 @@
     display: block
 </style>
 <script lang='ts'>
-  import Error from './Error';
+  import Error from './Error.vue';
   import Vue, { ComponentOptions }  from 'vue';
   import {api} from '../helpers/utils';
   import {Page} from '../model';

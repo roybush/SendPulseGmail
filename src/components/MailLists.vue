@@ -25,9 +25,9 @@
 <script lang='ts'>
 
   import {gmailTracker, api} from '../helpers/utils';
-  import Error from './Error';
-  import Loading from './Loading';
-  import Hovered from './Hovered';
+  import Error from './Error.vue';
+  import Loading from './Loading.vue';
+  import Hovered from './Hovered.vue';
   import Vue, { ComponentOptions }  from 'vue';
   import {MailList, Page} from '../model';
 
