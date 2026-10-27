@@ -1,9 +1,13 @@
-export type Credentials = {
-  clientId: string;
-  clientSecret: string;
-};
+/**
+ * Two ways SendPulse lets you into its API:
+ * a permanent API key (sp_apikey_…), or a client ID + secret exchanged for a 1-hour token.
+ */
+export type Credentials =
+  { kind: 'apiKey'; apiKey: string } | { kind: 'oauth'; clientId: string; clientSecret: string };
 
-export type AuthStatus = { loggedIn: false } | { loggedIn: true; clientIdPrefix: string };
+export type AuthStatus =
+  | { loggedIn: false }
+  | { loggedIn: true; method: Credentials['kind']; /** Masked key or client ID. */ label: string };
 
 export type AddressBook = {
   id: number;

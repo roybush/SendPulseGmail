@@ -12,6 +12,8 @@ export const manifest = {
   },
   action: {
     default_icon: { 16: 'icons/icon-16.png' },
+    default_title: 'SendPulse for Gmail',
+    default_popup: 'src/options/index.html',
   },
   background: {
     service_worker: 'src/background/index.ts',
@@ -28,7 +30,10 @@ export const manifest = {
   // `scripting` + Gmail host: InboxSDK injects its page-world script (pageWorld.js) into Gmail.
   permissions: ['storage', 'scripting'],
   host_permissions: ['https://api.sendpulse.com/*', 'https://mail.google.com/'],
-  web_accessible_resources: [{ resources: ['icons/*'], matches: ['https://mail.google.com/*'] }],
+  // The settings page is embedded in the Gmail panel as an iframe so secrets never touch Gmail's DOM.
+  web_accessible_resources: [
+    { resources: ['icons/*', 'src/options/index.html'], matches: ['https://mail.google.com/*'] },
+  ],
 } satisfies chrome.runtime.ManifestV3;
 
 export default defineManifest(manifest);

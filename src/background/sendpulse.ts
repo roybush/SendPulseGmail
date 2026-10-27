@@ -24,6 +24,9 @@ const NO_SUCH_EMAIL_CODE = 502;
 
 type Token = { value: string; expiresAt: number };
 
+/** Credentials saved before API key support had no `kind`. */
+type StoredCredentials = Credentials | { kind?: undefined; clientId: string; clientSecret: string };
+
 export class SendPulseError extends Error {
   constructor(
     message: string,
@@ -53,7 +56,7 @@ type MembershipDto = {
 
 export class SendPulseClient {
   constructor(
-    /** Long-lived: client id and secret, needed to refresh the token silently. */
+    /** Long-lived: API key, or client id and secret needed to refresh the token silently. */
     private readonly credentialsStore: KeyValueStore,
     /** Short-lived: access token. */
     private readonly tokenStore: KeyValueStore,
@@ -62,7 +65,21 @@ export class SendPulseClient {
   ) {}
 
   async login(credentials: Credentials): Promise<AuthStatus> {
-    const clean = { clientId: credentials.clientId.trim(), clientSecret: credentials.clientSecret.trim() };
+    if (credentials.kind === 'apiKey') {
+      const apiKey = credentials.apiKey.trim();
+      if (!apiKey) throw new SendPulseError('API key is required', 400);
+      // Any cheap authenticated call proves the key works.
+      await parse(await this.send('GET', '/addressbooks?limit=1', `Bearer ${apiKey}`));
+      await this.tokenStore.remove(TOKEN_KEY);
+      await this.credentialsStore.set(CREDENTIALS_KEY, { kind: 'apiKey', apiKey });
+      return this.status();
+    }
+
+    const clean = {
+      kind: 'oauth' as const,
+      clientId: credentials.clientId.trim(),
+      clientSecret: credentials.clientSecret.trim(),
+    };
     if (!clean.clientId || !clean.clientSecret) {
       throw new SendPulseError('Client ID and Client Secret are required', 400);
     }
@@ -79,10 +96,13 @@ export class SendPulseClient {
   }
 
   async status(): Promise<AuthStatus> {
-    const credentials = await this.credentialsStore.get<Credentials>(CREDENTIALS_KEY);
-    return credentials
-      ? { loggedIn: true, clientIdPrefix: credentials.clientId.slice(0, 8) }
-      : { loggedIn: false };
+    const credentials = await this.credentials();
+    if (!credentials) return { loggedIn: false };
+    return {
+      loggedIn: true,
+      method: credentials.kind,
+      label: mask(credentials.kind === 'apiKey' ? credentials.apiKey : credentials.clientId),
+    };
   }
 
   async listAddressBooks(): Promise<AddressBook[]> {
@@ -135,35 +155,50 @@ export class SendPulseClient {
   }
 
   private async request<T>(method: string, path: string, body?: unknown, retried = false): Promise<T> {
-    const token = await this.token();
-    const res = await this.fetchFn(API_URL + path, {
-      method,
-      headers: {
-        Authorization: token,
-        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-      },
-      body: body === undefined ? undefined : JSON.stringify(body),
-    });
-    // Token revoked or expired early: get a fresh one once.
-    if (res.status === 401 && !retried) {
+    const credentials = await this.credentials();
+    if (!credentials) throw new SendPulseError('Not logged in to SendPulse', 401);
+    const authorization =
+      credentials.kind === 'apiKey' ? `Bearer ${credentials.apiKey}` : await this.token(credentials);
+
+    const res = await this.send(method, path, authorization, body);
+    // A token can be revoked or expire early: get a fresh one once. API keys can't be refreshed.
+    if (res.status === 401 && credentials.kind === 'oauth' && !retried) {
       await this.tokenStore.remove(TOKEN_KEY);
       return this.request<T>(method, path, body, true);
     }
     return parse<T>(res);
   }
 
-  private async token(): Promise<string> {
+  private send(method: string, path: string, authorization: string, body?: unknown): Promise<Response> {
+    return this.fetchFn(API_URL + path, {
+      method,
+      headers: {
+        Authorization: authorization,
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  }
+
+  private async credentials(): Promise<Credentials | undefined> {
+    const stored = await this.credentialsStore.get<StoredCredentials>(CREDENTIALS_KEY);
+    if (!stored) return undefined;
+    return stored.kind ? stored : { ...stored, kind: 'oauth' };
+  }
+
+  private async token(credentials: Extract<Credentials, { kind: 'oauth' }>): Promise<string> {
     const cached = await this.tokenStore.get<Token>(TOKEN_KEY);
     if (cached && cached.expiresAt - TOKEN_EXPIRY_MARGIN_MS > this.now()) return cached.value;
 
-    const credentials = await this.credentialsStore.get<Credentials>(CREDENTIALS_KEY);
-    if (!credentials) throw new SendPulseError('Not logged in to SendPulse', 401);
     const token = await this.requestToken(credentials);
     await this.tokenStore.set(TOKEN_KEY, token);
     return token.value;
   }
 
-  private async requestToken({ clientId, clientSecret }: Credentials): Promise<Token> {
+  private async requestToken({
+    clientId,
+    clientSecret,
+  }: Extract<Credentials, { kind: 'oauth' }>): Promise<Token> {
     const res = await this.fetchFn(`${API_URL}/oauth/access_token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -198,6 +233,12 @@ async function parse<T>(res: Response): Promise<T> {
     throw new SendPulseError(message, res.status, err.error_code);
   }
   return data as T;
+}
+
+/** "sp_apikey_123456789abcdef" -> "sp_apikey_…bcdef": enough to recognise, useless to steal. */
+export function mask(secret: string): string {
+  const prefix = secret.match(/^sp_[a-z]+_/i)?.[0] ?? '';
+  return `${prefix}…${secret.slice(-5)}`;
 }
 
 function normalizeVariables(vars: MembershipDto['variables']): Record<string, string> {

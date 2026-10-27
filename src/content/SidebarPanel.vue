@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { call } from '../shared/messages';
 import { detectNameFields, fromVariables, toVariables, type NameFields } from '../shared/fields';
 import type { AddressBook, Membership } from '../shared/types';
@@ -73,7 +73,8 @@ function statusText(row: Row): string {
   return `In: ${names.join(', ')}`;
 }
 
-onMounted(async () => {
+async function init() {
+  error.value = '';
   try {
     loggedIn.value = (await call('auth.status')).loggedIn;
     if (!loggedIn.value) return;
@@ -98,7 +99,24 @@ onMounted(async () => {
   } catch (e) {
     error.value = message(e);
   }
+}
+
+// When not connected, the settings page is embedded below as an iframe (an extension page,
+// so the API key never lands in Gmail's DOM). It tells us when it connects and how tall it is.
+const settingsUrl = chrome.runtime.getURL('src/options/index.html');
+const settingsHeight = ref(260);
+
+function onSettingsMessage(event: MessageEvent) {
+  if (event.origin !== new URL(settingsUrl).origin) return;
+  if (event.data?.type === 'sendpulse:height') settingsHeight.value = event.data.height;
+  if (event.data?.type === 'sendpulse:connected') init();
+}
+
+onMounted(() => {
+  window.addEventListener('message', onSettingsMessage);
+  init();
 });
+onUnmounted(() => window.removeEventListener('message', onSettingsMessage));
 
 watch(bookId, async (id, previous) => {
   nameFields.value = {};
@@ -141,10 +159,15 @@ function openSettings() {
 
 <template>
   <div class="sp-panel">
-    <p v-if="loggedIn === false">
-      Connect your SendPulse account to see and add contacts.
-      <button type="button" class="sp-link" @click="openSettings">Open settings</button>
-    </p>
+    <template v-if="loggedIn === false">
+      <p class="sp-muted">Connect your SendPulse account to see and add contacts.</p>
+      <iframe
+        class="sp-settings"
+        :src="settingsUrl"
+        :style="{ height: `${settingsHeight}px` }"
+        title="Connect SendPulse"
+      ></iframe>
+    </template>
 
     <template v-else-if="loggedIn">
       <p v-if="!rows.length" class="sp-muted">No other people in this conversation.</p>
@@ -189,6 +212,9 @@ function openSettings() {
 
     <p v-if="notice" class="sp-ok">{{ notice }}</p>
     <p v-if="error" class="sp-error">{{ error }}</p>
+    <button v-if="loggedIn" type="button" class="sp-link sp-footer" @click="openSettings">
+      SendPulse settings
+    </button>
   </div>
 </template>
 
@@ -286,6 +312,15 @@ function openSettings() {
 }
 .sp-error {
   color: #c5221f;
+}
+.sp-settings {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+.sp-footer {
+  margin-top: 16px;
+  font-size: 12px;
 }
 .sp-link {
   border: 0;

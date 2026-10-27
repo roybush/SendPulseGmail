@@ -1,8 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { API_URL, SendPulseClient, SendPulseError } from '../src/background/sendpulse';
+import { API_URL, mask, SendPulseClient, SendPulseError } from '../src/background/sendpulse';
 import { memoryStore, type KeyValueStore } from '../src/background/storage';
 
-const CREDS = { clientId: 'test_client_id_00000000000000000', clientSecret: 'test_secret' };
+const CREDS = {
+  kind: 'oauth' as const,
+  clientId: 'sp_id_FAKE_client_id_12345',
+  clientSecret: 'FAKE_secret',
+};
+const API_KEY = 'sp_apikey_FAKE_key_99999';
 const TOKEN_RESPONSE = { access_token: 'tok1', token_type: 'Bearer', expires_in: 3600 };
 
 function json(body: unknown, status = 200) {
@@ -51,7 +56,7 @@ describe('SendPulseClient', () => {
     it('exchanges credentials for a token and stores both', async () => {
       const status = await client().login(CREDS);
 
-      expect(status).toEqual({ loggedIn: true, clientIdPrefix: 'test_cli' });
+      expect(status).toEqual({ loggedIn: true, method: 'oauth', label: 'sp_id_…12345' });
       const body = JSON.parse(requestsTo('/oauth/access_token')[0][1].body);
       expect(body).toEqual({
         grant_type: 'client_credentials',
@@ -73,11 +78,80 @@ describe('SendPulseClient', () => {
     });
 
     it('rejects empty credentials without calling the API', async () => {
-      await expect(client().login({ clientId: ' ', clientSecret: '' })).rejects.toBeInstanceOf(
+      await expect(client().login({ kind: 'oauth', clientId: ' ', clientSecret: '' })).rejects.toBeInstanceOf(
         SendPulseError,
       );
       expect(fetchFn).not.toHaveBeenCalled();
     });
+  });
+
+  describe('API key', () => {
+    beforeEach(() => {
+      on('GET', '/addressbooks?limit=1', (init) =>
+        (init.headers as Record<string, string>).Authorization === `Bearer ${API_KEY}`
+          ? json([])
+          : json({ message: 'Invalid API key' }, 401),
+      );
+      on('GET', '/addressbooks/1/variables', () => json([]));
+    });
+
+    it('checks the key, stores it and uses it directly', async () => {
+      const c = client();
+      expect(await c.login({ kind: 'apiKey', apiKey: ` ${API_KEY} ` })).toEqual({
+        loggedIn: true,
+        method: 'apiKey',
+        label: 'sp_apikey_…99999',
+      });
+      await c.listBookVariables(1);
+
+      expect(requestsTo('/oauth/access_token')).toHaveLength(0);
+      expect(requestsTo('/addressbooks/1/variables')[0][1].headers).toMatchObject({
+        Authorization: `Bearer ${API_KEY}`,
+      });
+      expect(await credentials.get('credentials')).toEqual({ kind: 'apiKey', apiKey: API_KEY });
+    });
+
+    it('rejects a wrong key and stores nothing', async () => {
+      await expect(client().login({ kind: 'apiKey', apiKey: 'sp_apikey_WRONG' })).rejects.toThrow(
+        'Invalid API key',
+      );
+      expect(await credentials.get('credentials')).toBeUndefined();
+    });
+
+    it('does not retry a revoked key', async () => {
+      const c = client();
+      await c.login({ kind: 'apiKey', apiKey: API_KEY });
+      routes = [];
+      on('GET', '/addressbooks/1/variables', () => json({ message: 'Invalid API key' }, 401));
+
+      await expect(c.listBookVariables(1)).rejects.toThrow('Invalid API key');
+      expect(requestsTo('/addressbooks/1/variables')).toHaveLength(1);
+    });
+
+    it('replaces previous client credentials and their token', async () => {
+      const c = client();
+      await c.login(CREDS);
+      await c.login({ kind: 'apiKey', apiKey: API_KEY });
+
+      expect(await tokens.get('token')).toBeUndefined();
+      expect(await c.status()).toMatchObject({ loggedIn: true, method: 'apiKey' });
+    });
+  });
+
+  it('keeps working with credentials saved before API key support', async () => {
+    await credentials.set('credentials', { clientId: CREDS.clientId, clientSecret: CREDS.clientSecret });
+    on('GET', '/addressbooks/1/variables', () => json([]));
+
+    expect(await client().status()).toEqual({ loggedIn: true, method: 'oauth', label: 'sp_id_…12345' });
+    await expect(client().listBookVariables(1)).resolves.toEqual([]);
+  });
+
+  it.each([
+    ['sp_apikey_FAKE_abcdef', 'sp_apikey_…bcdef'],
+    ['sp_id_FAKEabcdef', 'sp_id_…bcdef'],
+    ['FAKEFAKEFAKEabcdef', '…bcdef'],
+  ])('masks %s', (secret, masked) => {
+    expect(mask(secret)).toBe(masked);
   });
 
   describe('tokens', () => {
