@@ -40,6 +40,11 @@ const notice = ref('');
 const book = computed(() => books.value.find((b) => b.id === bookId.value));
 const selectedRows = computed(() => rows.filter((r) => r.selected));
 const bookNames = computed(() => new Map(books.value.map((b) => [b.id, b.name])));
+const addLabel = computed(() => {
+  if (busy.value) return 'Adding…';
+  const n = selectedRows.value.length;
+  return n ? `Add ${n} to SendPulse` : 'Add to SendPulse';
+});
 
 function message(e: unknown) {
   return e instanceof Error ? e.message : String(e);
@@ -85,6 +90,7 @@ onMounted(async () => {
         // Prefer what SendPulse already knows when the email header has no name.
         if (!row.firstName && !row.lastName && row.memberships?.length) {
           Object.assign(row, fromVariables(row.memberships[0].variables));
+          row.displayName = `${row.firstName} ${row.lastName}`.trim();
         }
         row.selected = !row.lookupError && !row.memberships?.length;
       }),
@@ -146,19 +152,19 @@ function openSettings() {
       <template v-else>
         <ul class="sp-people">
           <li v-for="row in rows" :key="row.email">
-            <label class="sp-head">
-              <input v-model="row.selected" type="checkbox" :disabled="busy" />
-              <span>
+            <input :id="`sp-pick-${row.email}`" v-model="row.selected" type="checkbox" :disabled="busy" />
+            <div class="sp-body">
+              <label :for="`sp-pick-${row.email}`">
                 <span class="sp-name">{{ row.displayName || row.email }}</span>
                 <span v-if="row.displayName" class="sp-muted sp-email">{{ row.email }}</span>
-              </span>
-            </label>
-            <div class="sp-status" :class="{ 'sp-error': row.lookupError, 'sp-ok': inBook(row) }">
-              {{ statusText(row) }}
-            </div>
-            <div v-if="row.selected" class="sp-names">
-              <input v-model="row.firstName" placeholder="First name" aria-label="First name" />
-              <input v-model="row.lastName" placeholder="Last name" aria-label="Last name" />
+              </label>
+              <div class="sp-status" :class="{ 'sp-error': row.lookupError, 'sp-ok': inBook(row) }">
+                {{ statusText(row) }}
+              </div>
+              <div v-if="row.selected" class="sp-names">
+                <input v-model="row.firstName" placeholder="First name" aria-label="First name" />
+                <input v-model="row.lastName" placeholder="Last name" aria-label="Last name" />
+              </div>
             </div>
           </li>
         </ul>
@@ -175,7 +181,7 @@ function openSettings() {
             :disabled="busy || !book || !selectedRows.length"
             @click="add"
           >
-            {{ busy ? 'Adding…' : `Add ${selectedRows.length || ''} to SendPulse` }}
+            {{ addLabel }}
           </button>
         </div>
       </template>
@@ -202,17 +208,21 @@ function openSettings() {
   padding: 0;
 }
 .sp-people li {
-  padding: 8px 0;
-  border-bottom: 1px solid #e0e0e0;
-}
-.sp-head {
   display: flex;
   gap: 8px;
   align-items: flex-start;
-  cursor: pointer;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
 }
-.sp-head input {
-  margin-top: 3px;
+.sp-people li > input {
+  margin: 3px 0 0;
+}
+.sp-body {
+  flex: 1;
+  min-width: 0;
+}
+.sp-body label {
+  cursor: pointer;
 }
 .sp-name {
   display: block;
@@ -227,14 +237,14 @@ function openSettings() {
   font-size: 12px;
 }
 .sp-status {
-  margin: 2px 0 0 24px;
+  margin-top: 2px;
   font-size: 12px;
   color: #5f6368;
 }
 .sp-names {
   display: flex;
   gap: 6px;
-  margin: 6px 0 0 24px;
+  margin-top: 6px;
 }
 .sp-names input {
   flex: 1;
