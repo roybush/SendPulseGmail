@@ -1,0 +1,105 @@
+/* Material 3 outlined field (Gmail's look). Shared by SpTextField and SpSelect. */
+.sp-field {
+  --sp-outline: #747775;
+  --sp-outline-hover: #1f1f1f;
+  --sp-primary: #0b57d0;
+  --sp-label: #444746;
+  --sp-surface: #fff;
+  --sp-warn: #b06000;
+  min-width: 0;
+  font:
+    14px/1.4 'Google Sans',
+    Roboto,
+    Arial,
+    sans-serif;
+}
+.sp-field__box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.sp-field__control {
+  box-sizing: border-box;
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--sp-outline);
+  border-radius: 4px;
+  outline: none;
+  background: var(--sp-surface);
+  color: #1f1f1f;
+  font: inherit;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.sp-field__control:hover:not(:disabled) {
+  border-color: var(--sp-outline-hover);
+}
+.sp-field__control:focus {
+  border-color: var(--sp-primary);
+  box-shadow: inset 0 0 0 1px var(--sp-primary);
+}
+.sp-field__control:disabled {
+  opacity: 0.6;
+}
+.sp-field__control--select {
+  padding-right: 36px;
+  appearance: none;
+  cursor: pointer;
+}
+.sp-field__chevron {
+  position: absolute;
+  right: 8px;
+  color: var(--sp-label);
+  pointer-events: none;
+}
+.sp-field__label {
+  position: absolute;
+  top: 50%;
+  left: 9px;
+  max-width: calc(100% - 24px);
+  padding: 0 4px;
+  overflow: hidden;
+  background: var(--sp-surface);
+  color: var(--sp-label);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transform: translateY(-50%);
+  transform-origin: left center;
+  transition:
+    top 0.15s,
+    transform 0.15s,
+    color 0.15s;
+  pointer-events: none;
+}
+/* Float the label onto the outline when focused or filled (selects always are). */
+.sp-field__control:focus + .sp-field__label,
+.sp-field__control:not(:placeholder-shown) + .sp-field__label,
+.sp-field__label--float {
+  top: 0;
+  transform: translateY(-50%) scale(0.8);
+}
+.sp-field__control:focus + .sp-field__label {
+  color: var(--sp-primary);
+}
+.sp-field__trailing {
+  position: absolute;
+  right: 4px;
+  display: flex;
+}
+.sp-field__box:has(.sp-field__trailing) .sp-field__control {
+  padding-right: 64px;
+}
+.sp-field__hint {
+  margin: 4px 12px 0;
+  color: var(--sp-label);
+  font-size: 12px;
+}
+.sp-field--warn .sp-field__control {
+  border-color: var(--sp-warn);
+}
+.sp-field--warn .sp-field__hint {
+  color: var(--sp-warn);
+}

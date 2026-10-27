@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { collectParticipants, splitName } from '../src/content/participants';
+import { collectParticipants, isAutomated, splitName } from '../src/content/participants';
 
 describe('splitName', () => {
   it.each([
@@ -47,13 +47,22 @@ describe('collectParticipants', () => {
     );
 
     expect(people).toEqual([
-      { email: 'ann@x.com', name: 'Ann Lee', firstName: 'Ann', lastName: 'Lee', isSender: true, details: {} },
+      {
+        email: 'ann@x.com',
+        name: 'Ann Lee',
+        firstName: 'Ann',
+        lastName: 'Lee',
+        isSender: true,
+        automated: false,
+        details: {},
+      },
       {
         email: 'bob@x.com',
         name: 'Bob Stone',
         firstName: 'Bob',
         lastName: 'Stone',
         isSender: false,
+        automated: false,
         details: {},
       },
     ]);
@@ -87,5 +96,38 @@ describe('collectParticipants', () => {
     expect(
       collectParticipants([{ sender: { emailAddress: me }, recipients: [{ emailAddress: me }] }], me),
     ).toEqual([]);
+  });
+});
+
+describe('automated senders', () => {
+  it.each([
+    ['notifications-noreply@linkedin.com', true],
+    ['noreply@github.com', true],
+    ['no-reply@accounts.google.com', true],
+    ['do-not-reply@x.com', true],
+    ['mailer-daemon@googlemail.com', true],
+    ['newsletter@shop.com', true],
+    ['ann@acme.com', false],
+    ['replyto.ann@acme.com', false],
+    ['alertson@acme.com', false],
+  ])('%s -> %s', (email, expected) => {
+    expect(isAutomated(email)).toBe(expected);
+  });
+
+  it('lists robots last, without a person name or details', () => {
+    const people = collectParticipants(
+      [
+        {
+          sender: { emailAddress: 'notifications-noreply@linkedin.com', name: 'LinkedIn' },
+          recipients: [{ emailAddress: 'ann@acme.com', name: 'Ann Lee' }],
+          signature: { text: 'Best,\nLinkedIn\n+1 650 687 3600', links: [] },
+        },
+      ],
+      'me@x.com',
+    );
+    expect(people.map((p) => [p.email, p.automated, p.firstName, p.details])).toEqual([
+      ['ann@acme.com', false, 'Ann', {}],
+      ['notifications-noreply@linkedin.com', true, '', {}],
+    ]);
   });
 });

@@ -10,6 +10,9 @@ import {
   type FieldMapping,
 } from '../shared/fields';
 import type { AddressBook, BookVariable, Membership } from '../shared/types';
+import SpSelect from '../shared/ui/SpSelect.vue';
+import SpTextField from '../shared/ui/SpTextField.vue';
+import '../shared/ui/buttons.css';
 import FieldMappingEditor from './FieldMappingEditor.vue';
 import type { Participant } from './participants';
 import { websiteFromEmail } from './signature';
@@ -21,6 +24,7 @@ type Row = {
   displayName: string;
   firstName: string;
   lastName: string;
+  automated: boolean;
 } & Record<DetailField, string> & {
     selected: boolean;
     detailsOpen: boolean;
@@ -42,10 +46,11 @@ const rows = reactive<Row[]>(
     displayName: p.name,
     firstName: p.firstName,
     lastName: p.lastName,
+    automated: p.automated,
     phone: p.details.phone ?? '',
     company: p.details.company ?? '',
     title: p.details.title ?? '',
-    website: p.details.website ?? websiteFromEmail(p.email) ?? '',
+    website: p.details.website ?? (p.automated ? '' : (websiteFromEmail(p.email) ?? '')),
     linkedin: p.details.linkedin ?? '',
     selected: false,
     detailsOpen: false,
@@ -66,8 +71,10 @@ const error = ref('');
 const notice = ref('');
 
 const book = computed(() => books.value.find((b) => b.id === bookId.value));
+const bookOptions = computed(() => books.value.map((b) => ({ value: b.id, label: b.name })));
 const selectedRows = computed(() => rows.filter((r) => r.selected));
 const bookNames = computed(() => new Map(books.value.map((b) => [b.id, b.name])));
+const savedFieldCount = computed(() => Object.keys(mapping.value).length);
 const addLabel = computed(() => {
   if (busy.value) return 'Adding…';
   const n = selectedRows.value.length;
@@ -101,8 +108,6 @@ function detailCount(row: Row) {
   return DETAIL_FIELDS.filter((f) => row[f].trim()).length;
 }
 
-const savedFieldCount = computed(() => Object.keys(mapping.value).length);
-
 /** Opens LinkedIn's own people search; we never fetch LinkedIn pages ourselves. */
 function findOnLinkedin(row: Row) {
   const keywords = [row.firstName, row.lastName, row.company].filter(Boolean).join(' ') || row.email;
@@ -120,9 +125,10 @@ function inBook(row: Row) {
 function statusText(row: Row): string {
   if (row.lookupError) return row.lookupError;
   if (!row.memberships) return 'Checking…';
-  if (!row.memberships.length) return 'Not in SendPulse yet';
+  const prefix = row.automated ? 'Automated sender · ' : '';
+  if (!row.memberships.length) return `${prefix}Not in SendPulse yet`;
   const names = row.memberships.map((m) => bookNames.value.get(m.bookId) ?? `#${m.bookId}`);
-  return `In: ${names.join(', ')}`;
+  return `${prefix}In: ${names.join(', ')}`;
 }
 
 async function init() {
@@ -151,7 +157,8 @@ async function init() {
           }
           for (const f of DETAIL_FIELDS) if (!row[f] && known[f]) row[f] = known[f];
         }
-        row.selected = !row.lookupError && !row.memberships?.length;
+        // Preselect real people who aren't in SendPulse yet; never robots.
+        row.selected = !row.automated && !row.lookupError && !row.memberships?.length;
       }),
     );
   } catch (e) {
@@ -159,15 +166,20 @@ async function init() {
   }
 }
 
-// When not connected, the settings page is embedded below as an iframe (an extension page,
-// so the API key never lands in Gmail's DOM). It tells us when it connects and how tall it is.
+// Settings live inside the panel as an iframe of the extension's settings page, so the API
+// key never lands in Gmail's DOM. The page reports its height and when it (dis)connects.
 const settingsUrl = chrome.runtime.getURL('src/options/index.html');
 const settingsHeight = ref(260);
+const settingsOpen = ref(false);
 
 function onSettingsMessage(event: MessageEvent) {
   if (event.origin !== new URL(settingsUrl).origin) return;
-  if (event.data?.type === 'sendpulse:height') settingsHeight.value = event.data.height;
-  if (event.data?.type === 'sendpulse:connected') init();
+  const type = event.data?.type;
+  if (type === 'sendpulse:height') settingsHeight.value = event.data.height;
+  if (type === 'sendpulse:connected' || type === 'sendpulse:disconnected') {
+    settingsOpen.value = false;
+    init();
+  }
 }
 
 onMounted(() => {
@@ -219,22 +231,28 @@ async function add() {
     busy.value = false;
   }
 }
-
-function openSettings() {
-  call('app.openOptions').catch(() => {});
-}
 </script>
 
 <template>
   <div class="sp-panel">
-    <template v-if="loggedIn === false">
-      <p class="sp-muted">Connect your SendPulse account to see and add contacts.</p>
+    <template v-if="loggedIn === false || settingsOpen">
+      <p v-if="loggedIn === false" class="sp-muted">
+        Connect your SendPulse account to see and add contacts.
+      </p>
       <iframe
         class="sp-settings"
         :src="settingsUrl"
         :style="{ height: `${settingsHeight}px` }"
-        title="Connect SendPulse"
+        title="SendPulse settings"
       ></iframe>
+      <button
+        v-if="settingsOpen"
+        type="button"
+        class="sp-btn sp-btn--text sp-btn--small sp-back"
+        @click="settingsOpen = false"
+      >
+        ← Back to contacts
+      </button>
     </template>
 
     <template v-else-if="loggedIn">
@@ -243,7 +261,13 @@ function openSettings() {
       <template v-else>
         <ul class="sp-people">
           <li v-for="row in rows" :key="row.email">
-            <input :id="`sp-pick-${row.email}`" v-model="row.selected" type="checkbox" :disabled="busy" />
+            <input
+              :id="`sp-pick-${row.email}`"
+              v-model="row.selected"
+              class="sp-checkbox"
+              type="checkbox"
+              :disabled="busy"
+            />
             <div class="sp-body">
               <label :for="`sp-pick-${row.email}`">
                 <span class="sp-name">{{ row.displayName || row.email }}</span>
@@ -252,60 +276,54 @@ function openSettings() {
               <div class="sp-status" :class="{ 'sp-error': row.lookupError, 'sp-ok': inBook(row) }">
                 {{ statusText(row) }}
               </div>
-              <template v-if="row.selected">
+
+              <div v-if="row.selected" class="sp-fields">
                 <div class="sp-names">
-                  <input v-model="row.firstName" placeholder="First name" aria-label="First name" />
-                  <input v-model="row.lastName" placeholder="Last name" aria-label="Last name" />
+                  <SpTextField v-model="row.firstName" label="First name" />
+                  <SpTextField v-model="row.lastName" label="Last name" />
                 </div>
                 <button
                   type="button"
-                  class="sp-link sp-toggle"
+                  class="sp-btn sp-btn--text sp-btn--small sp-toggle"
                   :aria-expanded="row.detailsOpen"
                   @click="row.detailsOpen = !row.detailsOpen"
                 >
                   {{ row.detailsOpen ? '▾' : '▸' }} Details
-                  <span class="sp-muted">{{ detailCount(row) ? `(${detailCount(row)} found)` : '' }}</span>
+                  <span v-if="detailCount(row)" class="sp-muted">({{ detailCount(row) }} found)</span>
                 </button>
-                <div v-if="row.detailsOpen" class="sp-details">
-                  <label v-for="f in DETAIL_FIELDS" :key="f">
-                    <span>
-                      {{ DETAIL_LABELS[f] }}
-                      <span v-if="!mapping[f]" class="sp-muted" title="Choose a variable under “Fields”">
-                        · not saved
-                      </span>
-                    </span>
-                    <span class="sp-input-row">
-                      <input v-model="row[f]" :aria-label="DETAIL_LABELS[f]" />
+                <template v-if="row.detailsOpen">
+                  <SpTextField
+                    v-for="f in DETAIL_FIELDS"
+                    :key="f"
+                    v-model="row[f]"
+                    :label="DETAIL_LABELS[f]"
+                    :hint="mapping[f] ? undefined : 'Not saved to this book (see Fields)'"
+                    :warning="f === 'phone' ? phoneWarning(row) : undefined"
+                  >
+                    <template v-if="f === 'linkedin'" #trailing>
                       <button
-                        v-if="f === 'linkedin'"
                         type="button"
-                        class="sp-small"
+                        class="sp-btn sp-btn--text sp-btn--small"
                         title="Search LinkedIn in a new tab"
                         @click="findOnLinkedin(row)"
                       >
                         Find
                       </button>
-                    </span>
-                    <span v-if="f === 'phone' && phoneWarning(row)" class="sp-warn">
-                      {{ phoneWarning(row) }}
-                    </span>
-                  </label>
-                </div>
-              </template>
+                    </template>
+                  </SpTextField>
+                </template>
+              </div>
             </div>
           </li>
         </ul>
 
         <div class="sp-add">
-          <label class="sp-muted" for="sp-book">Address book</label>
           <p v-if="!books.length" class="sp-muted">No address books yet. Create one in SendPulse first.</p>
           <template v-else>
-            <select id="sp-book" v-model="bookId" :disabled="busy">
-              <option v-for="b in books" :key="b.id" :value="b.id">{{ b.name }}</option>
-            </select>
+            <SpSelect v-model="bookId" label="Address book" :options="bookOptions" :disabled="busy" />
             <button
               type="button"
-              class="sp-link sp-toggle"
+              class="sp-btn sp-btn--text sp-btn--small sp-toggle"
               :aria-expanded="mappingOpen"
               @click="mappingOpen = !mappingOpen"
             >
@@ -322,7 +340,7 @@ function openSettings() {
           </template>
           <button
             type="button"
-            class="sp-primary"
+            class="sp-btn sp-btn--filled sp-btn--block"
             :disabled="busy || !book || !selectedRows.length"
             @click="add"
           >
@@ -330,13 +348,15 @@ function openSettings() {
           </button>
         </div>
       </template>
+
+      <p v-if="notice" class="sp-ok" role="status">{{ notice }}</p>
+      <p v-if="error" class="sp-error" role="alert">{{ error }}</p>
+      <button type="button" class="sp-btn sp-btn--text sp-btn--small sp-footer" @click="settingsOpen = true">
+        SendPulse settings
+      </button>
     </template>
 
-    <p v-if="notice" class="sp-ok">{{ notice }}</p>
-    <p v-if="error" class="sp-error">{{ error }}</p>
-    <button v-if="loggedIn" type="button" class="sp-link sp-footer" @click="openSettings">
-      SendPulse settings
-    </button>
+    <p v-else-if="error" class="sp-error" role="alert">{{ error }}</p>
   </div>
 </template>
 
@@ -357,19 +377,19 @@ function openSettings() {
 }
 .sp-people li {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: flex-start;
-  padding: 8px 0;
+  padding: 12px 0;
   border-bottom: 1px solid #e0e0e0;
 }
-.sp-people li > input {
-  margin: 3px 0 0;
+.sp-people li > .sp-checkbox {
+  margin-top: 2px;
 }
 .sp-body {
   flex: 1;
   min-width: 0;
 }
-.sp-body label {
+.sp-body > label {
   cursor: pointer;
 }
 .sp-name {
@@ -383,118 +403,47 @@ function openSettings() {
 .sp-muted {
   color: #5f6368;
   font-size: 12px;
+  font-weight: normal;
 }
 .sp-status {
   margin-top: 2px;
   font-size: 12px;
   color: #5f6368;
 }
-.sp-names {
+.sp-fields {
   display: flex;
-  gap: 6px;
-  margin-top: 6px;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
 }
-.sp-names input {
-  flex: 1;
-  min-width: 0;
-  padding: 4px 6px;
-  border: 1px solid #c4c7c5;
-  border-radius: 4px;
-  font: inherit;
-  font-size: 13px;
+.sp-names {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.sp-toggle {
+  align-self: flex-start;
+  margin: -6px 0 -6px -12px;
 }
 .sp-add {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 12px;
-}
-.sp-add select {
-  padding: 6px;
-  border: 1px solid #c4c7c5;
-  border-radius: 4px;
-  font: inherit;
-}
-.sp-primary {
-  padding: 8px 12px;
-  border: 0;
-  border-radius: 18px;
-  background: #0b57d0;
-  color: #fff;
-  font: inherit;
-  font-weight: 500;
-  cursor: pointer;
-}
-.sp-primary:disabled {
-  background: #c4c7c5;
-  cursor: default;
-}
-.sp-ok {
-  color: #146c2e;
-}
-.sp-error {
-  color: #c5221f;
-}
-.sp-toggle {
-  margin-top: 6px;
-  font-size: 12px;
-  text-align: left;
-}
-.sp-details {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
-  font-size: 12px;
-}
-.sp-details label {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  color: #5f6368;
-}
-.sp-input-row {
-  display: flex;
-  gap: 4px;
-}
-.sp-details input {
-  flex: 1;
-  min-width: 0;
-  padding: 4px 6px;
-  border: 1px solid #c4c7c5;
-  border-radius: 4px;
-  color: #1f1f1f;
-  font: inherit;
-  font-size: 13px;
-}
-.sp-warn {
-  color: #b06000;
-}
-.sp-small {
-  padding: 2px 10px;
-  border: 1px solid #c4c7c5;
-  border-radius: 12px;
-  background: #fff;
-  color: #0b57d0;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
+  gap: 12px;
+  margin-top: 16px;
 }
 .sp-settings {
   display: block;
   width: 100%;
   border: 0;
 }
+.sp-back,
 .sp-footer {
-  margin-top: 16px;
-  font-size: 12px;
+  margin: 12px 0 0 -12px;
 }
-.sp-link {
-  border: 0;
-  padding: 0;
-  background: none;
-  color: #0b57d0;
-  cursor: pointer;
-  font: inherit;
+.sp-ok {
+  color: #146c2e;
+}
+.sp-error {
+  color: #c5221f;
 }
 </style>

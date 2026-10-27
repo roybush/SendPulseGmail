@@ -19,7 +19,17 @@ export type Participant = {
   isSender: boolean;
   /** Found in their signatures; later messages win. */
   details: ContactDetails;
+  /** noreply@, notifications@…: a robot, not a person. */
+  automated: boolean;
 };
+
+const AUTOMATED_WORDS =
+  'no-?reply|do-?not-?reply|notifications?|notify|mailer-daemon|postmaster|bounces?|alerts?|newsletters?|digest|updates|automated';
+const AUTOMATED = new RegExp(`(^|[+._-])(${AUTOMATED_WORDS})([+._-]|$)`, 'i');
+
+export function isAutomated(email: string): boolean {
+  return AUTOMATED.test(email.split('@')[0] ?? '');
+}
 
 // Company senders often use their site as the display name ("Equipment.com.ua").
 const DOMAIN = /^[\p{L}\d-]+(\.[\p{L}\d-]+)+$/u;
@@ -76,12 +86,22 @@ export function collectParticipants(messages: MessageHeaders[], selfEmail: strin
   }
 
   return [...byEmail.values()]
-    .sort((a, b) => Number(b.isSender) - Number(a.isSender) || a.order - b.order)
-    .map(({ email, name, isSender, signatures }) => ({
+    .map((p) => ({ ...p, automated: isAutomated(p.email) }))
+    .sort(
+      (a, b) =>
+        Number(a.automated) - Number(b.automated) ||
+        Number(b.isSender) - Number(a.isSender) ||
+        a.order - b.order,
+    )
+    .map(({ email, name, isSender, signatures, automated }) => ({
       email,
       name,
       isSender,
-      ...splitName(name, email),
-      details: Object.assign({}, ...signatures.map((s) => parseSignature(s, { email, name }))),
+      automated,
+      // A robot's display name ("LinkedIn") and footer aren't a person's name and contacts.
+      ...(automated ? { firstName: '', lastName: '' } : splitName(name, email)),
+      details: automated
+        ? {}
+        : Object.assign({}, ...signatures.map((s) => parseSignature(s, { email, name }))),
     }));
 }

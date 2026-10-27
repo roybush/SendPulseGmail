@@ -7,7 +7,7 @@ const PREFS_KEY = 'prefs';
 
 type Handlers = { [M in Method]: (params: Params<M>) => Promise<Result<M>> };
 
-export type AppInfo = { version: string; openOptions: () => Promise<void> };
+export type AppInfo = { version: string };
 
 /** Other listeners (e.g. InboxSDK's) share chrome.runtime.onMessage; only answer our own calls. */
 export function isRpcRequest(message: unknown): message is RpcRequest {
@@ -19,7 +19,6 @@ export function createRouter(client: SendPulseClient, app: AppInfo, prefs: KeyVa
 
   const handlers: Handlers = {
     'app.version': async () => app.version,
-    'app.openOptions': () => app.openOptions(),
     'prefs.get': getPrefs,
     'prefs.set': async (p) => {
       const next = { ...(await getPrefs()), ...p };

@@ -15,7 +15,6 @@ import type {
 
 export type Api = {
   'app.version': { params: void; result: string };
-  'app.openOptions': { params: void; result: void };
   'prefs.get': { params: void; result: Prefs };
   'prefs.set': { params: Prefs; result: Prefs };
   'auth.status': { params: void; result: AuthStatus };
