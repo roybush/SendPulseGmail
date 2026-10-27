@@ -6,8 +6,9 @@ import * as InboxSDK from '@inboxsdk/core';
 import type { MessageView } from '@inboxsdk/core';
 import { collectParticipants, type MessageHeaders, type Participant } from './participants';
 
-// Any string works in development; a registered ID (inboxsdk.com/register) is needed for release.
-const APP_ID = import.meta.env.VITE_INBOXSDK_APP_ID || 'sendpulse-gmail-dev';
+// Register for free at https://www.inboxsdk.com/register and put the ID into .env.
+// InboxSDK refuses to load with an unregistered ID, even in development.
+const APP_ID = import.meta.env.VITE_INBOXSDK_APP_ID;
 
 export type OpenThread = {
   subject: string;
@@ -18,6 +19,7 @@ export type OpenThread = {
 };
 
 export async function onThreadOpen(handler: (thread: OpenThread) => void): Promise<void> {
+  if (!APP_ID) throw new Error('VITE_INBOXSDK_APP_ID is not set; see .env.example');
   const sdk = await InboxSDK.load(2, APP_ID, { appName: 'SendPulse' });
   const selfEmail = sdk.User.getEmailAddress();
 

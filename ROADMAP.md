@@ -72,11 +72,11 @@ Options page (Vue 3): логін SendPulse, налаштування, мапін
 
 ### Етап 3. Інтеграція з Gmail
 
-- [x] Адаптер Gmail на InboxSDK (`src/content/gmail.ts`); для розробки App ID не потрібен
+- [x] Адаптер Gmail на InboxSDK (`src/content/gmail.ts`)
 - [x] Панель «SendPulse» у правому сайдбарі відкритого листа зі списком учасників (from/to/cc, без вас)
 - [x] Ім'я та прізвище з заголовків листа (`src/content/participants.ts`, з тестами)
 - [x] Для кожного учасника — чи є він уже в SendPulse і в скількох книгах
-- [ ] **Власник:** зареєструвати App ID на inboxsdk.com/register і покласти в `.env` (`VITE_INBOXSDK_APP_ID`) — потрібно до публікації
+- [ ] **Власник:** зареєструвати App ID на inboxsdk.com/register і покласти в `.env` (`VITE_INBOXSDK_APP_ID`) — без нього InboxSDK не завантажується навіть у розробці
 - [ ] Перевірити вручну в Gmail: панель з'являється, учасники й статуси правильні
 
 ### Етап 4. Основний UI
