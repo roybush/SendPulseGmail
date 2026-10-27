@@ -1,21 +1,19 @@
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "es5",
-      "es2015",
-      "es2015.promise"
-    ],
-    "module": "es2015",
-    "moduleResolution": "node",
-    "target": "es5",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["chrome", "vite/client"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "noEmit": true
   },
-  "exclude": [
-    "node_modules",
-    "test"
-  ]
+  "include": ["src", "tests", "vite.config.ts", "vitest.config.ts", "env.d.ts"]
 }
