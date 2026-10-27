@@ -11,6 +11,7 @@ describe('splitName', () => {
     ['Ann Lee (Acme Inc)', 'ann@x.com', 'Ann', 'Lee'],
     ['  Ann   Lee ', 'ann@x.com', 'Ann', 'Lee'],
     ['Іван Петренко', 'ivan@x.ua', 'Іван', 'Петренко'],
+    ['J. R. Smith', 'jr@x.com', 'J.', 'R. Smith'],
   ])('%s -> %s / %s', (raw, email, firstName, lastName) => {
     expect(splitName(raw, email)).toEqual({ firstName, lastName });
   });
@@ -20,6 +21,8 @@ describe('splitName', () => {
     ['', 'ann@x.com'],
     ['ann@x.com', 'ann@x.com'],
     ['ann', 'ann@x.com'], // Gmail shows the local part when there is no display name
+    ['Equipment.com.ua', 'equipment@ua7.net'], // a site, not a person
+    ['shop.example', 'sales@shop.example'],
   ])('no real name in %s', (raw, email) => {
     expect(splitName(raw, email)).toEqual({ firstName: '', lastName: '' });
   });

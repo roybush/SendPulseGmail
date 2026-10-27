@@ -13,6 +13,9 @@ export type Participant = {
   isSender: boolean;
 };
 
+// Company senders often use their site as the display name ("Equipment.com.ua").
+const DOMAIN = /^[\p{L}\d-]+(\.[\p{L}\d-]+)+$/u;
+
 export function splitName(
   rawName: string | undefined,
   email: string,
@@ -23,7 +26,7 @@ export function splitName(
     .replace(/\s+/g, ' ')
     .trim();
   // Gmail falls back to the address (or its exact local part) when there's no display name.
-  if (!name || name.includes('@') || name === email.split('@')[0]) {
+  if (!name || name.includes('@') || name === email.split('@')[0] || DOMAIN.test(name)) {
     return { firstName: '', lastName: '' };
   }
   // "Lee, Ann" -> "Ann Lee"
