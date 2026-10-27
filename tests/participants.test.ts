@@ -99,6 +99,45 @@ describe('collectParticipants', () => {
   });
 });
 
+describe('names from signatures', () => {
+  it('uses the signed name when the header only has the address', () => {
+    const [p] = collectParticipants(
+      [
+        {
+          sender: {
+            emailAddress: 'ivan.kovalenko@example-supplies.com',
+            name: 'ivan.kovalenko@example-supplies.com',
+          },
+          recipients: [{ emailAddress: 'me@x.com' }],
+          signature: { text: 'Прошу ціну.\nЗ повагою\nІван Коваленко\nАссет менеджер', links: [] },
+        },
+      ],
+      'me@x.com',
+    );
+    expect(p).toMatchObject({
+      name: 'Іван Коваленко',
+      firstName: 'Іван',
+      lastName: 'Коваленко',
+      details: { title: 'Ассет менеджер' },
+    });
+    expect(p.details).not.toHaveProperty('name');
+  });
+
+  it('keeps the header name over the signature', () => {
+    const [p] = collectParticipants(
+      [
+        {
+          sender: { emailAddress: 'ann@acme.com', name: 'Ann Lee' },
+          recipients: [],
+          signature: { text: 'Best,\nAnnie Lee-Smith', links: [] },
+        },
+      ],
+      'me@x.com',
+    );
+    expect(p).toMatchObject({ name: 'Ann Lee', firstName: 'Ann', lastName: 'Lee' });
+  });
+});
+
 describe('automated senders', () => {
   it.each([
     ['notifications-noreply@linkedin.com', true],

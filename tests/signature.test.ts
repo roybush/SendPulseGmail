@@ -46,6 +46,7 @@ www.acme.com
 linkedin.com/in/ann-lee-42`;
 
     expect(parse(text)).toEqual({
+      name: 'Ann Lee',
       phone: '+14155550132',
       title: 'Head of Sales',
       company: 'Acme Inc.',
@@ -67,6 +68,7 @@ linkedin.com/in/ann-lee-42`;
 https://equipment.com.ua`;
 
     expect(parse(text, [], { email: 'sales@equipment.com.ua', name: 'Олена Коваль' })).toEqual({
+      name: 'Олена Коваль',
       phone: '+380671234567',
       title: 'Менеджер з продажу',
       company: 'ТОВ «Обладнання Плюс»',
@@ -82,6 +84,7 @@ https://equipment.com.ua`;
         name: 'Bob Stone',
       }),
     ).toEqual({
+      name: 'Bob Stone',
       title: 'Founder',
       company: 'Stone Labs',
       website: 'https://stonelabs.io/',
@@ -97,6 +100,31 @@ https://equipment.com.ua`;
   it('ignores social links, emails and short numbers', () => {
     const text = 'Cheers,\nAnn\nann.lee@acme.com\nRoom 101\nfacebook.com/ann';
     expect(parse(text)).toEqual({});
+  });
+
+  it('reads a Ukrainian request with a disclaimer and a product link in the body', () => {
+    const text = `Доброго дня.
+
+Прошу надати цінову пропозицію на товар:
+Electronic load, single channel, 150V, 500A
+https://shop.example.com/product/12345
+
+З повагою
+
+Іван Коваленко
+Ассет менеджер
+ТОВ Приклад Агро"
++380671112233
+
+Повідомлення про конфіденційність Це повідомлення (включно з вкладеними файлами) містить конфіденційну інформацію та призначене для використання виключно адресатами, яким воно направлено.`;
+    const email = 'ivan.kovalenko@example-supplies.com';
+
+    expect(parse(text, ['https://shop.example.com/product/12345'], { email, name: email })).toEqual({
+      name: 'Іван Коваленко',
+      title: 'Ассет менеджер',
+      company: 'ТОВ Приклад Агро',
+      phone: '+380671112233',
+    });
   });
 
   it('returns nothing for a message without a signature', () => {

@@ -4,6 +4,8 @@
  */
 
 export type ContactDetails = {
+  /** A person's name found at the top of the signature. */
+  name?: string;
   phone?: string;
   company?: string;
   title?: string;
@@ -92,6 +94,32 @@ export function websiteFromEmail(email: string): string | undefined {
   return `https://${domain}`;
 }
 
+const NAME_WORD = /^\p{Lu}[\p{Ll}'’-]+$/u;
+
+/** "Іван Коваленко", "Ann Marie Lee": 2–3 capitalised words, not a title or a company. */
+function looksLikeName(line: string): boolean {
+  const words = line.split(' ');
+  return (
+    words.length >= 2 &&
+    words.length <= 3 &&
+    words.every((w) => NAME_WORD.test(w)) &&
+    !TITLE_WORDS.test(line) &&
+    !LEGAL_FORM.test(line)
+  );
+}
+
+/** Drops a quote left without its pair: 'ТОВ Приклад Агро"' -> 'ТОВ Приклад Агро'. */
+function tidy(line: string): string {
+  const count = (re: RegExp) => (line.match(re) ?? []).length;
+  let out = line;
+  if (count(/"/g) % 2) out = out.replace(/"(?=[^"]*$)/, '');
+  const opens = count(/[«“]/g);
+  const closes = count(/[»”]/g);
+  if (closes > opens) out = out.replace(/[»”](?=[^»”]*$)/, '');
+  if (opens > closes) out = out.replace(/[«“]/, '');
+  return out.trim();
+}
+
 function isContactLine(line: string): boolean {
   return PHONE.test(line) || URL_IN_TEXT.test(line) || line.includes('@');
 }
@@ -121,8 +149,10 @@ export function parseSignature(
   details.linkedin = source.links.map(normalizeLinkedin).find(Boolean) ?? normalizeLinkedin(source.text);
 
   const emailHost = person.email.split('@')[1]?.toLowerCase() ?? '';
+  // Only links that show up in the signature itself: a product link in the body isn't their site.
+  const signatureText = lines.join(' ').toLowerCase();
   const candidates = [
-    ...source.links,
+    ...source.links.filter((u) => signatureText.includes(hostOf(u))),
     ...lines.flatMap((l) => (l.includes('@') ? [] : [l.match(URL_IN_TEXT)?.[1] ?? ''])),
   ].filter((u) => u && !NOT_A_WEBSITE.test(u) && hostOf(u));
   const website =
@@ -132,8 +162,14 @@ export function parseSignature(
     }) ?? candidates[0];
   if (website) details.website = normalizeWebsite(website);
 
+  // The name usually opens the signature.
+  const nameLine = lines.slice(0, 2).find(looksLikeName);
+  if (nameLine) details.name = nameLine;
+
   // Title and company: plain lines near the name, e.g. "Head of Sales, Acme Inc" or "CTO" / "Acme".
-  const plain = lines.filter((l) => !isContactLine(l) && !isNameLine(l, person.name) && l.length <= 80);
+  const plain = lines
+    .filter((l) => l !== nameLine && !isContactLine(l) && !isNameLine(l, person.name) && l.length <= 80)
+    .map(tidy);
   for (const line of plain) {
     if (!details.title && TITLE_WORDS.test(line)) {
       const [title, ...rest] = line.split(TITLE_COMPANY_SEPARATOR);

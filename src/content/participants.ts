@@ -76,7 +76,8 @@ export function collectParticipants(messages: MessageHeaders[], selfEmail: strin
       byEmail.set(key, entry);
     }
     entry.isSender ||= isSender;
-    if (!entry.name && address.name) entry.name = address.name;
+    // Some clients put the bare address in the display name; that's not a name.
+    if (!entry.name && address.name && !address.name.includes('@')) entry.name = address.name;
     if (signature) entry.signatures.push(signature);
   };
 
@@ -93,15 +94,20 @@ export function collectParticipants(messages: MessageHeaders[], selfEmail: strin
         Number(b.isSender) - Number(a.isSender) ||
         a.order - b.order,
     )
-    .map(({ email, name, isSender, signatures, automated }) => ({
-      email,
-      name,
-      isSender,
-      automated,
+    .map(({ email, name, isSender, signatures, automated }) => {
       // A robot's display name ("LinkedIn") and footer aren't a person's name and contacts.
-      ...(automated ? { firstName: '', lastName: '' } : splitName(name, email)),
-      details: automated
-        ? {}
-        : Object.assign({}, ...signatures.map((s) => parseSignature(s, { email, name }))),
-    }));
+      if (automated) return { email, name, isSender, automated, firstName: '', lastName: '', details: {} };
+
+      const { name: signedName, ...details }: ContactDetails = Object.assign(
+        {},
+        ...signatures.map((s) => parseSignature(s, { email, name })),
+      );
+      let parts = splitName(name, email);
+      // No usable name in the headers: take the one they signed with.
+      if (!parts.firstName && !parts.lastName && signedName) {
+        name = signedName;
+        parts = splitName(signedName, email);
+      }
+      return { email, name, isSender, automated, ...parts, details };
+    });
 }
