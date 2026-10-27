@@ -1,8 +1,8 @@
-# Privacy Policy — SendPulse for Gmail
+# Privacy Policy — SendPulse Gmail Extension
 
 _Last updated: October 27, 2026_
 
-SendPulse for Gmail ("the extension") is a Chrome extension that helps you add people from your
+SendPulse Gmail Extension ("the extension") is a Chrome extension that helps you add people from your
 Gmail conversations to your SendPulse mailing lists. This policy explains what data the extension
 handles and where it goes.
 

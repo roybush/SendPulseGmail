@@ -1,4 +1,4 @@
-# SendPulse for Gmail
+# SendPulse Gmail Extension
 
 Chrome extension (Manifest V3) that lets you add people from your Gmail conversations to
 [SendPulse](https://sendpulse.com/) address books via the SendPulse REST API.

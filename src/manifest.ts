@@ -3,7 +3,7 @@ import pkg from '../package.json' with { type: 'json' };
 
 export const manifest = {
   manifest_version: 3,
-  name: 'SendPulse for Gmail',
+  name: 'SendPulse Gmail Extension',
   description: pkg.description,
   version: pkg.version,
   icons: {
@@ -12,7 +12,7 @@ export const manifest = {
   },
   action: {
     default_icon: { 16: 'icons/icon-16.png' },
-    default_title: 'SendPulse for Gmail',
+    default_title: 'SendPulse Gmail Extension',
     default_popup: 'src/options/index.html',
   },
   background: {

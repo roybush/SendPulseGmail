@@ -2,11 +2,11 @@
 
 ## Name (from the package)
 
-SendPulse for Gmail
+SendPulse Gmail Extension
 
 ## Summary (from the package, max 132 characters)
 
-SendPulse for Gmail: add people from your emails to SendPulse
+Add people from your Gmail conversations to SendPulse mailing lists in one click
 
 ## Category
 

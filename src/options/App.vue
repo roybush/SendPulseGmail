@@ -83,7 +83,7 @@ onUnmounted(() => resizeObserver.disconnect());
   <main ref="root" :class="{ embedded }">
     <header v-if="!embedded">
       <img src="/icons/icon-128.png" alt="" width="28" height="28" />
-      <h1>SendPulse for Gmail</h1>
+      <h1>SendPulse Gmail Extension</h1>
     </header>
 
     <p v-if="!status" class="muted">Loading…</p>
