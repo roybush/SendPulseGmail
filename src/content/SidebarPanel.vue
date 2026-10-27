@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { call } from '../shared/messages';
-import { detectNameFields, fromVariables, toVariables, type NameFields } from '../shared/fields';
-import type { AddressBook, Membership } from '../shared/types';
+import {
+  DETAIL_FIELDS,
+  detectFieldMapping,
+  fromVariables,
+  toVariables,
+  type DetailField,
+  type FieldMapping,
+} from '../shared/fields';
+import type { AddressBook, BookVariable, Membership } from '../shared/types';
+import FieldMappingEditor from './FieldMappingEditor.vue';
 import type { Participant } from './participants';
+import { websiteFromEmail } from './signature';
 
 const props = defineProps<{ participants: Participant[] }>();
 
@@ -12,27 +21,46 @@ type Row = {
   displayName: string;
   firstName: string;
   lastName: string;
-  selected: boolean;
-  /** null while loading */
-  memberships: Membership[] | null;
-  lookupError: string;
-};
+} & Record<DetailField, string> & {
+    selected: boolean;
+    detailsOpen: boolean;
+    /** null while loading */
+    memberships: Membership[] | null;
+    lookupError: string;
+  };
 
 const loggedIn = ref<boolean | null>(null);
 const books = ref<AddressBook[]>([]);
 const bookId = ref<number | null>(null);
-const nameFields = ref<NameFields>({});
+const bookVariables = ref<BookVariable[]>([]);
+const mapping = ref<FieldMapping>({});
+const savedMappings = ref<Record<string, FieldMapping>>({});
+const mappingOpen = ref(false);
 const rows = reactive<Row[]>(
   props.participants.map((p) => ({
     email: p.email,
     displayName: p.name,
     firstName: p.firstName,
     lastName: p.lastName,
+    phone: p.details.phone ?? '',
+    company: p.details.company ?? '',
+    title: p.details.title ?? '',
+    website: p.details.website ?? websiteFromEmail(p.email) ?? '',
+    linkedin: p.details.linkedin ?? '',
     selected: false,
+    detailsOpen: false,
     memberships: null,
     lookupError: '',
   })),
 );
+
+const DETAIL_LABELS: Record<DetailField, string> = {
+  phone: 'Phone',
+  company: 'Company',
+  title: 'Job title',
+  website: 'Website',
+  linkedin: 'LinkedIn',
+};
 const busy = ref(false);
 const error = ref('');
 const notice = ref('');
@@ -61,6 +89,30 @@ async function lookup(row: Row) {
   }
 }
 
+/** SendPulse rejects the whole contact if Phone isn't in international format. */
+function phoneWarning(row: Row) {
+  const digits = row.phone.replace(/[\s().-]/g, '');
+  return mapping.value.phone && digits && !/^\+\d{9,15}$/.test(digits)
+    ? 'Use international format, e.g. +380671234567'
+    : '';
+}
+
+function detailCount(row: Row) {
+  return DETAIL_FIELDS.filter((f) => row[f].trim()).length;
+}
+
+const savedFieldCount = computed(() => Object.keys(mapping.value).length);
+
+/** Opens LinkedIn's own people search; we never fetch LinkedIn pages ourselves. */
+function findOnLinkedin(row: Row) {
+  const keywords = [row.firstName, row.lastName, row.company].filter(Boolean).join(' ') || row.email;
+  window.open(
+    `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(keywords)}`,
+    '_blank',
+    'noopener',
+  );
+}
+
 function inBook(row: Row) {
   return !!row.memberships?.some((m) => m.bookId === bookId.value);
 }
@@ -81,6 +133,7 @@ async function init() {
 
     const [allBooks, prefs] = await Promise.all([call('books.list'), call('prefs.get')]);
     books.value = allBooks;
+    savedMappings.value = prefs.mappings ?? {};
     bookId.value = allBooks.some((b) => b.id === prefs.lastBookId)
       ? prefs.lastBookId!
       : (allBooks[0]?.id ?? null);
@@ -88,10 +141,15 @@ async function init() {
     await Promise.all(
       rows.map(async (row) => {
         await lookup(row);
-        // Prefer what SendPulse already knows when the email header has no name.
-        if (!row.firstName && !row.lastName && row.memberships?.length) {
-          Object.assign(row, fromVariables(row.memberships[0].variables));
-          row.displayName = `${row.firstName} ${row.lastName}`.trim();
+        // Fill gaps with what SendPulse already knows; fresh data from the email wins.
+        if (row.memberships?.length) {
+          const known = fromVariables(row.memberships[0].variables);
+          if (!row.firstName && !row.lastName) {
+            row.firstName = known.firstName;
+            row.lastName = known.lastName;
+            row.displayName ||= `${row.firstName} ${row.lastName}`.trim();
+          }
+          for (const f of DETAIL_FIELDS) if (!row[f] && known[f]) row[f] = known[f];
         }
         row.selected = !row.lookupError && !row.memberships?.length;
       }),
@@ -119,17 +177,27 @@ onMounted(() => {
 onUnmounted(() => window.removeEventListener('message', onSettingsMessage));
 
 watch(bookId, async (id, previous) => {
-  nameFields.value = {};
+  mapping.value = {};
+  bookVariables.value = [];
   if (id === null) return;
   if (previous !== undefined && previous !== null) call('prefs.set', { lastBookId: id }).catch(() => {});
   try {
     const variables = await call('books.variables', { bookId: id });
     // Ignore a slow response for a book the user has already switched away from.
-    if (id === bookId.value) nameFields.value = detectNameFields(variables);
+    if (id !== bookId.value) return;
+    bookVariables.value = variables;
+    mapping.value = savedMappings.value[id] ?? detectFieldMapping(variables);
   } catch (e) {
     error.value = message(e);
   }
 });
+
+function onMappingChange(next: FieldMapping) {
+  if (bookId.value === null) return;
+  mapping.value = next;
+  savedMappings.value = { ...savedMappings.value, [bookId.value]: next };
+  call('prefs.set', { mappings: savedMappings.value }).catch((e) => (error.value = message(e)));
+}
 
 async function add() {
   if (bookId.value === null || !selectedRows.value.length) return;
@@ -140,7 +208,7 @@ async function add() {
   try {
     await call('contact.add', {
       bookId: bookId.value,
-      contacts: added.map((r) => ({ email: r.email, variables: toVariables(r, nameFields.value) })),
+      contacts: added.map((r) => ({ email: r.email, variables: toVariables(r, mapping.value) })),
     });
     notice.value = `Added ${added.length === 1 ? added[0].email : `${added.length} contacts`} to ${book.value?.name}`;
     added.forEach((r) => (r.selected = false));
@@ -184,10 +252,46 @@ function openSettings() {
               <div class="sp-status" :class="{ 'sp-error': row.lookupError, 'sp-ok': inBook(row) }">
                 {{ statusText(row) }}
               </div>
-              <div v-if="row.selected" class="sp-names">
-                <input v-model="row.firstName" placeholder="First name" aria-label="First name" />
-                <input v-model="row.lastName" placeholder="Last name" aria-label="Last name" />
-              </div>
+              <template v-if="row.selected">
+                <div class="sp-names">
+                  <input v-model="row.firstName" placeholder="First name" aria-label="First name" />
+                  <input v-model="row.lastName" placeholder="Last name" aria-label="Last name" />
+                </div>
+                <button
+                  type="button"
+                  class="sp-link sp-toggle"
+                  :aria-expanded="row.detailsOpen"
+                  @click="row.detailsOpen = !row.detailsOpen"
+                >
+                  {{ row.detailsOpen ? '▾' : '▸' }} Details
+                  <span class="sp-muted">{{ detailCount(row) ? `(${detailCount(row)} found)` : '' }}</span>
+                </button>
+                <div v-if="row.detailsOpen" class="sp-details">
+                  <label v-for="f in DETAIL_FIELDS" :key="f">
+                    <span>
+                      {{ DETAIL_LABELS[f] }}
+                      <span v-if="!mapping[f]" class="sp-muted" title="Choose a variable under “Fields”">
+                        · not saved
+                      </span>
+                    </span>
+                    <span class="sp-input-row">
+                      <input v-model="row[f]" :aria-label="DETAIL_LABELS[f]" />
+                      <button
+                        v-if="f === 'linkedin'"
+                        type="button"
+                        class="sp-small"
+                        title="Search LinkedIn in a new tab"
+                        @click="findOnLinkedin(row)"
+                      >
+                        Find
+                      </button>
+                    </span>
+                    <span v-if="f === 'phone' && phoneWarning(row)" class="sp-warn">
+                      {{ phoneWarning(row) }}
+                    </span>
+                  </label>
+                </div>
+              </template>
             </div>
           </li>
         </ul>
@@ -195,9 +299,27 @@ function openSettings() {
         <div class="sp-add">
           <label class="sp-muted" for="sp-book">Address book</label>
           <p v-if="!books.length" class="sp-muted">No address books yet. Create one in SendPulse first.</p>
-          <select v-else id="sp-book" v-model="bookId" :disabled="busy">
-            <option v-for="b in books" :key="b.id" :value="b.id">{{ b.name }}</option>
-          </select>
+          <template v-else>
+            <select id="sp-book" v-model="bookId" :disabled="busy">
+              <option v-for="b in books" :key="b.id" :value="b.id">{{ b.name }}</option>
+            </select>
+            <button
+              type="button"
+              class="sp-link sp-toggle"
+              :aria-expanded="mappingOpen"
+              @click="mappingOpen = !mappingOpen"
+            >
+              {{ mappingOpen ? '▾' : '▸' }} Fields
+              <span class="sp-muted">({{ savedFieldCount }} saved to this book)</span>
+            </button>
+            <FieldMappingEditor
+              v-if="mappingOpen"
+              :model-value="mapping"
+              :variables="bookVariables"
+              :disabled="busy"
+              @update:model-value="onMappingChange"
+            />
+          </template>
           <button
             type="button"
             class="sp-primary"
@@ -312,6 +434,51 @@ function openSettings() {
 }
 .sp-error {
   color: #c5221f;
+}
+.sp-toggle {
+  margin-top: 6px;
+  font-size: 12px;
+  text-align: left;
+}
+.sp-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+.sp-details label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #5f6368;
+}
+.sp-input-row {
+  display: flex;
+  gap: 4px;
+}
+.sp-details input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 6px;
+  border: 1px solid #c4c7c5;
+  border-radius: 4px;
+  color: #1f1f1f;
+  font: inherit;
+  font-size: 13px;
+}
+.sp-warn {
+  color: #b06000;
+}
+.sp-small {
+  padding: 2px 10px;
+  border: 1px solid #c4c7c5;
+  border-radius: 12px;
+  background: #fff;
+  color: #0b57d0;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
 }
 .sp-settings {
   display: block;

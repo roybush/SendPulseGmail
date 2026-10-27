@@ -1,3 +1,5 @@
+import type { FieldMapping } from './fields';
+
 /**
  * Two ways SendPulse lets you into its API:
  * a permanent API key (sp_apikey_…), or a client ID + secret exchanged for a 1-hour token.
@@ -31,6 +33,8 @@ export type Membership = {
 /** Small UI preferences, kept by the service worker. */
 export type Prefs = {
   lastBookId?: number;
+  /** Per address book (by id): which variable receives which profile field. */
+  mappings?: Record<string, FieldMapping>;
 };
 
 export type NewContact = {

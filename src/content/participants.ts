@@ -1,8 +1,14 @@
 /** Pure helpers for turning Gmail message headers into contacts. No DOM, no InboxSDK. */
+import { parseSignature, type ContactDetails, type SignatureSource } from './signature';
 
 export type Address = { emailAddress: string; name?: string };
 
-export type MessageHeaders = { sender: Address; recipients: Address[] };
+export type MessageHeaders = {
+  sender: Address;
+  recipients: Address[];
+  /** The sender's own text (quotes removed), for reading their signature. */
+  signature?: SignatureSource;
+};
 
 export type Participant = {
   email: string;
@@ -11,6 +17,8 @@ export type Participant = {
   lastName: string;
   /** Sent at least one message in the thread (vs. only received). */
   isSender: boolean;
+  /** Found in their signatures; later messages win. */
+  details: ContactDetails;
 };
 
 // Company senders often use their site as the display name ("Equipment.com.ua").
@@ -43,27 +51,37 @@ export function splitName(
  */
 export function collectParticipants(messages: MessageHeaders[], selfEmail: string): Participant[] {
   const self = selfEmail.toLowerCase();
-  const byEmail = new Map<string, { email: string; name: string; isSender: boolean; order: number }>();
+  const byEmail = new Map<
+    string,
+    { email: string; name: string; isSender: boolean; order: number; signatures: SignatureSource[] }
+  >();
 
-  const add = (address: Address, isSender: boolean) => {
+  const add = (address: Address, isSender: boolean, signature?: SignatureSource) => {
     const email = address.emailAddress.trim();
     const key = email.toLowerCase();
     if (!key || key === self) return;
-    const existing = byEmail.get(key);
-    if (existing) {
-      existing.isSender ||= isSender;
-      if (!existing.name && address.name) existing.name = address.name;
-    } else {
-      byEmail.set(key, { email, name: address.name ?? '', isSender, order: byEmail.size });
+    let entry = byEmail.get(key);
+    if (!entry) {
+      entry = { email, name: '', isSender: false, order: byEmail.size, signatures: [] };
+      byEmail.set(key, entry);
     }
+    entry.isSender ||= isSender;
+    if (!entry.name && address.name) entry.name = address.name;
+    if (signature) entry.signatures.push(signature);
   };
 
   for (const m of messages) {
-    add(m.sender, true);
+    add(m.sender, true, m.signature);
     m.recipients.forEach((r) => add(r, false));
   }
 
   return [...byEmail.values()]
     .sort((a, b) => Number(b.isSender) - Number(a.isSender) || a.order - b.order)
-    .map(({ email, name, isSender }) => ({ email, name, isSender, ...splitName(name, email) }));
+    .map(({ email, name, isSender, signatures }) => ({
+      email,
+      name,
+      isSender,
+      ...splitName(name, email),
+      details: Object.assign({}, ...signatures.map((s) => parseSignature(s, { email, name }))),
+    }));
 }

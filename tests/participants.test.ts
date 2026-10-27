@@ -47,9 +47,40 @@ describe('collectParticipants', () => {
     );
 
     expect(people).toEqual([
-      { email: 'ann@x.com', name: 'Ann Lee', firstName: 'Ann', lastName: 'Lee', isSender: true },
-      { email: 'bob@x.com', name: 'Bob Stone', firstName: 'Bob', lastName: 'Stone', isSender: false },
+      { email: 'ann@x.com', name: 'Ann Lee', firstName: 'Ann', lastName: 'Lee', isSender: true, details: {} },
+      {
+        email: 'bob@x.com',
+        name: 'Bob Stone',
+        firstName: 'Bob',
+        lastName: 'Stone',
+        isSender: false,
+        details: {},
+      },
     ]);
+  });
+
+  it("reads details from each sender's own signatures, latest first", () => {
+    const [ann] = collectParticipants(
+      [
+        {
+          sender: { emailAddress: 'ann@acme.com', name: 'Ann Lee' },
+          recipients: [{ emailAddress: me }],
+          signature: { text: 'Hi\nBest,\nAnn Lee\nCTO, Acme Inc\n+1 415 555 0100', links: [] },
+        },
+        {
+          sender: { emailAddress: me },
+          recipients: [{ emailAddress: 'ann@acme.com' }],
+          signature: { text: 'Best,\nMe\n+44 20 7946 0000', links: [] },
+        },
+        {
+          sender: { emailAddress: 'ann@acme.com', name: 'Ann Lee' },
+          recipients: [{ emailAddress: me }],
+          signature: { text: 'Thanks,\nAnn\n+1 415 555 0199', links: [] },
+        },
+      ],
+      me,
+    );
+    expect(ann.details).toEqual({ title: 'CTO', company: 'Acme Inc', phone: '+14155550199' });
   });
 
   it('returns nothing for a thread with only me', () => {
