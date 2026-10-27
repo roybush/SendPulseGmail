@@ -38,8 +38,8 @@ export class MockApi extends Api {
 
 }
 
-export const CLIENT_ID = '***REMOVED***';
-export const CLIENT_SECRET = '***REMOVED***';
+export const CLIENT_ID = 'test_client_id_00000000000000000';
+export const CLIENT_SECRET = 'test_client_secret_0000000000000';
 
 export class XmlHttpRequestMock {
 

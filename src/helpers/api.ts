@@ -1,5 +1,5 @@
 import {
-  CORS_URL, API_URL, FB_ACCESS_TOKEN, LS_CLIENT_ID, LS_TOKEN_EXPIRES,
+  CORS_URL, API_URL, LS_CLIENT_ID, LS_TOKEN_EXPIRES,
   LS_TOKEN_NAME
 } from './constants';
 import serialize from './serializer';
