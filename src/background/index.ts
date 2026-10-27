@@ -5,11 +5,16 @@ import { SendPulseClient } from './sendpulse';
 import { chromeStore } from './storage';
 
 // Credentials survive browser restarts; the access token lives only for the session.
-const client = new SendPulseClient(chromeStore(chrome.storage.local), chromeStore(chrome.storage.session));
-const route = createRouter(client, {
-  version: chrome.runtime.getManifest().version,
-  openOptions: () => chrome.runtime.openOptionsPage(),
-});
+const local = chromeStore(chrome.storage.local);
+const client = new SendPulseClient(local, chromeStore(chrome.storage.session));
+const route = createRouter(
+  client,
+  {
+    version: chrome.runtime.getManifest().version,
+    openOptions: () => chrome.runtime.openOptionsPage(),
+  },
+  local,
+);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // Only our own extension pages and content scripts may talk to the API.

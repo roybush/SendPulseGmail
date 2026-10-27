@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createRouter, isRpcRequest } from '../src/background/router';
 import type { SendPulseClient } from '../src/background/sendpulse';
+import { memoryStore } from '../src/background/storage';
 import type { RpcRequest } from '../src/shared/messages';
 
 const client = {
@@ -10,7 +11,7 @@ const client = {
   },
 } as unknown as SendPulseClient;
 
-const route = createRouter(client, { version: '2.0.0', openOptions: async () => {} });
+const route = createRouter(client, { version: '2.0.0', openOptions: async () => {} }, memoryStore());
 
 describe('router', () => {
   it('wraps results', async () => {
@@ -25,6 +26,15 @@ describe('router', () => {
     expect(await route({ method: 'books.list', params: undefined })).toEqual({
       ok: false,
       error: 'Not logged in to SendPulse',
+    });
+  });
+
+  it('merges and keeps prefs', async () => {
+    expect(await route({ method: 'prefs.get', params: undefined })).toEqual({ ok: true, data: {} });
+    await route({ method: 'prefs.set', params: { lastBookId: 7 } });
+    expect(await route({ method: 'prefs.get', params: undefined })).toEqual({
+      ok: true,
+      data: { lastBookId: 7 },
     });
   });
 

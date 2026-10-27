@@ -1,5 +1,9 @@
 import type { Method, Params, Result, RpcRequest, RpcResponse } from '../shared/messages';
+import type { Prefs } from '../shared/types';
 import type { SendPulseClient } from './sendpulse';
+import type { KeyValueStore } from './storage';
+
+const PREFS_KEY = 'prefs';
 
 type Handlers = { [M in Method]: (params: Params<M>) => Promise<Result<M>> };
 
@@ -10,10 +14,18 @@ export function isRpcRequest(message: unknown): message is RpcRequest {
   return typeof (message as RpcRequest | undefined)?.method === 'string';
 }
 
-export function createRouter(client: SendPulseClient, app: AppInfo) {
+export function createRouter(client: SendPulseClient, app: AppInfo, prefs: KeyValueStore) {
+  const getPrefs = async (): Promise<Prefs> => (await prefs.get<Prefs>(PREFS_KEY)) ?? {};
+
   const handlers: Handlers = {
     'app.version': async () => app.version,
     'app.openOptions': () => app.openOptions(),
+    'prefs.get': getPrefs,
+    'prefs.set': async (p) => {
+      const next = { ...(await getPrefs()), ...p };
+      await prefs.set(PREFS_KEY, next);
+      return next;
+    },
     'auth.status': () => client.status(),
     'auth.login': (p) => client.login(p),
     'auth.logout': () => client.logout(),

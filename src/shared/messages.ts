@@ -3,11 +3,21 @@
  * Every network call to SendPulse goes through the service worker, so tokens never
  * reach the Gmail page.
  */
-import type { AddressBook, AuthStatus, BookVariable, Credentials, Membership, NewContact } from './types';
+import type {
+  AddressBook,
+  AuthStatus,
+  BookVariable,
+  Credentials,
+  Membership,
+  NewContact,
+  Prefs,
+} from './types';
 
 export type Api = {
   'app.version': { params: void; result: string };
   'app.openOptions': { params: void; result: void };
+  'prefs.get': { params: void; result: Prefs };
+  'prefs.set': { params: Prefs; result: Prefs };
   'auth.status': { params: void; result: AuthStatus };
   'auth.login': { params: Credentials; result: AuthStatus };
   'auth.logout': { params: void; result: AuthStatus };

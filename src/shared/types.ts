@@ -24,6 +24,11 @@ export type Membership = {
   variables: Record<string, string>;
 };
 
+/** Small UI preferences, kept by the service worker. */
+export type Prefs = {
+  lastBookId?: number;
+};
+
 export type NewContact = {
   email: string;
   variables?: Record<string, string>;
