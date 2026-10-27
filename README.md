@@ -22,7 +22,7 @@ Then open `chrome://extensions`, enable **Developer mode**, click **Load unpacke
 the `dist` directory. With `npm run dev` running, changes reload automatically.
 
 Before the first run, copy `.env.example` to `.env` and set your InboxSDK app ID
-(free at [inboxsdk.com/register](https://www.inboxsdk.com/register)); InboxSDK won't load without it.
+(free at [register.inboxsdk.com](https://register.inboxsdk.com)); InboxSDK won't load without it.
 
 ## Scripts
 

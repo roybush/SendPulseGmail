@@ -6,7 +6,7 @@ import * as InboxSDK from '@inboxsdk/core';
 import type { MessageView } from '@inboxsdk/core';
 import { collectParticipants, type MessageHeaders, type Participant } from './participants';
 
-// Register for free at https://www.inboxsdk.com/register and put the ID into .env.
+// Register for free at https://register.inboxsdk.com and put the ID into .env.
 // InboxSDK refuses to load with an unregistered ID, even in development.
 const APP_ID = import.meta.env.VITE_INBOXSDK_APP_ID;
 
