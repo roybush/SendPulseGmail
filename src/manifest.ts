@@ -1,5 +1,5 @@
 import { defineManifest } from '@crxjs/vite-plugin';
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 
 export const manifest = {
   manifest_version: 3,
@@ -25,8 +25,10 @@ export const manifest = {
     },
   ],
   options_page: 'src/options/index.html',
-  permissions: ['storage'],
-  host_permissions: ['https://api.sendpulse.com/*'],
+  // `scripting` + Gmail host: InboxSDK injects its page-world script (pageWorld.js) into Gmail.
+  permissions: ['storage', 'scripting'],
+  host_permissions: ['https://api.sendpulse.com/*', 'https://mail.google.com/'],
+  web_accessible_resources: [{ resources: ['icons/*'], matches: ['https://mail.google.com/*'] }],
 } satisfies chrome.runtime.ManifestV3;
 
 export default defineManifest(manifest);

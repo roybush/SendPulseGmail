@@ -7,6 +7,7 @@ import type { AddressBook, AuthStatus, BookVariable, Credentials, Membership, Ne
 
 export type Api = {
   'app.version': { params: void; result: string };
+  'app.openOptions': { params: void; result: void };
   'auth.status': { params: void; result: AuthStatus };
   'auth.login': { params: Credentials; result: AuthStatus };
   'auth.logout': { params: void; result: AuthStatus };

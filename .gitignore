@@ -2,3 +2,6 @@ node_modules/
 dist/
 *.zip
 .DS_Store
+public/pageWorld.js
+.env
+.env.local

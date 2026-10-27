@@ -3,9 +3,17 @@ import type { SendPulseClient } from './sendpulse';
 
 type Handlers = { [M in Method]: (params: Params<M>) => Promise<Result<M>> };
 
-export function createRouter(client: SendPulseClient, version: string) {
+export type AppInfo = { version: string; openOptions: () => Promise<void> };
+
+/** Other listeners (e.g. InboxSDK's) share chrome.runtime.onMessage; only answer our own calls. */
+export function isRpcRequest(message: unknown): message is RpcRequest {
+  return typeof (message as RpcRequest | undefined)?.method === 'string';
+}
+
+export function createRouter(client: SendPulseClient, app: AppInfo) {
   const handlers: Handlers = {
-    'app.version': async () => version,
+    'app.version': async () => app.version,
+    'app.openOptions': () => app.openOptions(),
     'auth.status': () => client.status(),
     'auth.login': (p) => client.login(p),
     'auth.logout': () => client.logout(),
@@ -16,8 +24,8 @@ export function createRouter(client: SendPulseClient, version: string) {
   };
 
   return async function route(request: RpcRequest): Promise<RpcResponse> {
-    const handler = handlers[request?.method] as ((p: unknown) => Promise<unknown>) | undefined;
-    if (!handler) return { ok: false, error: `Unknown method: ${String(request?.method)}` };
+    const handler = handlers[request.method] as ((p: unknown) => Promise<unknown>) | undefined;
+    if (!handler) return { ok: false, error: `Unknown method: ${request.method}` };
     try {
       return { ok: true, data: await handler(request.params) };
     } catch (e) {

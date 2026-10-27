@@ -21,6 +21,8 @@ npm run dev
 Then open `chrome://extensions`, enable **Developer mode**, click **Load unpacked** and select
 the `dist` directory. With `npm run dev` running, changes reload automatically.
 
+For a release build, copy `.env.example` to `.env` and set your InboxSDK app ID.
+
 ## Scripts
 
 | Command             | What it does                                     |
@@ -39,7 +41,7 @@ the `dist` directory. With `npm run dev` running, changes reload automatically.
 src/
   manifest.ts      MV3 manifest (permissions are covered by tests/manifest.test.ts)
   background/      service worker: all network calls to SendPulse, token storage
-  content/         content script injected into Gmail
+  content/         Gmail sidebar panel; gmail.ts is the only file that talks to InboxSDK
   options/         options page (Vue)
   shared/          typed messages between the parts above
 ```

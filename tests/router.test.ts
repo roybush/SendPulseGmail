@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createRouter } from '../src/background/router';
+import { createRouter, isRpcRequest } from '../src/background/router';
 import type { SendPulseClient } from '../src/background/sendpulse';
 import type { RpcRequest } from '../src/shared/messages';
 
@@ -10,7 +10,7 @@ const client = {
   },
 } as unknown as SendPulseClient;
 
-const route = createRouter(client, '2.0.0');
+const route = createRouter(client, { version: '2.0.0', openOptions: async () => {} });
 
 describe('router', () => {
   it('wraps results', async () => {
@@ -26,6 +26,12 @@ describe('router', () => {
       ok: false,
       error: 'Not logged in to SendPulse',
     });
+  });
+
+  it('ignores messages that are not ours', () => {
+    expect(isRpcRequest({ type: 'inboxsdk__injectPageWorld' })).toBe(false);
+    expect(isRpcRequest(undefined)).toBe(false);
+    expect(isRpcRequest({ method: 'auth.status' })).toBe(true);
   });
 
   it('rejects unknown methods', async () => {

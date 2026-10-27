@@ -8,8 +8,8 @@ describe('manifest', () => {
 
   // Chrome Web Store review flags broad permissions; keep this list deliberate.
   it('requests only the permissions we need', () => {
-    expect(manifest.permissions).toEqual(['storage']);
-    expect(manifest.host_permissions).toEqual(['https://api.sendpulse.com/*']);
+    expect(manifest.permissions).toEqual(['storage', 'scripting']);
+    expect(manifest.host_permissions).toEqual(['https://api.sendpulse.com/*', 'https://mail.google.com/']);
   });
 
   it('injects the content script only into Gmail', () => {
