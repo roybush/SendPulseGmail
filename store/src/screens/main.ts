@@ -1,0 +1,89 @@
+// Renders the real panel / settings components with fictional data for store screenshots.
+// The extension APIs are replaced by an in-memory fake of the service worker.
+import { createApp } from 'vue';
+import SidebarPanel from '../../../src/content/SidebarPanel.vue';
+import SettingsApp from '../../../src/options/App.vue';
+
+const scene = new URLSearchParams(location.search).get('scene') ?? 'contacts';
+
+const members: Record<string, { bookId: number; status: string; variables: Record<string, string> }[]> = {
+  'ann.lee@acme.com': [{ bookId: 1, status: 'Active', variables: { firstName: 'Ann', lastName: 'Lee' } }],
+  'olena.koval@agroplus.ua': [
+    { bookId: 3, status: 'Active', variables: { firstName: 'Olena', lastName: 'Koval' } },
+  ],
+};
+
+const responses: Record<string, (params: any) => unknown> = {
+  'app.version': () => '2.0.0',
+  'auth.status': () =>
+    scene === 'connect'
+      ? { loggedIn: false }
+      : { loggedIn: true, method: 'apiKey', label: 'sp_apikey_…4f2a1' },
+  'books.list': () => [
+    { id: 1, name: 'Clients', totalEmails: 1240, activeEmails: 1198 },
+    { id: 2, name: 'Leads — Q4', totalEmails: 310, activeEmails: 305 },
+    { id: 3, name: 'Newsletter', totalEmails: 5820, activeEmails: 5641 },
+  ],
+  'prefs.get': () => ({ lastBookId: 2 }),
+  'prefs.set': (p) => p,
+  'books.variables': () => [
+    { name: 'firstName', type: 'string' },
+    { name: 'lastName', type: 'string' },
+    { name: 'Company', type: 'string' },
+    { name: 'Position', type: 'string' },
+  ],
+  'contact.find': (p) => members[p.email] ?? [],
+  'contact.add': () => undefined,
+};
+
+(window as any).chrome = {
+  runtime: {
+    getURL: (path: string) => `/${path}`,
+    async sendMessage({ method, params }: { method: string; params: unknown }) {
+      await new Promise((r) => setTimeout(r, 30));
+      return { ok: true, data: responses[method]?.(params) };
+    },
+  },
+};
+
+if (scene === 'connect') {
+  createApp(SettingsApp).mount('#popup');
+} else {
+  createApp(SidebarPanel, {
+    participants: [
+      {
+        email: 'bob@stonelabs.io',
+        name: 'Bob Stone',
+        firstName: 'Bob',
+        lastName: 'Stone',
+        isSender: true,
+        automated: false,
+        details: {
+          phone: '+44 20 7946 0321',
+          title: 'Founder & CEO',
+          company: 'Stone Labs',
+          website: 'https://stonelabs.io',
+          linkedin: 'https://www.linkedin.com/in/bobstone',
+        },
+      },
+      {
+        email: 'maria.garcia@stonelabs.io',
+        name: 'Maria Garcia',
+        firstName: 'Maria',
+        lastName: 'Garcia',
+        isSender: false,
+        automated: false,
+        details: {},
+      },
+      {
+        email: 'ann.lee@acme.com',
+        name: 'Ann Lee',
+        firstName: 'Ann',
+        lastName: 'Lee',
+        isSender: false,
+        automated: false,
+        details: {},
+      },
+    ],
+  }).mount('#app');
+}
