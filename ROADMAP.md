@@ -61,11 +61,14 @@ Options page (Vue 3): логін SendPulse, налаштування, мапін
 
 ### Етап 2. Ядро: SendPulse-клієнт у service worker
 
-- [ ] `fetch` + async/await, типізовані відповіді
-- [ ] Логін client_credentials, зберігання в `chrome.storage`, автооновлення токена
-- [ ] Типізований обмін повідомленнями content ↔ background
-- [ ] Перенести й розширити тести API (моки `fetch`)
-- [ ] Звірити з поточною документацією SendPulse формат додавання email (JSON vs PHP-serialize)
+- [x] `fetch` + async/await, типізовані відповіді (`src/background/sendpulse.ts`)
+- [x] Логін client_credentials; credentials у `chrome.storage.local`, токен у `chrome.storage.session`;
+      тихе оновлення токена за хвилину до кінця строку і повтор запиту один раз при 401
+- [x] Типізований RPC content/options ↔ background (`src/shared/messages.ts`, `src/background/router.ts`)
+- [x] Тести клієнта й роутера на моках `fetch`
+- [x] Звірено з документацією: `emails` передається JSON-масивом, PHP-serialize не потрібен
+- [x] Мінімальна форма логіну в options page (для ручної перевірки)
+- [ ] Перевірити вручну з реальними ключами: логін і список адресних книг на сторінці налаштувань
 
 ### Етап 3. Інтеграція з Gmail
 
@@ -75,7 +78,7 @@ Options page (Vue 3): логін SendPulse, налаштування, мапін
 
 ### Етап 4. Основний UI
 
-- [ ] Options page: логін, вихід, стан підключення
+- [ ] Options page: доробити дизайн логіну (базова форма є з етапу 2)
 - [ ] Картка контакту: дані з SendPulse, у яких книгах контакт уже є
 - [ ] Додавання в книгу з редагуванням змінних; масове додавання кількох учасників
 

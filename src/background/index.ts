@@ -1,14 +1,15 @@
-import type { Request, ResponseFor } from '../shared/messages';
+import { createRouter } from './router';
+import { SendPulseClient } from './sendpulse';
+import { chromeStore } from './storage';
 
-async function handle(request: Request): Promise<ResponseFor<Request>> {
-  switch (request.type) {
-    case 'ping':
-      return { ok: true, version: chrome.runtime.getManifest().version };
-  }
-}
+// Credentials survive browser restarts; the access token lives only for the session.
+const client = new SendPulseClient(chromeStore(chrome.storage.local), chromeStore(chrome.storage.session));
+const route = createRouter(client, chrome.runtime.getManifest().version);
 
-chrome.runtime.onMessage.addListener((request: Request, _sender, sendResponse) => {
-  handle(request).then(sendResponse);
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // Only our own extension pages and content scripts may talk to the API.
+  if (sender.id !== chrome.runtime.id) return false;
+  route(request).then(sendResponse);
   return true; // keep the channel open for the async response
 });
 
