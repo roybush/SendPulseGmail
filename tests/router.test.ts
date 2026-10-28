@@ -11,7 +11,7 @@ const client = {
   },
 } as unknown as SendPulseClient;
 
-const route = createRouter(client, { version: '2.0.0', openOptions: async () => {} }, memoryStore());
+const route = createRouter(client, { version: '2.0.0' }, memoryStore());
 
 describe('router', () => {
   it('wraps results', async () => {

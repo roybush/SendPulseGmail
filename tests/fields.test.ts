@@ -1,18 +1,32 @@
 import { describe, expect, it } from 'vitest';
-import { detectNameFields, fromVariables, toVariables } from '../src/shared/fields';
+import { detectFieldMapping, fromVariables, toVariables } from '../src/shared/fields';
 
 const vars = (...names: string[]) => names.map((name) => ({ name }));
 const ann = { firstName: 'Ann', lastName: 'Lee' };
 
-describe('detectNameFields', () => {
+describe('detectFieldMapping', () => {
   it.each([
-    [['firstName', 'lastName'], { first: 'firstName', last: 'lastName', full: undefined }],
-    [['first_name', 'Last Name', 'Phone'], { first: 'first_name', last: 'Last Name', full: undefined }],
-    [['Name'], { first: undefined, last: undefined, full: 'Name' }],
-    [["Ім'я", 'Прізвище'], { first: "Ім'я", last: 'Прізвище', full: undefined }],
-    [['Phone', 'company'], { first: undefined, last: undefined, full: undefined }],
+    [['firstName', 'lastName'], { first: 'firstName', last: 'lastName', phone: 'Phone' }],
+    [['first_name', 'Last Name', 'phone'], { first: 'first_name', last: 'Last Name', phone: 'phone' }],
+    [['Name'], { full: 'Name', phone: 'Phone' }],
+    [
+      ["Ім'я", 'Прізвище', 'Компанія', 'Посада'],
+      { first: "Ім'я", last: 'Прізвище', company: 'Компанія', title: 'Посада', phone: 'Phone' },
+    ],
+    [
+      ['Company', 'Job Title', 'Website', 'LinkedIn'],
+      {
+        full: 'name',
+        company: 'Company',
+        title: 'Job Title',
+        website: 'Website',
+        linkedin: 'LinkedIn',
+        phone: 'Phone',
+      },
+    ],
+    [['city'], { full: 'name', phone: 'Phone' }],
   ])('%j', (names, expected) => {
-    expect(detectNameFields(vars(...names))).toEqual(expected);
+    expect(detectFieldMapping(vars(...names))).toEqual(expected);
   });
 });
 
@@ -32,19 +46,38 @@ describe('toVariables', () => {
     expect(toVariables(ann, { first: 'firstName' })).toEqual({ firstName: 'Ann Lee' });
   });
 
-  it('falls back to a "name" variable when the book has none', () => {
-    expect(toVariables(ann, {})).toEqual({ name: 'Ann Lee' });
+  it('saves no name when no name field is mapped', () => {
+    expect(toVariables(ann, {})).toEqual({});
   });
 
   it('skips empty values', () => {
     expect(toVariables({ firstName: ' ', lastName: '' }, { first: 'f', last: 'l', full: 'n' })).toEqual({});
     expect(toVariables({ firstName: 'Ann', lastName: '' }, { first: 'f', last: 'l' })).toEqual({ f: 'Ann' });
   });
+
+  it('strips formatting from the phone', () => {
+    expect(toVariables({ ...ann, phone: ' +38 (067) 123-45-67 ' }, { phone: 'Phone' })).toEqual({
+      Phone: '+380671234567',
+    });
+  });
+
+  it('adds mapped details and drops unmapped ones', () => {
+    const profile = { ...ann, phone: '+14155550132', company: 'Acme', title: 'CTO', linkedin: 'https://x' };
+    expect(toVariables(profile, { full: 'Name', phone: 'Phone', company: 'Company' })).toEqual({
+      Name: 'Ann Lee',
+      Phone: '+14155550132',
+      Company: 'Acme',
+    });
+  });
 });
 
 describe('fromVariables', () => {
-  it('reads separate fields', () => {
-    expect(fromVariables({ firstName: 'Ann', lastName: 'Lee', Phone: '1' })).toEqual(ann);
+  it('reads separate fields and details', () => {
+    expect(fromVariables({ firstName: 'Ann', lastName: 'Lee', Phone: '1', Company: 'Acme' })).toEqual({
+      ...ann,
+      phone: '1',
+      company: 'Acme',
+    });
   });
 
   it('splits a full name field', () => {
@@ -52,6 +85,6 @@ describe('fromVariables', () => {
   });
 
   it('returns empty names when nothing matches', () => {
-    expect(fromVariables({ Phone: '1' })).toEqual({ firstName: '', lastName: '' });
+    expect(fromVariables({ city: 'Kyiv' })).toEqual({ firstName: '', lastName: '' });
   });
 });

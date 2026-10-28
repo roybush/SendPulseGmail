@@ -1,8 +1,14 @@
 /** Pure helpers for turning Gmail message headers into contacts. No DOM, no InboxSDK. */
+import { parseSignature, type ContactDetails, type SignatureSource } from './signature';
 
 export type Address = { emailAddress: string; name?: string };
 
-export type MessageHeaders = { sender: Address; recipients: Address[] };
+export type MessageHeaders = {
+  sender: Address;
+  recipients: Address[];
+  /** The sender's own text (quotes removed), for reading their signature. */
+  signature?: SignatureSource;
+};
 
 export type Participant = {
   email: string;
@@ -11,7 +17,19 @@ export type Participant = {
   lastName: string;
   /** Sent at least one message in the thread (vs. only received). */
   isSender: boolean;
+  /** Found in their signatures; later messages win. */
+  details: ContactDetails;
+  /** noreply@, notifications@…: a robot, not a person. */
+  automated: boolean;
 };
+
+const AUTOMATED_WORDS =
+  'no-?reply|do-?not-?reply|notifications?|notify|mailer-daemon|postmaster|bounces?|alerts?|newsletters?|digest|updates|automated';
+const AUTOMATED = new RegExp(`(^|[+._-])(${AUTOMATED_WORDS})([+._-]|$)`, 'i');
+
+export function isAutomated(email: string): boolean {
+  return AUTOMATED.test(email.split('@')[0] ?? '');
+}
 
 // Company senders often use their site as the display name ("Equipment.com.ua").
 const DOMAIN = /^[\p{L}\d-]+(\.[\p{L}\d-]+)+$/u;
@@ -43,27 +61,53 @@ export function splitName(
  */
 export function collectParticipants(messages: MessageHeaders[], selfEmail: string): Participant[] {
   const self = selfEmail.toLowerCase();
-  const byEmail = new Map<string, { email: string; name: string; isSender: boolean; order: number }>();
+  const byEmail = new Map<
+    string,
+    { email: string; name: string; isSender: boolean; order: number; signatures: SignatureSource[] }
+  >();
 
-  const add = (address: Address, isSender: boolean) => {
+  const add = (address: Address, isSender: boolean, signature?: SignatureSource) => {
     const email = address.emailAddress.trim();
     const key = email.toLowerCase();
     if (!key || key === self) return;
-    const existing = byEmail.get(key);
-    if (existing) {
-      existing.isSender ||= isSender;
-      if (!existing.name && address.name) existing.name = address.name;
-    } else {
-      byEmail.set(key, { email, name: address.name ?? '', isSender, order: byEmail.size });
+    let entry = byEmail.get(key);
+    if (!entry) {
+      entry = { email, name: '', isSender: false, order: byEmail.size, signatures: [] };
+      byEmail.set(key, entry);
     }
+    entry.isSender ||= isSender;
+    // Some clients put the bare address in the display name; that's not a name.
+    if (!entry.name && address.name && !address.name.includes('@')) entry.name = address.name;
+    if (signature) entry.signatures.push(signature);
   };
 
   for (const m of messages) {
-    add(m.sender, true);
+    add(m.sender, true, m.signature);
     m.recipients.forEach((r) => add(r, false));
   }
 
   return [...byEmail.values()]
-    .sort((a, b) => Number(b.isSender) - Number(a.isSender) || a.order - b.order)
-    .map(({ email, name, isSender }) => ({ email, name, isSender, ...splitName(name, email) }));
+    .map((p) => ({ ...p, automated: isAutomated(p.email) }))
+    .sort(
+      (a, b) =>
+        Number(a.automated) - Number(b.automated) ||
+        Number(b.isSender) - Number(a.isSender) ||
+        a.order - b.order,
+    )
+    .map(({ email, name, isSender, signatures, automated }) => {
+      // A robot's display name ("LinkedIn") and footer aren't a person's name and contacts.
+      if (automated) return { email, name, isSender, automated, firstName: '', lastName: '', details: {} };
+
+      const { name: signedName, ...details }: ContactDetails = Object.assign(
+        {},
+        ...signatures.map((s) => parseSignature(s, { email, name })),
+      );
+      let parts = splitName(name, email);
+      // No usable name in the headers: take the one they signed with.
+      if (!parts.firstName && !parts.lastName && signedName) {
+        name = signedName;
+        parts = splitName(signedName, email);
+      }
+      return { email, name, isSender, automated, ...parts, details };
+    });
 }

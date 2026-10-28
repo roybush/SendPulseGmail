@@ -1,48 +1,92 @@
 /**
- * Maps a person's first/last name onto an address book's variables.
- * Books name these variables freely ("name", "firstName", "Ім'я"…), so we match common spellings.
+ * Maps a contact's profile onto an address book's variables.
+ * Books name variables freely ("name", "firstName", "Ім'я", "Company"…), so we match common
+ * spellings; the user can override the result per book.
  */
 import type { BookVariable } from './types';
 
-const FIRST = /^(first[\s_-]?name|fname|given[\s_-]?name|ім['’]?я|имя)$/i;
-const LAST = /^(last[\s_-]?name|lname|surname|family[\s_-]?name|прізвище|фамилия)$/i;
-const FULL = /^(name|full[\s_-]?name|contact[\s_-]?name|піб|фио)$/i;
+export type PersonName = { firstName: string; lastName: string };
+
+export type Profile = PersonName & {
+  phone?: string;
+  company?: string;
+  title?: string;
+  website?: string;
+  linkedin?: string;
+};
+
+export type DetailField = 'phone' | 'company' | 'title' | 'website' | 'linkedin';
+export const DETAIL_FIELDS: DetailField[] = ['phone', 'company', 'title', 'website', 'linkedin'];
+
+/** Which book variable receives each part of the profile; missing key = not saved. */
+export type FieldMapping = Partial<Record<'first' | 'last' | 'full' | DetailField, string>>;
 
 /** Used when the book has no name-like variable; SendPulse creates it on first add. */
 export const DEFAULT_NAME_VARIABLE = 'name';
+/** SendPulse's built-in phone variable, present in every book. */
+export const PHONE_VARIABLE = 'Phone';
 
-export type NameFields = { first?: string; last?: string; full?: string };
+const PATTERNS: Record<keyof FieldMapping, RegExp> = {
+  first: /^(first[\s_-]?name|fname|given[\s_-]?name|ім['’]?я|имя)$/i,
+  last: /^(last[\s_-]?name|lname|surname|family[\s_-]?name|прізвище|фамилия)$/i,
+  full: /^(name|full[\s_-]?name|contact[\s_-]?name|піб|фио)$/i,
+  phone: /^(phone|tel|telephone|mobile|телефон|тел)$/i,
+  company: /^(company|company[\s_-]?name|organi[sz]ation|firm|компанія|компания|організація|организация)$/i,
+  title: /^(title|job[\s_-]?title|position|role|посада|должность)$/i,
+  website: /^(website|web[\s_-]?site|site|web|url|сайт)$/i,
+  linkedin: /^(linked[\s_-]?in|linked[\s_-]?in[\s_-]?url)$/i,
+};
 
-export type PersonName = { firstName: string; lastName: string };
-
-export function detectNameFields(variables: Pick<BookVariable, 'name'>[]): NameFields {
-  const find = (re: RegExp) => variables.find((v) => re.test(v.name.trim()))?.name;
-  return { first: find(FIRST), last: find(LAST), full: find(FULL) };
+export function detectFieldMapping(variables: Pick<BookVariable, 'name'>[]): FieldMapping {
+  const mapping: FieldMapping = {};
+  for (const key of Object.keys(PATTERNS) as (keyof FieldMapping)[]) {
+    const match = variables.find((v) => PATTERNS[key].test(v.name.trim()))?.name;
+    if (match) mapping[key] = match;
+  }
+  if (!mapping.first && !mapping.last && !mapping.full) mapping.full = DEFAULT_NAME_VARIABLE;
+  mapping.phone ??= PHONE_VARIABLE;
+  return mapping;
 }
 
-export function toVariables({ firstName, lastName }: PersonName, fields: NameFields): Record<string, string> {
-  const first = firstName.trim();
-  const last = lastName.trim();
+export function toVariables(profile: Profile, mapping: FieldMapping): Record<string, string> {
+  const first = profile.firstName.trim();
+  const last = profile.lastName.trim();
   const full = [first, last].filter(Boolean).join(' ');
   const vars: Record<string, string> = {};
 
-  if (fields.first && first) vars[fields.first] = first;
-  if (fields.last && last) vars[fields.last] = last;
+  if (mapping.first && first) vars[mapping.first] = first;
+  if (mapping.last && last) vars[mapping.last] = last;
   // If the book only has a first-name field, don't lose the surname.
-  if (fields.first && !fields.last && !fields.full && last) vars[fields.first] = full;
-  if (fields.full && full) vars[fields.full] = full;
-  if (!fields.first && !fields.last && !fields.full && full) vars[DEFAULT_NAME_VARIABLE] = full;
+  if (mapping.first && !mapping.last && !mapping.full && last) vars[mapping.first] = full;
+  if (mapping.full && full) vars[mapping.full] = full;
+
+  for (const field of DETAIL_FIELDS) {
+    let value = profile[field]?.trim();
+    // "+38 (067) 123-45-67" -> "+380671234567": SendPulse validates Phone strictly.
+    if (field === 'phone') value = value?.replace(/[\s().-]/g, '');
+    const variable = mapping[field];
+    if (variable && value) vars[variable] = value;
+  }
   return vars;
 }
 
 /** Best-effort reverse of toVariables, for prefilling from data already in SendPulse. */
-export function fromVariables(variables: Record<string, string>): PersonName {
-  const fields = detectNameFields(Object.keys(variables).map((name) => ({ name })));
-  const first = fields.first ? variables[fields.first]?.trim() : '';
-  const last = fields.last ? variables[fields.last]?.trim() : '';
-  if (first || last) return { firstName: first ?? '', lastName: last ?? '' };
+export function fromVariables(variables: Record<string, string>): Profile {
+  const mapping = detectFieldMapping(Object.keys(variables).map((name) => ({ name })));
+  const read = (key: keyof FieldMapping) => (mapping[key] ? variables[mapping[key]]?.trim() || '' : '');
 
-  const full = fields.full ? (variables[fields.full]?.trim() ?? '') : '';
-  const [firstName = '', ...rest] = full.split(/\s+/).filter(Boolean);
-  return { firstName, lastName: rest.join(' ') };
+  let firstName = read('first');
+  let lastName = read('last');
+  if (!firstName && !lastName) {
+    const [head = '', ...rest] = read('full').split(/\s+/).filter(Boolean);
+    firstName = head;
+    lastName = rest.join(' ');
+  }
+
+  const profile: Profile = { firstName, lastName };
+  for (const field of DETAIL_FIELDS) {
+    const value = read(field);
+    if (value) profile[field] = value;
+  }
+  return profile;
 }

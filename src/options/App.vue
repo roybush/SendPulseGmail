@@ -2,6 +2,8 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { call } from '../shared/messages';
 import type { AddressBook, AuthStatus, Credentials } from '../shared/types';
+import SpTextField from '../shared/ui/SpTextField.vue';
+import '../shared/ui/buttons.css';
 
 /**
  * One settings UI for three places: the options tab, the toolbar popup and an iframe
@@ -58,6 +60,7 @@ const disconnect = () =>
   run(async () => {
     status.value = await call('auth.logout');
     books.value = [];
+    notifyParent({ type: 'sendpulse:disconnected' });
   });
 
 // Let the Gmail panel size the iframe to its content.
@@ -93,7 +96,14 @@ onUnmounted(() => resizeObserver.disconnect());
             {{ status.method === 'apiKey' ? 'API key' : 'Client ID' }} <code>{{ status.label }}</code>
           </div>
         </div>
-        <button type="button" class="secondary" :disabled="busy" @click="disconnect">Disconnect</button>
+        <button
+          type="button"
+          class="sp-btn sp-btn--outlined sp-btn--small"
+          :disabled="busy"
+          @click="disconnect"
+        >
+          Disconnect
+        </button>
       </div>
 
       <template v-if="!embedded">
@@ -105,7 +115,14 @@ onUnmounted(() => resizeObserver.disconnect());
             <span class="muted">{{ book.activeEmails }} active</span>
           </li>
         </ul>
-        <a class="primary" href="https://mail.google.com/" target="_blank" rel="noopener">Open Gmail</a>
+        <a
+          class="sp-btn sp-btn--filled sp-btn--block"
+          href="https://mail.google.com/"
+          target="_blank"
+          rel="noopener"
+        >
+          Open Gmail
+        </a>
       </template>
     </section>
 
@@ -134,26 +151,19 @@ onUnmounted(() => resizeObserver.disconnect());
       </div>
 
       <template v-if="method === 'apiKey'">
-        <label>
-          API key
-          <input v-model="apiKey" type="password" autocomplete="off" placeholder="sp_apikey_…" required />
-        </label>
+        <SpTextField v-model="apiKey" label="API key (sp_apikey_…)" type="password" required />
         <p class="muted hint">SendPulse → Settings → API → <b>API keys</b> (Ключі API) → Create key.</p>
       </template>
 
       <template v-else>
-        <label>
-          Client ID
-          <input v-model="clientId" autocomplete="off" placeholder="sp_id_…" required />
-        </label>
-        <label>
-          Client Secret
-          <input v-model="clientSecret" type="password" autocomplete="off" required />
-        </label>
+        <SpTextField v-model="clientId" label="Client ID (sp_id_…)" required />
+        <SpTextField v-model="clientSecret" label="Client Secret" type="password" required />
         <p class="muted hint">SendPulse → Settings → API → <b>Credentials</b> (Облікові дані).</p>
       </template>
 
-      <button type="submit" class="primary" :disabled="busy">{{ busy ? 'Connecting…' : 'Connect' }}</button>
+      <button type="submit" class="sp-btn sp-btn--filled sp-btn--block" :disabled="busy">
+        {{ busy ? 'Connecting…' : 'Connect' }}
+      </button>
     </form>
 
     <p v-if="error" class="error" role="alert">{{ error }}</p>
@@ -263,60 +273,17 @@ h2 {
   color: var(--text);
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
 }
-label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 13px;
-  color: var(--muted);
-}
-input {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  margin-top: 4px;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font: inherit;
-}
-input:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: -1px;
-  border-color: transparent;
-}
 .hint {
-  margin: 0 0 14px;
+  margin: 0;
 }
-button,
-a.primary {
-  font: inherit;
-  cursor: pointer;
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
-.primary {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  padding: 9px 14px;
-  border: 0;
-  border-radius: 20px;
-  background: var(--accent);
-  color: #fff;
-  font-weight: 500;
-  text-align: center;
-  text-decoration: none;
-}
-.primary:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-.secondary {
-  flex-shrink: 0;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--surface);
-  color: var(--accent);
+form h2,
+form .tabs {
+  margin-bottom: 0;
 }
 .books {
   list-style: none;

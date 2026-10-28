@@ -1,0 +1,71 @@
+/* Material 3 buttons and checkbox. Global but `sp-` prefixed, so it can't clash with Gmail. */
+.sp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+  height: 40px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 20px;
+  background: none;
+  font:
+    500 14px/1 'Google Sans',
+    Roboto,
+    Arial,
+    sans-serif;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    box-shadow 0.15s;
+}
+.sp-btn:disabled {
+  cursor: default;
+}
+.sp-btn--filled {
+  background: #0b57d0;
+  color: #fff;
+}
+.sp-btn--filled:hover:not(:disabled) {
+  background: #0a4fbd;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.sp-btn--filled:disabled {
+  background: rgb(31 31 31 / 0.12);
+  color: rgb(31 31 31 / 0.38);
+}
+.sp-btn--outlined {
+  border: 1px solid #747775;
+  color: #0b57d0;
+}
+.sp-btn--text {
+  padding: 0 12px;
+  color: #0b57d0;
+}
+.sp-btn--outlined:hover:not(:disabled),
+.sp-btn--text:hover:not(:disabled) {
+  background: rgb(11 87 208 / 0.08);
+}
+.sp-btn--small {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 16px;
+  font-size: 13px;
+}
+.sp-btn--block {
+  width: 100%;
+}
+.sp-btn:focus-visible {
+  outline: 2px solid #0b57d0;
+  outline-offset: 2px;
+}
+.sp-checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #0b57d0;
+  cursor: pointer;
+}

@@ -4,6 +4,7 @@
  */
 import * as InboxSDK from '@inboxsdk/core';
 import type { MessageView } from '@inboxsdk/core';
+import { messageSignatureSource } from './message-text';
 import { collectParticipants, type MessageHeaders, type Participant } from './participants';
 
 // Register for free at https://register.inboxsdk.com and put the ID into .env.
@@ -51,5 +52,9 @@ export async function onThreadOpen(handler: (thread: OpenThread) => void): Promi
 }
 
 async function readHeaders(message: MessageView): Promise<MessageHeaders> {
-  return { sender: message.getSender(), recipients: await message.getRecipientsFull() };
+  return {
+    sender: message.getSender(),
+    recipients: await message.getRecipientsFull(),
+    signature: messageSignatureSource(message.getBodyElement()),
+  };
 }
