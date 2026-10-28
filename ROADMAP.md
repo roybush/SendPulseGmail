@@ -1,4 +1,4 @@
-# Roadmap: SendPulse for Gmail v2
+# Roadmap: SendPulse Gmail Extension v2
 
 Мета — робоче розширення для Chrome (Manifest V3), яке з будь-якого листа в Gmail
 дає за кілька кліків додати співрозмовника в SendPulse, збагатити контакт даними

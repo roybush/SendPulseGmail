@@ -21,7 +21,13 @@ export type OpenThread = {
 
 export async function onThreadOpen(handler: (thread: OpenThread) => void): Promise<void> {
   if (!APP_ID) throw new Error('VITE_INBOXSDK_APP_ID is not set; see .env.example');
-  const sdk = await InboxSDK.load(2, APP_ID, { appName: 'SendPulse' });
+  const sdk = await InboxSDK.load(2, APP_ID, {
+    appName: 'SendPulse',
+    // No usage analytics, and don't hook Gmail's own errors. InboxSDK still reports its own
+    // internal errors to api.inboxsdk.com (stack trace + hashed account email); see PRIVACY.md.
+    eventTracking: false,
+    globalErrorLogging: false,
+  });
   const selfEmail = sdk.User.getEmailAddress();
 
   sdk.Conversations.registerThreadViewHandler(async (threadView) => {

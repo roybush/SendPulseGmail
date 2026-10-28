@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Store screenshot</title>
+    <link rel="stylesheet" href="./screens.css" />
+  </head>
+  <body>
+    <div class="caption"><span id="caption"></span></div>
+    <div class="mail">
+      <header class="topbar">
+        <div class="burger"><i></i><i></i><i></i></div>
+        <div class="brand">Mail</div>
+        <div class="search">Search mail</div>
+        <div class="avatar me">J</div>
+      </header>
+
+      <nav class="nav">
+        <div class="compose">✎ Compose</div>
+        <div class="nav-item active">Inbox <b>12</b></div>
+        <div class="nav-item">Starred</div>
+        <div class="nav-item">Snoozed</div>
+        <div class="nav-item">Sent</div>
+        <div class="nav-item">Drafts</div>
+        <div class="nav-item">Leads</div>
+      </nav>
+
+      <main class="message">
+        <h1>Partnership proposal for Q4 <span class="label">Inbox</span></h1>
+        <div class="from">
+          <div class="avatar">BS</div>
+          <div>
+            <div><b>Bob Stone</b> <span class="muted">&lt;bob@stonelabs.io&gt;</span></div>
+            <div class="muted">to me, Maria, Ann</div>
+          </div>
+          <div class="muted date">10:42 AM</div>
+        </div>
+        <div class="body">
+          <p>Hi Julia,</p>
+          <p>
+            Thanks for the call yesterday. As promised, here's a short summary of what we discussed and the
+            next steps for the pilot. Maria from our team will send the onboarding checklist, and Ann will
+            join us from Acme for the integration part.
+          </p>
+          <p>Could you share your availability for a follow-up next Tuesday or Wednesday?</p>
+          <p>Best regards,</p>
+          <p class="sig">
+            Bob Stone<br />
+            Founder &amp; CEO, Stone Labs<br />
+            +44 20 7946 0321<br />
+            <span class="link">stonelabs.io</span> · <span class="link">linkedin.com/in/bobstone</span>
+          </p>
+        </div>
+      </main>
+
+      <aside class="side">
+        <div class="side-title"><img src="/icons/icon-128.png" alt="" />SendPulse</div>
+        <div id="app"></div>
+      </aside>
+      <div class="rail">
+        <span class="rail-icon on"><img src="/icons/icon-128.png" alt="" /></span>
+        <span class="rail-icon"></span>
+        <span class="rail-icon"></span>
+      </div>
+
+      <div class="popup-wrap"><div id="popup"></div></div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="./tiles.css" />
+    <style>
+      body {
+        width: 1400px;
+        height: 560px;
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 64px;
+        padding: 0 96px 0 104px;
+        align-items: center;
+      }
+      .left {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+      .logo {
+        width: 84px;
+        height: 84px;
+      }
+      .logo img {
+        width: 60px;
+      }
+      h1 {
+        font-size: 52px;
+        line-height: 1.05;
+      }
+      p.tag {
+        font-size: 26px;
+        line-height: 1.35;
+        max-width: 640px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        max-width: 760px;
+      }
+      .panel {
+        align-self: start;
+        margin-top: 56px;
+        height: 560px;
+        border-radius: 16px 16px 0 0;
+      }
+      .panel img {
+        width: 380px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="left">
+      <div class="brand">
+        <div class="logo"><img src="../../../public/icons/icon-128.png" alt="" /></div>
+        <h1>SendPulse Gmail Extension</h1>
+      </div>
+      <p class="tag">
+        See who's in the conversation and add them to your SendPulse mailing lists — names and details
+        included.
+      </p>
+      <div class="chips">
+        <span class="chip">✓ Status in SendPulse</span>
+        <span class="chip">✓ Details from signatures</span>
+        <span class="chip">✓ One-click add</span>
+        <span class="chip">✓ API key sign-in</span>
+      </div>
+    </div>
+    <div class="panel"><img src="./panel.png" alt="" /></div>
+  </body>
+</html>

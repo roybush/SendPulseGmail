@@ -1,15 +1,31 @@
-# SendPulse for Gmail
+# SendPulse Gmail Extension
 
-Chrome extension (Manifest V3) that lets you add people from your Gmail conversations to
-[SendPulse](https://sendpulse.com/) address books via the SendPulse REST API.
+Add people from your Gmail conversations to [SendPulse](https://sendpulse.com/) mailing lists in one
+click.
 
-> v2 is a rewrite in progress — see [ROADMAP.md](ROADMAP.md) for stages and status.
+![SendPulse panel in Gmail](store/images/screenshot-1-contacts.png)
 
-## Stack
+Open an email and a **SendPulse** panel in Gmail's right sidebar lists everyone in the conversation:
+
+- which of your SendPulse mailing lists each person is already in;
+- first and last name from the email header or the signature;
+- phone, company, job title, website and LinkedIn picked up from the sender's signature;
+- people who aren't in SendPulse yet are preselected; noreply and notification senders are skipped;
+- pick a list and add everyone selected in one click — fields are mapped to the list's variables
+  automatically and remembered per list;
+- **Find** opens LinkedIn's people search for the contact in a new tab.
+
+Sign in with a SendPulse API key (Settings → API → API keys) or with REST API ID and Secret, right in
+the panel. Everything goes straight to the official SendPulse API — see the
+[privacy policy](PRIVACY.md).
+
+## Development
+
+### Stack
 
 Vue 3 · TypeScript · Vite + [CRXJS](https://crxjs.dev/) · Vitest · ESLint + Prettier
 
-## Develop
+### Run locally
 
 Requires Node ≥ 22 (see `.nvmrc`).
 
@@ -24,7 +40,7 @@ the `dist` directory. With `npm run dev` running, changes reload automatically.
 Before the first run, copy `.env.example` to `.env` and set your InboxSDK app ID
 (free at [register.inboxsdk.com](https://register.inboxsdk.com)); InboxSDK won't load without it.
 
-## Scripts
+### Scripts
 
 | Command             | What it does                                     |
 | ------------------- | ------------------------------------------------ |
@@ -36,7 +52,7 @@ Before the first run, copy `.env.example` to `.env` and set your InboxSDK app ID
 | `npm run typecheck` | `vue-tsc` type check                             |
 | `npm run format`    | Prettier                                         |
 
-## Layout
+### Layout
 
 ```
 src/
@@ -44,10 +60,12 @@ src/
   background/      service worker: all network calls to SendPulse, token storage
   content/         Gmail sidebar panel; gmail.ts is the only file that talks to InboxSDK
   options/         options page (Vue)
-  shared/          typed messages between the parts above
+  shared/          typed messages, field mapping, Material UI components
+store/             Chrome Web Store listing, images and their generator
 ```
 
-## Publish
+### Publish
 
 Bump `version` in `package.json`, run `npm run zip` and upload `sendpulse-gmail.zip` in the
-[Chrome Web Store developer dashboard](https://chrome.google.com/webstore/devconsole).
+[Chrome Web Store developer dashboard](https://chrome.google.com/webstore/devconsole). Listing
+texts, images and the privacy answers are in [store/](store/README.md).
