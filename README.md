@@ -96,3 +96,7 @@ texts, images and the privacy answers are in [store/](store/README.md).
 AMO also asks for the source: upload `git archive -o source.zip HEAD` and point the reviewer to
 this README (Node ≥ 22, `npm ci`, set `VITE_INBOXSDK_APP_ID` in `.env`, `npm run build:firefox`).
 The add-on ID `sendpulse-gmail@roybush.github.io` in `src/manifest.ts` is permanent once published.
+
+## License
+
+[MIT](LICENSE)

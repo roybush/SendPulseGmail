@@ -37,8 +37,7 @@
      (Manifest V3)» замінити на «Completely rebuilt (Manifest V3)»; те саме в перекладах.
    - **Categories** — Social & Communication (AMO не має категорії Productivity).
    - **Support email / website** — `https://github.com/roybush/SendPulseGmail/issues`.
-   - **License** — у репозиторії немає файлу ліцензії; вибрати «All Rights Reserved» або додати
-     ліцензію в репозиторій перед публікацією.
+   - **License** — MIT License (файл `LICENSE` у репозиторії).
    - **Privacy Policy** — потрібна, бо доповнення передає дані: вставити текст `PRIVACY.md`.
 6. Notes to Reviewer — текст нижче.
 7. Після відправки: Edit Product Page → додати переклади описів і скриншоти.
