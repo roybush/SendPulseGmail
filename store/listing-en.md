@@ -45,11 +45,12 @@ Completely rebuilt for the latest Chrome (Manifest V3):
 
 • Shows the SendPulse status of every participant: which lists they are in, or "Not in SendPulse yet"
 • Takes the name from the email header — or from the signature when the header only shows an address
-• Finds phone, company, job title, website and LinkedIn profile in the sender's signature (English and Ukrainian signatures supported)
+• Finds phone, company, job title, website and LinkedIn profile in the sender's signature (signatures in English, Ukrainian, Spanish, German, Portuguese, Polish, Turkish and French)
 • "Find" button opens LinkedIn's people search for the contact in a new tab
 • Maps fields to your list's variables automatically (firstName, Name, Company, Phone…) and remembers your choice for each list
 • Skips noreply and notification senders, converts phone numbers to international format
 • Settings open right in the Gmail panel or in a popup from the extension icon
+• Interface in 8 languages: English, Ukrainian, Spanish, German, Portuguese, Polish, Turkish and French
 
 Is this useful for you? Yes! If you are:
 

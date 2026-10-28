@@ -3,7 +3,7 @@
 Add people from your Gmail conversations to [SendPulse](https://sendpulse.com/) mailing lists in one
 click.
 
-![SendPulse panel in Gmail](store/images/screenshot-1-contacts.png)
+![SendPulse panel in Gmail](store/images/en/screenshot-1-contacts.png)
 
 Open an email and a **SendPulse** panel in Gmail's right sidebar lists everyone in the conversation:
 
