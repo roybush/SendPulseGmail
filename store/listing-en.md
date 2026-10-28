@@ -14,9 +14,9 @@ Productivity → Workflow & Planning
 
 ## Description
 
-🔥 Simple way to import contacts from your Gmail inbox to SendPulse lists for free
+🔥 A simple way to import contacts from your Gmail inbox to SendPulse lists for free
 
-If you are a SendPulse user with a Gmail account, don't waste time on creating lists manually or uploading them into SendPulse via copy-paste.
+If you use SendPulse and Gmail, don't waste time building lists by hand or copy-pasting addresses into SendPulse.
 Meet SendPulse Gmail Extension — open an email and add the people in it to your SendPulse lists with one click.
 
 🆕 New in version 2.0
@@ -30,8 +30,8 @@ Completely rebuilt for the latest Chrome (Manifest V3):
 
 🤖 How exactly does it work?
 
-1. Install the SendPulse extension into Chrome.
-2. Log into your SendPulse account, open Settings → API → API keys and create a key
+1. Add the SendPulse extension to Chrome.
+2. Log in to your SendPulse account, open Settings → API → API keys and create a key
    (or use your REST API ID and Secret from Settings → API → Credentials).
 3. Open Gmail and any email — the SendPulse icon appears in the right sidebar.
 4. Paste your key into the panel and click Connect.
@@ -53,17 +53,17 @@ Completely rebuilt for the latest Chrome (Manifest V3):
 
 Is this useful for you? Yes! If you are:
 
-- a sales person for inbound sales management, following up, segmenting;
-- a business owner with tons of emails to be sent;
-- a marketer to manage all the clients base to work with;
-- a freelancer to stay in touch with all of your clients and prospects;
-- a person with too many friends and relatives to send holidays congrats and party invites;
-- an HR or recruiter to have all of candidates in one place for a quick reach out;
-- a manager to send out informative letters to all the employees;
-- an events and holidays coordinator to stay in touch with your team and sponsors;
-- looking for a job, this extension can help you send more letters to more companies with less effort.
+• a salesperson handling inbound leads, follow-ups and segmentation;
+• a business owner with tons of emails to send;
+• a marketer managing your whole client base;
+• a freelancer staying in touch with all your clients and prospects;
+• someone with lots of friends and relatives to send holiday greetings and party invitations to;
+• an HR specialist or recruiter keeping all your candidates in one place for a quick reach-out;
+• a manager sending updates to all employees;
+• an event coordinator staying in touch with your team and sponsors;
+• a job seeker who wants to reach more companies with less effort.
 
-SendPulse Gmail Extension is a great alternative to CRMs. There are many competitive and awesome CRM solutions on the market, but why pay more, if you can use our extension? :)
+SendPulse Gmail Extension is a lightweight alternative to a full CRM. There are many great CRM solutions on the market, but why pay more if all you need is to get your contacts into SendPulse? :)
 
 🔒 Privacy
 
