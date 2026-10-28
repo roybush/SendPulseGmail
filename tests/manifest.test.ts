@@ -6,6 +6,12 @@ describe('manifest', () => {
     expect(manifest.manifest_version).toBe(3);
   });
 
+  it('takes name and description from _locales, English by default', () => {
+    expect(manifest.default_locale).toBe('en');
+    expect(manifest.name).toBe('__MSG_extName__');
+    expect(manifest.description).toBe('__MSG_extDescription__');
+  });
+
   // Chrome Web Store review flags broad permissions; keep this list deliberate.
   it('requests only the permissions we need', () => {
     expect(manifest.permissions).toEqual(['storage', 'scripting']);

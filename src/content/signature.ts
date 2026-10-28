@@ -20,13 +20,24 @@ export type SignatureSource = {
   links: string[];
 };
 
-const VALEDICTION =
-  /^(best|best regards|kind regards|warm regards|regards|cheers|thanks|thank you|many thanks|sincerely|yours|br|з повагою|з найкращими побажаннями|дякую|щиро|с уважением|спасибо|всего доброго|mit freundlichen grüßen|viele grüße)[\s,.!—-]*$/i;
+const VALEDICTION = new RegExp(
+  `^(${[
+    'best|best regards|kind regards|warm regards|regards|cheers|thanks|thank you|many thanks|sincerely|yours|br',
+    'з повагою|з найкращими побажаннями|дякую|щиро|с уважением|спасибо|всего доброго',
+    'saludos|un saludo|saludos cordiales|atentamente|cordialmente|gracias|muchas gracias|un abrazo',
+    'mit freundlichen grüßen|freundliche grüße|beste grüße|viele grüße|liebe grüße|herzliche grüße|danke|vielen dank|mfg|lg',
+    'atenciosamente|cumprimentos|saudações|abraços|abraço|um abraço|obrigado|obrigada|att',
+    'pozdrawiam|serdecznie pozdrawiam|z poważaniem|z wyrazami szacunku|dziękuję|pozdrowienia',
+    'saygılarımla|iyi çalışmalar|İyi çalışmalar|teşekkürler|teşekkür ederim|selamlar|sevgiler',
+    'cordialement|bien cordialement|bien à vous|salutations|sincères salutations|merci|merci beaucoup|bonne journée|amicalement',
+  ].join('|')})[\\s,.!—-]*$`,
+  'i',
+);
 const SIGNATURE_DELIMITER = /^--\s*$/;
 const MAX_SIGNATURE_LINES = 10;
 
 const PHONE_LABEL =
-  /^(tel|phone|mob|mobile|cell|office|direct|whatsapp|viber|telegram|т|тел|телефон|моб|мобільний|мобильный)\.?\s*[:.]?\s*/i;
+  /^(tel|phone|mob|mobile|cell|office|direct|whatsapp|viber|telegram|т|тел|телефон|моб|мобільний|мобильный|tlf|teléfono|telefono|móvil|movil|celular|cel|handy|mobil|telefon|tél|téléphone|portable|komórka|kom|cep|gsm)\.?\s*[:.]?\s*/i;
 const PHONE = /(\+?\d[\d\s().-]{7,}\d)/;
 const LINKEDIN = /(?:https?:\/\/)?(?:[a-z]{2,3}\.)?linkedin\.com\/(in|company)\/([\w%.-]+)/i;
 const URL_IN_TEXT =
@@ -36,7 +47,11 @@ const NOT_A_WEBSITE =
 // `\b` only knows ASCII letters, so word edges are spelled out to work for Cyrillic too.
 const word = (alternatives: string) => new RegExp(`(?<![\\p{L}\\d])(${alternatives})(?![\\p{L}\\d])`, 'iu');
 const LEGAL_FORM = word(
-  'llc|inc|ltd|limited|gmbh|ag|corp|corporation|co\\.|plc|llp|s\\.a\\.|sp\\. z o\\.o\\.|тов|пп|фоп|ооо|зао|пао|ат',
+  [
+    'llc|inc|ltd|limited|gmbh|ag|corp|corporation|co\\.|plc|llp|s\\.a\\.|sp\\. z o\\.o\\.|тов|пп|фоп|ооо|зао|пао|ат',
+    // Short forms like SA, SL or ME are left out: they collide with ordinary words.
+    's\\.l\\.|s\\.a\\.s\\.|sas|sarl|ltda|e\\.k\\.|ohg|a\\.ş\\.|şti|s\\.r\\.l\\.|srl|b\\.v\\.|spółka',
+  ].join('|'),
 );
 const TITLE_WORDS = word(
   [
@@ -46,9 +61,20 @@ const TITLE_WORDS = word(
     'директор|менеджер|керівник|засновник|співзасновник|інженер|розробник|дизайнер|консультант',
     'спеціаліст|фахівець|аналітик|бухгалтер|юрист|керуючий|начальник|руководитель|основатель',
     'разработчик|специалист',
+    'gerente|director|directora|jefe|jefa|responsable|fundador|fundadora|ingeniero|ingeniera|desarrollador',
+    'desarrolladora|consultor|consultora|asesor|asesora|ventas|comercial',
+    'geschäftsführer|geschäftsführerin|leiter|leiterin|inhaber|inhaberin|gründer|gründerin|vertrieb|berater',
+    'beraterin|entwickler|entwicklerin|ingenieur|ingenieurin|projektleiter|projektleiterin',
+    'diretor|diretora|engenheiro|engenheira|desenvolvedor|desenvolvedora|vendas|coordenador|coordenadora',
+    'kierownik|kierowniczka|dyrektor|dyrektorka|prezes|właściciel|właścicielka|założyciel|założycielka',
+    'specjalista|specjalistka|inżynier|programista|programistka|handlowiec|konsultantka|koordynator|menedżer',
+    'przedstawiciel',
+    'müdür|müdürü|yönetici|kurucu|uzman|mühendis|geliştirici|danışman|satış|temsilci|koordinatör',
+    'directeur|directrice|gérant|gérante|fondateur|fondatrice|ingénieur|ingénieure|développeur|développeuse',
+    'consultante|commerciale|chef|chargé|chargée',
   ].join('|'),
 );
-const TITLE_COMPANY_SEPARATOR = /\s+(?:at|@|\||—|–|-|в|у)\s+|,\s+/i;
+const TITLE_COMPANY_SEPARATOR = /\s+(?:at|@|\||—|–|-|в|у|en|na|no|em|chez|bei|w)\s+|,\s+/i;
 
 const FREE_MAIL =
   /^(gmail|googlemail|yahoo|ymail|hotmail|outlook|live|msn|icloud|me|mac|aol|proton|protonmail|pm|gmx|mail|yandex|ya|ukr|i|meta|bigmir|rambler|zoho|fastmail|tutanota)\./i;

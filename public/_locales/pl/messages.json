@@ -1,0 +1,164 @@
+{
+  "extName": {
+    "message": "SendPulse Gmail Extension"
+  },
+  "extDescription": {
+    "message": "Dodawaj osoby z rozmów w Gmailu do list mailingowych SendPulse jednym kliknięciem"
+  },
+  "connectPrompt": {
+    "message": "Połącz konto SendPulse, aby widzieć i dodawać kontakty."
+  },
+  "settingsTitle": {
+    "message": "Ustawienia SendPulse"
+  },
+  "backToContacts": {
+    "message": "← Wróć do kontaktów"
+  },
+  "noParticipants": {
+    "message": "W tej rozmowie nie ma innych osób."
+  },
+  "firstName": {
+    "message": "Imię"
+  },
+  "lastName": {
+    "message": "Nazwisko"
+  },
+  "fullName": {
+    "message": "Imię i nazwisko"
+  },
+  "phone": {
+    "message": "Telefon"
+  },
+  "company": {
+    "message": "Firma"
+  },
+  "jobTitle": {
+    "message": "Stanowisko"
+  },
+  "website": {
+    "message": "Strona WWW"
+  },
+  "linkedin": {
+    "message": "LinkedIn"
+  },
+  "details": {
+    "message": "Szczegóły"
+  },
+  "detailsFound": {
+    "message": "znaleziono: $1"
+  },
+  "notSavedHint": {
+    "message": "Nie jest zapisywane na tej liście (zob. Pola)"
+  },
+  "findOnLinkedinTitle": {
+    "message": "Szukaj w LinkedIn w nowej karcie"
+  },
+  "find": {
+    "message": "Szukaj"
+  },
+  "mailingList": {
+    "message": "Lista mailingowa"
+  },
+  "noListsPanel": {
+    "message": "Brak list mailingowych. Najpierw utwórz listę w SendPulse."
+  },
+  "fields": {
+    "message": "Pola"
+  },
+  "fieldsSaved": {
+    "message": "zapisywane: $1"
+  },
+  "addButton": {
+    "message": "Dodaj do SendPulse"
+  },
+  "addButtonCount": {
+    "message": "Dodaj do SendPulse ($1)"
+  },
+  "adding": {
+    "message": "Dodawanie…"
+  },
+  "phoneWarning": {
+    "message": "Użyj formatu międzynarodowego, np. +48512345678"
+  },
+  "checking": {
+    "message": "Sprawdzanie…"
+  },
+  "automatedSender": {
+    "message": "Nadawca automatyczny"
+  },
+  "notInSendPulse": {
+    "message": "Jeszcze nie ma w SendPulse"
+  },
+  "inLists": {
+    "message": "Na listach: $1"
+  },
+  "addedTo": {
+    "message": "Dodano do „$1”: $2"
+  },
+  "notSaved": {
+    "message": "Nie zapisuj"
+  },
+  "builtInVariable": {
+    "message": "$1 (wbudowana)"
+  },
+  "newVariable": {
+    "message": "+ Nowa zmienna „$1”"
+  },
+  "newVariableSuffix": {
+    "message": "$1 (nowa)"
+  },
+  "loading": {
+    "message": "Ładowanie…"
+  },
+  "connected": {
+    "message": "Połączono"
+  },
+  "apiKey": {
+    "message": "Klucz API"
+  },
+  "clientId": {
+    "message": "Client ID"
+  },
+  "disconnect": {
+    "message": "Rozłącz"
+  },
+  "mailingLists": {
+    "message": "Listy mailingowe"
+  },
+  "noListsSettings": {
+    "message": "Brak list mailingowych. Utwórz listę w SendPulse."
+  },
+  "activeCount": {
+    "message": "aktywnych: $1"
+  },
+  "openGmail": {
+    "message": "Otwórz Gmaila"
+  },
+  "connectTitle": {
+    "message": "Połącz z SendPulse"
+  },
+  "clientIdAndSecret": {
+    "message": "Client ID i Secret"
+  },
+  "apiKeyLabel": {
+    "message": "Klucz API (sp_apikey_…)"
+  },
+  "apiKeyHint": {
+    "message": "SendPulse → Ustawienia → API → Klucze API → Utwórz klucz."
+  },
+  "clientIdLabel": {
+    "message": "Client ID (sp_id_…)"
+  },
+  "clientSecretLabel": {
+    "message": "Client Secret"
+  },
+  "oauthHint": {
+    "message": "SendPulse → Ustawienia → API → Dane uwierzytelniające."
+  },
+  "connecting": {
+    "message": "Łączenie…"
+  },
+  "connect": {
+    "message": "Połącz"
+  }
+}

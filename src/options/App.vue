@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { call } from '../shared/messages';
 import type { AddressBook, AuthStatus, Credentials } from '../shared/types';
+import { t, uiLanguage } from '../shared/i18n';
 import SpTextField from '../shared/ui/SpTextField.vue';
 import '../shared/ui/buttons.css';
 
@@ -11,6 +12,8 @@ import '../shared/ui/buttons.css';
  */
 const embedded = window.top !== window;
 if (embedded) document.documentElement.classList.add('embedded');
+document.documentElement.lang = uiLanguage();
+document.title = t('extName');
 const GMAIL_ORIGIN = 'https://mail.google.com';
 
 const version = ref('');
@@ -83,17 +86,17 @@ onUnmounted(() => resizeObserver.disconnect());
   <main ref="root" :class="{ embedded }">
     <header v-if="!embedded">
       <img src="/icons/icon-128.png" alt="" width="28" height="28" />
-      <h1>SendPulse Gmail Extension</h1>
+      <h1>{{ t('extName') }}</h1>
     </header>
 
-    <p v-if="!status" class="muted">Loading…</p>
+    <p v-if="!status" class="muted">{{ t('loading') }}</p>
 
     <section v-else-if="status.loggedIn" class="card">
       <div class="row">
         <div>
-          <div class="ok">● Connected</div>
+          <div class="ok">● {{ t('connected') }}</div>
           <div class="muted">
-            {{ status.method === 'apiKey' ? 'API key' : 'Client ID' }} <code>{{ status.label }}</code>
+            {{ status.method === 'apiKey' ? t('apiKey') : t('clientId') }} <code>{{ status.label }}</code>
           </div>
         </div>
         <button
@@ -102,17 +105,17 @@ onUnmounted(() => resizeObserver.disconnect());
           :disabled="busy"
           @click="disconnect"
         >
-          Disconnect
+          {{ t('disconnect') }}
         </button>
       </div>
 
       <template v-if="!embedded">
-        <h2>Address books</h2>
-        <p v-if="!books.length" class="muted">No address books yet. Create one in SendPulse.</p>
+        <h2>{{ t('mailingLists') }}</h2>
+        <p v-if="!books.length" class="muted">{{ t('noListsSettings') }}</p>
         <ul v-else class="books">
           <li v-for="book in books" :key="book.id">
             <span>{{ book.name }}</span>
-            <span class="muted">{{ book.activeEmails }} active</span>
+            <span class="muted">{{ t('activeCount', book.activeEmails) }}</span>
           </li>
         </ul>
         <a
@@ -121,13 +124,13 @@ onUnmounted(() => resizeObserver.disconnect());
           target="_blank"
           rel="noopener"
         >
-          Open Gmail
+          {{ t('openGmail') }}
         </a>
       </template>
     </section>
 
     <form v-else class="card" @submit.prevent="connect">
-      <h2>Connect SendPulse</h2>
+      <h2>{{ t('connectTitle') }}</h2>
 
       <div class="tabs" role="tablist">
         <button
@@ -137,7 +140,7 @@ onUnmounted(() => resizeObserver.disconnect());
           :class="{ active: method === 'apiKey' }"
           @click="method = 'apiKey'"
         >
-          API key
+          {{ t('apiKey') }}
         </button>
         <button
           type="button"
@@ -146,23 +149,23 @@ onUnmounted(() => resizeObserver.disconnect());
           :class="{ active: method === 'oauth' }"
           @click="method = 'oauth'"
         >
-          Client ID &amp; Secret
+          {{ t('clientIdAndSecret') }}
         </button>
       </div>
 
       <template v-if="method === 'apiKey'">
-        <SpTextField v-model="apiKey" label="API key (sp_apikey_…)" type="password" required />
-        <p class="muted hint">SendPulse → Settings → API → <b>API keys</b> (Ключі API) → Create key.</p>
+        <SpTextField v-model="apiKey" :label="t('apiKeyLabel')" type="password" required />
+        <p class="muted hint">{{ t('apiKeyHint') }}</p>
       </template>
 
       <template v-else>
-        <SpTextField v-model="clientId" label="Client ID (sp_id_…)" required />
-        <SpTextField v-model="clientSecret" label="Client Secret" type="password" required />
-        <p class="muted hint">SendPulse → Settings → API → <b>Credentials</b> (Облікові дані).</p>
+        <SpTextField v-model="clientId" :label="t('clientIdLabel')" required />
+        <SpTextField v-model="clientSecret" :label="t('clientSecretLabel')" type="password" required />
+        <p class="muted hint">{{ t('oauthHint') }}</p>
       </template>
 
       <button type="submit" class="sp-btn sp-btn--filled sp-btn--block" :disabled="busy">
-        {{ busy ? 'Connecting…' : 'Connect' }}
+        {{ busy ? t('connecting') : t('connect') }}
       </button>
     </form>
 

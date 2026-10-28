@@ -1,0 +1,218 @@
+{
+  "extName": {
+    "message": "SendPulse Gmail Extension",
+    "description": "Extension name (store and toolbar)"
+  },
+  "extDescription": {
+    "message": "Add people from your Gmail conversations to SendPulse mailing lists in one click",
+    "description": "Store summary, max 132 characters"
+  },
+  "connectPrompt": {
+    "message": "Connect your SendPulse account to see and add contacts.",
+    "description": "Panel, not connected"
+  },
+  "settingsTitle": {
+    "message": "SendPulse settings",
+    "description": "Link and frame title for the settings"
+  },
+  "backToContacts": {
+    "message": "← Back to contacts",
+    "description": "Button leaving the settings in the panel"
+  },
+  "noParticipants": {
+    "message": "No other people in this conversation.",
+    "description": "Thread has nobody but the user"
+  },
+  "firstName": {
+    "message": "First name",
+    "description": "Field label"
+  },
+  "lastName": {
+    "message": "Last name",
+    "description": "Field label"
+  },
+  "fullName": {
+    "message": "Full name",
+    "description": "Field label"
+  },
+  "phone": {
+    "message": "Phone",
+    "description": "Field label"
+  },
+  "company": {
+    "message": "Company",
+    "description": "Field label"
+  },
+  "jobTitle": {
+    "message": "Job title",
+    "description": "Field label"
+  },
+  "website": {
+    "message": "Website",
+    "description": "Field label"
+  },
+  "linkedin": {
+    "message": "LinkedIn",
+    "description": "Field label"
+  },
+  "details": {
+    "message": "Details",
+    "description": "Toggle for contact details"
+  },
+  "detailsFound": {
+    "message": "$1 found",
+    "description": "$1 = number of details found"
+  },
+  "notSavedHint": {
+    "message": "Not saved to this list (see Fields)",
+    "description": "Field has no variable in the selected list"
+  },
+  "findOnLinkedinTitle": {
+    "message": "Search LinkedIn in a new tab",
+    "description": "Tooltip of the LinkedIn search button"
+  },
+  "find": {
+    "message": "Find",
+    "description": "LinkedIn search button"
+  },
+  "mailingList": {
+    "message": "Mailing list",
+    "description": "Label of the list picker"
+  },
+  "noListsPanel": {
+    "message": "No mailing lists yet. Create one in SendPulse first.",
+    "description": "Account has no mailing lists"
+  },
+  "fields": {
+    "message": "Fields",
+    "description": "Toggle for the field mapping"
+  },
+  "fieldsSaved": {
+    "message": "$1 saved to this list",
+    "description": "$1 = number of fields saved to the list"
+  },
+  "addButton": {
+    "message": "Add to SendPulse",
+    "description": "Add button, nothing selected"
+  },
+  "addButtonCount": {
+    "message": "Add $1 to SendPulse",
+    "description": "Add button, $1 = number of selected people"
+  },
+  "adding": {
+    "message": "Adding…",
+    "description": "Add button while saving"
+  },
+  "phoneWarning": {
+    "message": "Use international format, e.g. +14155550132",
+    "description": "Phone is not in international format"
+  },
+  "checking": {
+    "message": "Checking…",
+    "description": "Contact lookup in progress"
+  },
+  "automatedSender": {
+    "message": "Automated sender",
+    "description": "noreply/notification sender"
+  },
+  "notInSendPulse": {
+    "message": "Not in SendPulse yet",
+    "description": "Contact is in no list"
+  },
+  "inLists": {
+    "message": "In: $1",
+    "description": "$1 = comma-separated list names"
+  },
+  "addedTo": {
+    "message": "Added to $1: $2",
+    "description": "$1 = list name, $2 = email or number of contacts"
+  },
+  "notSaved": {
+    "message": "Not saved",
+    "description": "Mapping option: do not save the field"
+  },
+  "builtInVariable": {
+    "message": "$1 (built-in)",
+    "description": "$1 = variable name"
+  },
+  "newVariable": {
+    "message": "+ New variable “$1”",
+    "description": "$1 = variable name"
+  },
+  "newVariableSuffix": {
+    "message": "$1 (new)",
+    "description": "$1 = variable name"
+  },
+  "loading": {
+    "message": "Loading…",
+    "description": "Settings loading"
+  },
+  "connected": {
+    "message": "Connected",
+    "description": "Connection status"
+  },
+  "apiKey": {
+    "message": "API key",
+    "description": "Auth method"
+  },
+  "clientId": {
+    "message": "Client ID",
+    "description": "Auth method"
+  },
+  "disconnect": {
+    "message": "Disconnect",
+    "description": "Button"
+  },
+  "mailingLists": {
+    "message": "Mailing lists",
+    "description": "Heading"
+  },
+  "noListsSettings": {
+    "message": "No mailing lists yet. Create one in SendPulse.",
+    "description": "Account has no mailing lists"
+  },
+  "activeCount": {
+    "message": "$1 active",
+    "description": "$1 = number of active contacts"
+  },
+  "openGmail": {
+    "message": "Open Gmail",
+    "description": "Button"
+  },
+  "connectTitle": {
+    "message": "Connect SendPulse",
+    "description": "Heading of the sign-in form"
+  },
+  "clientIdAndSecret": {
+    "message": "Client ID & Secret",
+    "description": "Auth method tab"
+  },
+  "apiKeyLabel": {
+    "message": "API key (sp_apikey_…)",
+    "description": "Field label"
+  },
+  "apiKeyHint": {
+    "message": "SendPulse → Settings → API → API keys → Create key.",
+    "description": "Where to find the API key in SendPulse"
+  },
+  "clientIdLabel": {
+    "message": "Client ID (sp_id_…)",
+    "description": "Field label"
+  },
+  "clientSecretLabel": {
+    "message": "Client Secret",
+    "description": "Field label"
+  },
+  "oauthHint": {
+    "message": "SendPulse → Settings → API → Credentials.",
+    "description": "Where to find client credentials in SendPulse"
+  },
+  "connecting": {
+    "message": "Connecting…",
+    "description": "Connect button while signing in"
+  },
+  "connect": {
+    "message": "Connect",
+    "description": "Button"
+  }
+}

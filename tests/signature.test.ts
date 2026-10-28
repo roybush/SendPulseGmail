@@ -127,6 +127,67 @@ https://shop.example.com/product/12345
     });
   });
 
+  it.each([
+    [
+      'Spanish',
+      'Hola,\n\nTe envío la propuesta.\n\nSaludos cordiales,\nLucía Martín\nGerente de Ventas en Ejemplo Digital S.L.\nMóvil: +34 612 345 678',
+      { email: 'lucia@ejemplo.es', name: 'Lucía Martín' },
+      {
+        name: 'Lucía Martín',
+        title: 'Gerente de Ventas',
+        company: 'Ejemplo Digital S.L.',
+        phone: '+34612345678',
+      },
+    ],
+    [
+      'German',
+      'Hallo,\n\nanbei das Angebot.\n\nMit freundlichen Grüßen\nJonas Weber\nGeschäftsführer\nBeispiel Technik GmbH\nTel.: +49 30 1234567',
+      { email: 'jonas.weber@beispiel.de', name: 'Jonas Weber' },
+      {
+        name: 'Jonas Weber',
+        title: 'Geschäftsführer',
+        company: 'Beispiel Technik GmbH',
+        phone: '+49301234567',
+      },
+    ],
+    [
+      'Portuguese',
+      'Olá,\n\nSegue o orçamento.\n\nAtenciosamente,\nAna Souza\nDiretora Comercial na Exemplo Ltda\nCelular: +55 11 91234-5678',
+      { email: 'ana@exemplo.com.br', name: 'Ana Souza' },
+      { name: 'Ana Souza', title: 'Diretora Comercial', company: 'Exemplo Ltda', phone: '+5511912345678' },
+    ],
+    [
+      'Polish',
+      'Dzień dobry,\n\nw załączniku oferta.\n\nPozdrawiam\nMarek Nowak\nKierownik ds. sprzedaży\nPrzykład Sp. z o.o.\ntel. +48 512 345 678',
+      { email: 'marek@przyklad.pl', name: 'Marek Nowak' },
+      {
+        name: 'Marek Nowak',
+        title: 'Kierownik ds. sprzedaży',
+        company: 'Przykład Sp. z o.o.',
+        phone: '+48512345678',
+      },
+    ],
+    [
+      'Turkish',
+      'Merhaba,\n\nTeklifimiz ektedir.\n\nSaygılarımla,\nAyşe Yılmaz\nSatış Müdürü\nÖrnek Yazılım A.Ş.\nCep: +90 532 123 45 67',
+      { email: 'ayse@ornek.com.tr', name: 'Ayşe Yılmaz' },
+      { name: 'Ayşe Yılmaz', title: 'Satış Müdürü', company: 'Örnek Yazılım A.Ş.', phone: '+905321234567' },
+    ],
+    [
+      'French',
+      'Bonjour,\n\nVoici notre devis.\n\nCordialement,\nCamille Durand\nResponsable commerciale chez Exemple SARL\nTél. : +33 6 12 34 56 78',
+      { email: 'camille@exemple.fr', name: 'Camille Durand' },
+      {
+        name: 'Camille Durand',
+        title: 'Responsable commerciale',
+        company: 'Exemple SARL',
+        phone: '+33612345678',
+      },
+    ],
+  ])('reads a %s signature', (_, text, person, expected) => {
+    expect(parse(text, [], person)).toEqual(expected);
+  });
+
   it('returns nothing for a message without a signature', () => {
     expect(parse('ok')).toEqual({});
   });

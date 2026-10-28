@@ -4,7 +4,21 @@ import { createApp } from 'vue';
 import SidebarPanel from '../../../src/content/SidebarPanel.vue';
 import SettingsApp from '../../../src/options/App.vue';
 
-const scene = new URLSearchParams(location.search).get('scene') ?? 'contacts';
+const params = new URLSearchParams(location.search);
+const scene = params.get('scene') ?? 'contacts';
+const lang = params.get('lang') ?? 'en';
+
+// chrome.i18n stand-in: the real messages.json for the requested language.
+const catalogs = import.meta.glob<Record<string, { message: string }>>(
+  '../../../public/_locales/*/messages.json',
+  {
+    eager: true,
+    import: 'default',
+  },
+);
+const messages = catalogs[`../../../public/_locales/${lang}/messages.json`];
+const getMessage = (key: string, subs: string[] = []) =>
+  (messages[key]?.message ?? '').replace(/\$(\d)/g, (_, n) => subs[Number(n) - 1] ?? '');
 
 const members: Record<string, { bookId: number; status: string; variables: Record<string, string> }[]> = {
   'ann.lee@acme.com': [{ bookId: 1, status: 'Active', variables: { firstName: 'Ann', lastName: 'Lee' } }],
@@ -37,6 +51,7 @@ const responses: Record<string, (params: any) => unknown> = {
 };
 
 (window as any).chrome = {
+  i18n: { getMessage, getUILanguage: () => lang.replace('_', '-') },
   runtime: {
     getURL: (path: string) => `/${path}`,
     async sendMessage({ method, params }: { method: string; params: unknown }) {

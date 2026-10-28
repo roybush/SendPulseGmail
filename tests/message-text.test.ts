@@ -34,6 +34,19 @@ describe('messageSignatureSource', () => {
     expect(text).toContain('Bob');
   });
 
+  it.each([
+    'El mar, 3 mar 2026 a las 10:00, Ann Lee escribió:',
+    'Am Di., 3. März 2026 um 10:00 Uhr schrieb Ann Lee <ann@x.com>:',
+    'Em ter., 3 de mar. de 2026, Ann Lee escreveu:',
+    'W dniu 3.03.2026 o 10:00 Ann Lee napisał(a):',
+    'Ann Lee <ann@x.com>, 3 Mar 2026 Sal, 10:00 tarihinde şunu yazdı:',
+    'Le mar. 3 mars 2026 à 10:00, Ann Lee <ann@x.com> a écrit :',
+    'Von: Ann Lee <ann@x.com>',
+  ])('stops at the reply header "%s"', (header) => {
+    const { text } = messageSignatureSource(body(`<div>Bob</div><div>${header}</div><div>old</div>`));
+    expect(text).not.toContain('old');
+  });
+
   it('uses only the Gmail-marked signature when present', () => {
     const { text, links } = messageSignatureSource(
       body(
