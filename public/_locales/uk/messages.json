@@ -1,0 +1,164 @@
+{
+  "extName": {
+    "message": "SendPulse Gmail Extension"
+  },
+  "extDescription": {
+    "message": "Додавайте людей зі своїх листів у Gmail до списків розсилки SendPulse в один клік"
+  },
+  "connectPrompt": {
+    "message": "Підключіть акаунт SendPulse, щоб бачити й додавати контакти."
+  },
+  "settingsTitle": {
+    "message": "Налаштування SendPulse"
+  },
+  "backToContacts": {
+    "message": "← Назад до контактів"
+  },
+  "noParticipants": {
+    "message": "У цьому листуванні більше нікого немає."
+  },
+  "firstName": {
+    "message": "Ім'я"
+  },
+  "lastName": {
+    "message": "Прізвище"
+  },
+  "fullName": {
+    "message": "Повне ім'я"
+  },
+  "phone": {
+    "message": "Телефон"
+  },
+  "company": {
+    "message": "Компанія"
+  },
+  "jobTitle": {
+    "message": "Посада"
+  },
+  "website": {
+    "message": "Сайт"
+  },
+  "linkedin": {
+    "message": "LinkedIn"
+  },
+  "details": {
+    "message": "Деталі"
+  },
+  "detailsFound": {
+    "message": "знайдено: $1"
+  },
+  "notSavedHint": {
+    "message": "Не зберігається в цей список (див. «Поля»)"
+  },
+  "findOnLinkedinTitle": {
+    "message": "Шукати в LinkedIn у новій вкладці"
+  },
+  "find": {
+    "message": "Знайти"
+  },
+  "mailingList": {
+    "message": "Список розсилки"
+  },
+  "noListsPanel": {
+    "message": "Списків розсилки ще немає. Спершу створіть список у SendPulse."
+  },
+  "fields": {
+    "message": "Поля"
+  },
+  "fieldsSaved": {
+    "message": "зберігається: $1"
+  },
+  "addButton": {
+    "message": "Додати в SendPulse"
+  },
+  "addButtonCount": {
+    "message": "Додати в SendPulse ($1)"
+  },
+  "adding": {
+    "message": "Додаємо…"
+  },
+  "phoneWarning": {
+    "message": "Вкажіть у міжнародному форматі, напр. +380671234567"
+  },
+  "checking": {
+    "message": "Перевіряємо…"
+  },
+  "automatedSender": {
+    "message": "Автоматична розсилка"
+  },
+  "notInSendPulse": {
+    "message": "Ще немає в SendPulse"
+  },
+  "inLists": {
+    "message": "У списках: $1"
+  },
+  "addedTo": {
+    "message": "Додано в «$1»: $2"
+  },
+  "notSaved": {
+    "message": "Не зберігати"
+  },
+  "builtInVariable": {
+    "message": "$1 (вбудована)"
+  },
+  "newVariable": {
+    "message": "+ Нова змінна «$1»"
+  },
+  "newVariableSuffix": {
+    "message": "$1 (нова)"
+  },
+  "loading": {
+    "message": "Завантаження…"
+  },
+  "connected": {
+    "message": "Підключено"
+  },
+  "apiKey": {
+    "message": "API-ключ"
+  },
+  "clientId": {
+    "message": "Client ID"
+  },
+  "disconnect": {
+    "message": "Відключити"
+  },
+  "mailingLists": {
+    "message": "Списки розсилки"
+  },
+  "noListsSettings": {
+    "message": "Списків розсилки ще немає. Створіть список у SendPulse."
+  },
+  "activeCount": {
+    "message": "активних: $1"
+  },
+  "openGmail": {
+    "message": "Відкрити Gmail"
+  },
+  "connectTitle": {
+    "message": "Підключення SendPulse"
+  },
+  "clientIdAndSecret": {
+    "message": "Client ID і Secret"
+  },
+  "apiKeyLabel": {
+    "message": "API-ключ (sp_apikey_…)"
+  },
+  "apiKeyHint": {
+    "message": "SendPulse → Налаштування → API → Ключі API → Створити ключ."
+  },
+  "clientIdLabel": {
+    "message": "Client ID (sp_id_…)"
+  },
+  "clientSecretLabel": {
+    "message": "Client Secret"
+  },
+  "oauthHint": {
+    "message": "SendPulse → Налаштування → API → Облікові дані."
+  },
+  "connecting": {
+    "message": "Підключення…"
+  },
+  "connect": {
+    "message": "Підключити"
+  }
+}

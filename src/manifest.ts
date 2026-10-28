@@ -1,10 +1,13 @@
 import { defineManifest } from '@crxjs/vite-plugin';
 import pkg from '../package.json' with { type: 'json' };
 
+// Name and description come from public/_locales/<lang>/messages.json.
+
 export const manifest = {
   manifest_version: 3,
-  name: 'SendPulse Gmail Extension',
-  description: pkg.description,
+  name: '__MSG_extName__',
+  description: '__MSG_extDescription__',
+  default_locale: 'en',
   version: pkg.version,
   icons: {
     16: 'icons/icon-16.png',
@@ -12,7 +15,7 @@ export const manifest = {
   },
   action: {
     default_icon: { 16: 'icons/icon-16.png' },
-    default_title: 'SendPulse Gmail Extension',
+    default_title: '__MSG_extName__',
     default_popup: 'src/options/index.html',
   },
   background: {

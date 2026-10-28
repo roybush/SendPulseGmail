@@ -3,7 +3,7 @@
 Add people from your Gmail conversations to [SendPulse](https://sendpulse.com/) mailing lists in one
 click.
 
-![SendPulse panel in Gmail](store/images/screenshot-1-contacts.png)
+![SendPulse panel in Gmail](store/images/en/screenshot-1-contacts.png)
 
 Open an email and a **SendPulse** panel in Gmail's right sidebar lists everyone in the conversation:
 
@@ -13,7 +13,8 @@ Open an email and a **SendPulse** panel in Gmail's right sidebar lists everyone 
 - people who aren't in SendPulse yet are preselected; noreply and notification senders are skipped;
 - pick a list and add everyone selected in one click — fields are mapped to the list's variables
   automatically and remembered per list;
-- **Find** opens LinkedIn's people search for the contact in a new tab.
+- **Find** opens LinkedIn's people search for the contact in a new tab;
+- interface in 8 languages: English, Ukrainian, Spanish, German, Portuguese, Polish, Turkish, French.
 
 Sign in with a SendPulse API key (Settings → API → API keys) or with REST API ID and Secret, right in
 the panel. Everything goes straight to the official SendPulse API — see the
@@ -51,6 +52,17 @@ Before the first run, copy `.env.example` to `.env` and set your InboxSDK app ID
 | `npm run lint`      | ESLint                                           |
 | `npm run typecheck` | `vue-tsc` type check                             |
 | `npm run format`    | Prettier                                         |
+
+### Translations
+
+The UI is available in English, Ukrainian, Spanish, German, Portuguese (Brazil), Polish, Turkish
+and French; Chrome picks the language from the browser's settings (`chrome.i18n`).
+
+All strings live in one table, [scripts/locales.py](scripts/locales.py). Edit it and run
+`python3 scripts/locales.py` to regenerate `public/_locales/*/messages.json`; in code use
+`t('key', ...substitutions)` from `src/shared/i18n.ts`. `tests/locales.test.ts` checks that every
+language has every key with the same `$1`/`$2` substitutions and that the store name and summary
+fit their limits.
 
 ### Layout
 

@@ -9,6 +9,7 @@ import {
   type DetailField,
   type FieldMapping,
 } from '../shared/fields';
+import { t, type MessageKey } from '../shared/i18n';
 import type { AddressBook, BookVariable, Membership } from '../shared/types';
 import SpSelect from '../shared/ui/SpSelect.vue';
 import SpTextField from '../shared/ui/SpTextField.vue';
@@ -59,12 +60,12 @@ const rows = reactive<Row[]>(
   })),
 );
 
-const DETAIL_LABELS: Record<DetailField, string> = {
-  phone: 'Phone',
-  company: 'Company',
-  title: 'Job title',
-  website: 'Website',
-  linkedin: 'LinkedIn',
+const DETAIL_LABELS: Record<DetailField, MessageKey> = {
+  phone: 'phone',
+  company: 'company',
+  title: 'jobTitle',
+  website: 'website',
+  linkedin: 'linkedin',
 };
 const busy = ref(false);
 const error = ref('');
@@ -76,9 +77,9 @@ const selectedRows = computed(() => rows.filter((r) => r.selected));
 const bookNames = computed(() => new Map(books.value.map((b) => [b.id, b.name])));
 const savedFieldCount = computed(() => Object.keys(mapping.value).length);
 const addLabel = computed(() => {
-  if (busy.value) return 'Adding…';
+  if (busy.value) return t('adding');
   const n = selectedRows.value.length;
-  return n ? `Add ${n} to SendPulse` : 'Add to SendPulse';
+  return n ? t('addButtonCount', n) : t('addButton');
 });
 
 function message(e: unknown) {
@@ -99,9 +100,7 @@ async function lookup(row: Row) {
 /** SendPulse rejects the whole contact if Phone isn't in international format. */
 function phoneWarning(row: Row) {
   const digits = row.phone.replace(/[\s().-]/g, '');
-  return mapping.value.phone && digits && !/^\+\d{9,15}$/.test(digits)
-    ? 'Use international format, e.g. +380671234567'
-    : '';
+  return mapping.value.phone && digits && !/^\+\d{9,15}$/.test(digits) ? t('phoneWarning') : '';
 }
 
 function detailCount(row: Row) {
@@ -124,11 +123,11 @@ function inBook(row: Row) {
 
 function statusText(row: Row): string {
   if (row.lookupError) return row.lookupError;
-  if (!row.memberships) return 'Checking…';
-  const prefix = row.automated ? 'Automated sender · ' : '';
-  if (!row.memberships.length) return `${prefix}Not in SendPulse yet`;
+  if (!row.memberships) return t('checking');
+  const prefix = row.automated ? `${t('automatedSender')} · ` : '';
+  if (!row.memberships.length) return prefix + t('notInSendPulse');
   const names = row.memberships.map((m) => bookNames.value.get(m.bookId) ?? `#${m.bookId}`);
-  return `${prefix}In: ${names.join(', ')}`;
+  return prefix + t('inLists', names.join(', '));
 }
 
 async function init() {
@@ -222,7 +221,7 @@ async function add() {
       bookId: bookId.value,
       contacts: added.map((r) => ({ email: r.email, variables: toVariables(r, mapping.value) })),
     });
-    notice.value = `Added ${added.length === 1 ? added[0].email : `${added.length} contacts`} to ${book.value?.name}`;
+    notice.value = t('addedTo', book.value?.name ?? '', added.length === 1 ? added[0].email : added.length);
     added.forEach((r) => (r.selected = false));
     await Promise.all(added.map(lookup));
   } catch (e) {
@@ -237,13 +236,13 @@ async function add() {
   <div class="sp-panel">
     <template v-if="loggedIn === false || settingsOpen">
       <p v-if="loggedIn === false" class="sp-muted">
-        Connect your SendPulse account to see and add contacts.
+        {{ t('connectPrompt') }}
       </p>
       <iframe
         class="sp-settings"
         :src="settingsUrl"
         :style="{ height: `${settingsHeight}px` }"
-        title="SendPulse settings"
+        :title="t('settingsTitle')"
       ></iframe>
       <button
         v-if="settingsOpen"
@@ -251,12 +250,12 @@ async function add() {
         class="sp-btn sp-btn--text sp-btn--small sp-back"
         @click="settingsOpen = false"
       >
-        ← Back to contacts
+        {{ t('backToContacts') }}
       </button>
     </template>
 
     <template v-else-if="loggedIn">
-      <p v-if="!rows.length" class="sp-muted">No other people in this conversation.</p>
+      <p v-if="!rows.length" class="sp-muted">{{ t('noParticipants') }}</p>
 
       <template v-else>
         <ul class="sp-people">
@@ -279,8 +278,8 @@ async function add() {
 
               <div v-if="row.selected" class="sp-fields">
                 <div class="sp-names">
-                  <SpTextField v-model="row.firstName" label="First name" />
-                  <SpTextField v-model="row.lastName" label="Last name" />
+                  <SpTextField v-model="row.firstName" :label="t('firstName')" />
+                  <SpTextField v-model="row.lastName" :label="t('lastName')" />
                 </div>
                 <button
                   type="button"
@@ -288,26 +287,28 @@ async function add() {
                   :aria-expanded="row.detailsOpen"
                   @click="row.detailsOpen = !row.detailsOpen"
                 >
-                  {{ row.detailsOpen ? '▾' : '▸' }} Details
-                  <span v-if="detailCount(row)" class="sp-muted">({{ detailCount(row) }} found)</span>
+                  {{ row.detailsOpen ? '▾' : '▸' }} {{ t('details') }}
+                  <span v-if="detailCount(row)" class="sp-muted"
+                    >({{ t('detailsFound', detailCount(row)) }})</span
+                  >
                 </button>
                 <template v-if="row.detailsOpen">
                   <SpTextField
                     v-for="f in DETAIL_FIELDS"
                     :key="f"
                     v-model="row[f]"
-                    :label="DETAIL_LABELS[f]"
-                    :hint="mapping[f] ? undefined : 'Not saved to this book (see Fields)'"
+                    :label="t(DETAIL_LABELS[f])"
+                    :hint="mapping[f] ? undefined : t('notSavedHint')"
                     :warning="f === 'phone' ? phoneWarning(row) : undefined"
                   >
                     <template v-if="f === 'linkedin'" #trailing>
                       <button
                         type="button"
                         class="sp-btn sp-btn--text sp-btn--small"
-                        title="Search LinkedIn in a new tab"
+                        :title="t('findOnLinkedinTitle')"
                         @click="findOnLinkedin(row)"
                       >
-                        Find
+                        {{ t('find') }}
                       </button>
                     </template>
                   </SpTextField>
@@ -318,17 +319,17 @@ async function add() {
         </ul>
 
         <div class="sp-add">
-          <p v-if="!books.length" class="sp-muted">No address books yet. Create one in SendPulse first.</p>
+          <p v-if="!books.length" class="sp-muted">{{ t('noListsPanel') }}</p>
           <template v-else>
-            <SpSelect v-model="bookId" label="Address book" :options="bookOptions" :disabled="busy" />
+            <SpSelect v-model="bookId" :label="t('mailingList')" :options="bookOptions" :disabled="busy" />
             <button
               type="button"
               class="sp-btn sp-btn--text sp-btn--small sp-toggle"
               :aria-expanded="mappingOpen"
               @click="mappingOpen = !mappingOpen"
             >
-              {{ mappingOpen ? '▾' : '▸' }} Fields
-              <span class="sp-muted">({{ savedFieldCount }} saved to this book)</span>
+              {{ mappingOpen ? '▾' : '▸' }} {{ t('fields') }}
+              <span class="sp-muted">({{ t('fieldsSaved', savedFieldCount) }})</span>
             </button>
             <FieldMappingEditor
               v-if="mappingOpen"
@@ -352,7 +353,7 @@ async function add() {
       <p v-if="notice" class="sp-ok" role="status">{{ notice }}</p>
       <p v-if="error" class="sp-error" role="alert">{{ error }}</p>
       <button type="button" class="sp-btn sp-btn--text sp-btn--small sp-footer" @click="settingsOpen = true">
-        SendPulse settings
+        {{ t('settingsTitle') }}
       </button>
     </template>
 

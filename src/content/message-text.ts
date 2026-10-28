@@ -5,8 +5,16 @@ const QUOTED =
   'blockquote, .gmail_quote, .gmail_extra, .gmail_attr, .yahoo_quoted, #divRplyFwdMsg, #appendonsend';
 const BLOCK = /^(ADDRESS|BLOCKQUOTE|BR|DIV|H[1-6]|HR|LI|OL|P|PRE|TABLE|TD|TH|TR|UL)$/;
 // Plain-text replies quote below a line like this; everything after it is someone else's.
-const REPLY_HEADER =
-  /^(on .+ wrote:|.+ написав\(ла\):|.+ пише:|.+ писал\(а\):|-{2,}\s*original message\s*-{2,}|from:\s.+)$/i;
+const REPLY_HEADER = new RegExp(
+  `^(${[
+    'on .+ wrote:|.+ написав\\(ла\\):|.+ пише:|.+ писал\\(а\\):|-{2,}\\s*original message\\s*-{2,}',
+    'el .+ escribió:|am .+ schrieb .+:|em .+ escreveu:|.+ napisał\\(a\\):|w dniu .+ napisał.*|.+ şunu yazdı:',
+    'le .+ a écrit\\s?:',
+    // Outlook-style quote headers
+    '(from|de|von|od|kimden|від|от):\\s.+',
+  ].join('|')})$`,
+  'i',
+);
 
 /**
  * Text and links of a message body, without quoted replies.

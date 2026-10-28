@@ -1,0 +1,164 @@
+{
+  "extName": {
+    "message": "SendPulse Gmail Extension"
+  },
+  "extDescription": {
+    "message": "Gmail yazışmalarınızdaki kişileri tek tıkla SendPulse e-posta listelerinize ekleyin"
+  },
+  "connectPrompt": {
+    "message": "Kişileri görmek ve eklemek için SendPulse hesabınızı bağlayın."
+  },
+  "settingsTitle": {
+    "message": "SendPulse ayarları"
+  },
+  "backToContacts": {
+    "message": "← Kişilere dön"
+  },
+  "noParticipants": {
+    "message": "Bu yazışmada başka kimse yok."
+  },
+  "firstName": {
+    "message": "Ad"
+  },
+  "lastName": {
+    "message": "Soyadı"
+  },
+  "fullName": {
+    "message": "Ad soyad"
+  },
+  "phone": {
+    "message": "Telefon"
+  },
+  "company": {
+    "message": "Şirket"
+  },
+  "jobTitle": {
+    "message": "Unvan"
+  },
+  "website": {
+    "message": "Web sitesi"
+  },
+  "linkedin": {
+    "message": "LinkedIn"
+  },
+  "details": {
+    "message": "Ayrıntılar"
+  },
+  "detailsFound": {
+    "message": "$1 bulundu"
+  },
+  "notSavedHint": {
+    "message": "Bu listeye kaydedilmez (bkz. Alanlar)"
+  },
+  "findOnLinkedinTitle": {
+    "message": "LinkedIn'de yeni sekmede ara"
+  },
+  "find": {
+    "message": "Bul"
+  },
+  "mailingList": {
+    "message": "E-posta listesi"
+  },
+  "noListsPanel": {
+    "message": "Henüz e-posta listesi yok. Önce SendPulse’ta bir liste oluşturun."
+  },
+  "fields": {
+    "message": "Alanlar"
+  },
+  "fieldsSaved": {
+    "message": "$1 kaydediliyor"
+  },
+  "addButton": {
+    "message": "SendPulse’a ekle"
+  },
+  "addButtonCount": {
+    "message": "SendPulse’a ekle ($1)"
+  },
+  "adding": {
+    "message": "Ekleniyor…"
+  },
+  "phoneWarning": {
+    "message": "Uluslararası biçim kullanın, ör. +905321234567"
+  },
+  "checking": {
+    "message": "Kontrol ediliyor…"
+  },
+  "automatedSender": {
+    "message": "Otomatik gönderici"
+  },
+  "notInSendPulse": {
+    "message": "Henüz SendPulse’ta değil"
+  },
+  "inLists": {
+    "message": "Listeler: $1"
+  },
+  "addedTo": {
+    "message": "“$1” listesine eklendi: $2"
+  },
+  "notSaved": {
+    "message": "Kaydetme"
+  },
+  "builtInVariable": {
+    "message": "$1 (yerleşik)"
+  },
+  "newVariable": {
+    "message": "+ Yeni değişken “$1”"
+  },
+  "newVariableSuffix": {
+    "message": "$1 (yeni)"
+  },
+  "loading": {
+    "message": "Yükleniyor…"
+  },
+  "connected": {
+    "message": "Bağlandı"
+  },
+  "apiKey": {
+    "message": "API anahtarı"
+  },
+  "clientId": {
+    "message": "Client ID"
+  },
+  "disconnect": {
+    "message": "Bağlantıyı kes"
+  },
+  "mailingLists": {
+    "message": "E-posta listeleri"
+  },
+  "noListsSettings": {
+    "message": "Henüz e-posta listesi yok. SendPulse’ta bir liste oluşturun."
+  },
+  "activeCount": {
+    "message": "$1 aktif"
+  },
+  "openGmail": {
+    "message": "Gmail’i aç"
+  },
+  "connectTitle": {
+    "message": "SendPulse’u bağlayın"
+  },
+  "clientIdAndSecret": {
+    "message": "Client ID ve Secret"
+  },
+  "apiKeyLabel": {
+    "message": "API anahtarı (sp_apikey_…)"
+  },
+  "apiKeyHint": {
+    "message": "SendPulse → Ayarlar → API → API anahtarları → Anahtar oluştur."
+  },
+  "clientIdLabel": {
+    "message": "Client ID (sp_id_…)"
+  },
+  "clientSecretLabel": {
+    "message": "Client Secret"
+  },
+  "oauthHint": {
+    "message": "SendPulse → Ayarlar → API → Kimlik bilgileri."
+  },
+  "connecting": {
+    "message": "Bağlanıyor…"
+  },
+  "connect": {
+    "message": "Bağlan"
+  }
+}
