@@ -1,10 +1,10 @@
 # Privacy Policy — SendPulse Gmail Extension
 
-_Last updated: October 27, 2026_
+_Last updated: October 28, 2026_
 
-SendPulse Gmail Extension ("the extension") is a Chrome extension that helps you add people from your
-Gmail conversations to your SendPulse mailing lists. This policy explains what data the extension
-handles and where it goes.
+SendPulse Gmail Extension ("the extension") is a browser extension for Chrome and Firefox that helps
+you add people from your Gmail conversations to your SendPulse mailing lists. This policy explains
+what data the extension handles and where it goes.
 
 ## Summary
 
@@ -15,8 +15,8 @@ handles and where it goes.
 ## What the extension reads
 
 **Your SendPulse credentials.** The API key, or client ID and secret, you enter in the extension's
-settings. They are stored in Chrome's extension storage (`chrome.storage.local`) on your device and
-used only to authenticate requests to the SendPulse API. A temporary access token is kept in
+settings. They are stored in the browser's extension storage (`chrome.storage.local`) on your device
+and used only to authenticate requests to the SendPulse API. A temporary access token is kept in
 `chrome.storage.session` and is cleared when the browser closes. Credentials are never placed on the
 Gmail page itself. You can remove them at any time with **Disconnect**.
 

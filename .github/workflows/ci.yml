@@ -23,3 +23,9 @@ jobs:
         with:
           name: sendpulse-gmail
           path: sendpulse-gmail.zip
+      - run: npm run zip:firefox
+      - run: npx -y web-ext@8 lint --source-dir dist-firefox --self-hosted=false
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sendpulse-gmail-firefox
+          path: sendpulse-gmail-firefox.zip

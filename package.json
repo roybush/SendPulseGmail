@@ -2,6 +2,7 @@
   "name": "sendpulse-gmail",
   "version": "2.0.0",
   "description": "Add people from your Gmail conversations to SendPulse mailing lists in one click",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "engines": {
@@ -10,9 +11,14 @@
   "scripts": {
     "predev": "node scripts/copy-pageworld.js",
     "dev": "vite",
+    "predev:firefox": "node scripts/copy-pageworld.js",
+    "dev:firefox": "vite build --watch --mode firefox",
     "prebuild": "node scripts/copy-pageworld.js",
     "build": "vue-tsc --noEmit && vite build",
-    "zip": "npm run build && cd dist && zip -qr ../sendpulse-gmail.zip .",
+    "prebuild:firefox": "node scripts/copy-pageworld.js",
+    "build:firefox": "vue-tsc --noEmit && vite build --mode firefox",
+    "zip": "npm run build && rm -f sendpulse-gmail.zip && cd dist && zip -qr ../sendpulse-gmail.zip .",
+    "zip:firefox": "npm run build:firefox && rm -f sendpulse-gmail-firefox.zip && cd dist-firefox && zip -qr ../sendpulse-gmail-firefox.zip .",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "vue-tsc --noEmit",
