@@ -14,30 +14,56 @@ Productivity → Workflow & Planning
 
 ## Description
 
-🔥 Add people from your Gmail conversations to SendPulse mailing lists in one click.
+🔥 Simple way to import contacts from your Gmail inbox to SendPulse lists for free
 
-If you use SendPulse and work in Gmail, stop copying addresses by hand or exporting CSV files. Open an email, and everyone in the conversation is right there in a SendPulse panel on the right — ready to add to the list you choose.
+If you are a SendPulse user with a Gmail account, don't waste time on creating lists manually or uploading them into SendPulse via copy-paste.
+Meet SendPulse Gmail Extension — open an email and add the people in it to your SendPulse lists with one click.
 
-✨ What it does
+🆕 New in version 2.0
 
-• Shows everyone in the open conversation (sender, recipients, CC) except you
-• Tells you which SendPulse mailing lists each person is already in
-• Preselects people who aren't in SendPulse yet; skips noreply and notification senders
-• Fills in first and last name from the email header or the signature
-• Reads the sender's signature for phone, company, job title, website and LinkedIn profile
-• Lets you review and edit everything before saving
-• Adds all selected people to the chosen mailing list with one click
-• Maps fields to your list's variables automatically (firstName, Name, Company, Phone…) and remembers your choice per list
-• "Find on LinkedIn" opens LinkedIn's people search for the contact in a new tab
+Completely rebuilt for the latest Chrome (Manifest V3):
+• A SendPulse panel right in Gmail's sidebar for every email you open
+• See which of your SendPulse lists each person is already in — no more duplicates
+• Names, phone, company, job title, website and LinkedIn picked up from email signatures
+• Sign in with a SendPulse API key in seconds
+• A clean new design that matches Gmail
 
-🚀 Getting started
+🤖 How exactly does it work?
 
-1. Install the extension and open Gmail.
-2. Open any email — the SendPulse icon appears in the right sidebar.
-3. Connect your account right in the panel with a SendPulse API key
-   (SendPulse → Settings → API → API keys → Create key),
-   or with your REST API ID and Secret (Settings → API → Credentials).
-4. Pick a mailing list and click "Add to SendPulse".
+1. Install the SendPulse extension into Chrome.
+2. Log into your SendPulse account, open Settings → API → API keys and create a key
+   (or use your REST API ID and Secret from Settings → API → Credentials).
+3. Open Gmail and any email — the SendPulse icon appears in the right sidebar.
+4. Paste your key into the panel and click Connect.
+5. The panel lists everyone in the conversation: sender, recipients and CC. People who aren't in SendPulse yet are already selected.
+6. Check the first and last name and the details found in the signature; edit them if necessary.
+7. Choose the list for import and click "Add to SendPulse".
+
+🎉 Voila! All of the chosen people are now in your SendPulse list.
+
+✨ What else it can do
+
+• Shows the SendPulse status of every participant: which lists they are in, or "Not in SendPulse yet"
+• Takes the name from the email header — or from the signature when the header only shows an address
+• Finds phone, company, job title, website and LinkedIn profile in the sender's signature (English and Ukrainian signatures supported)
+• "Find" button opens LinkedIn's people search for the contact in a new tab
+• Maps fields to your list's variables automatically (firstName, Name, Company, Phone…) and remembers your choice for each list
+• Skips noreply and notification senders, converts phone numbers to international format
+• Settings open right in the Gmail panel or in a popup from the extension icon
+
+Is this useful for you? Yes! If you are:
+
+- a sales person for inbound sales management, following up, segmenting;
+- a business owner with tons of emails to be sent;
+- a marketer to manage all the clients base to work with;
+- a freelancer to stay in touch with all of your clients and prospects;
+- a person with too many friends and relatives to send holidays congrats and party invites;
+- an HR or recruiter to have all of candidates in one place for a quick reach out;
+- a manager to send out informative letters to all the employees;
+- an events and holidays coordinator to stay in touch with your team and sponsors;
+- looking for a job, this extension can help you send more letters to more companies with less effort.
+
+SendPulse Gmail Extension is a great alternative to CRMs. There are many competitive and awesome CRM solutions on the market, but why pay more, if you can use our extension? :)
 
 🔒 Privacy
 
@@ -45,10 +71,7 @@ If you use SendPulse and work in Gmail, stop copying addresses by hand or export
 • Your data goes only to the official SendPulse API (api.sendpulse.com). No servers of ours in between, no analytics, no ads. The Gmail integration library (InboxSDK) may send anonymous technical error reports to its developer.
 • Email content is read locally, only to find names and contact details in the open conversation.
 • When you open an email, the participants' addresses are looked up in your SendPulse account to show their status. Names and details are saved to SendPulse only when you click "Add".
+• No more Facebook access: the old Facebook name lookup has been removed.
 
 Privacy policy: https://github.com/roybush/SendPulseGmail/blob/master/PRIVACY.md
 Source code: https://github.com/roybush/SendPulseGmail
-
-🆕 What's new in 2.0
-
-Completely rebuilt for Manifest V3: a new Gmail sidebar panel, sign-in with API keys, contact details from signatures, field mapping per mailing list, and a refreshed Material design.
