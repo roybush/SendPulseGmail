@@ -45,24 +45,14 @@ Completely rebuilt for the latest Chrome (Manifest V3):
 
 • Shows the SendPulse status of every participant: which lists they are in, or "Not in SendPulse yet"
 • Takes the name from the email header — or from the signature when the header only shows an address
-• Finds phone, company, job title, website and LinkedIn profile in the sender's signature (signatures in English, Ukrainian, Spanish, German, Portuguese, Polish, Turkish and French)
+• Finds phone, company, job title, website and LinkedIn profile in the sender's signature (signatures in 8 languages)
 • "Find" button opens LinkedIn's people search for the contact in a new tab
 • Maps fields to your list's variables automatically (firstName, Name, Company, Phone…) and remembers your choice for each list
 • Skips noreply and notification senders, converts phone numbers to international format
 • Settings open right in the Gmail panel or in a popup from the extension icon
-• Interface in 8 languages: English, Ukrainian, Spanish, German, Portuguese, Polish, Turkish and French
+• Interface in 8 languages
 
-Is this useful for you? Yes! If you are:
-
-• a salesperson handling inbound leads, follow-ups and segmentation;
-• a business owner with tons of emails to send;
-• a marketer managing your whole client base;
-• a freelancer staying in touch with all your clients and prospects;
-• someone with lots of friends and relatives to send holiday greetings and party invitations to;
-• an HR specialist or recruiter keeping all your candidates in one place for a quick reach-out;
-• a manager sending updates to all employees;
-• an event coordinator staying in touch with your team and sponsors;
-• a job seeker who wants to reach more companies with less effort.
+Useful for anyone who keeps contacts in SendPulse: sales, marketing, recruiting, freelancing or event organizing.
 
 SendPulse Gmail Extension is a lightweight alternative to a full CRM. There are many great CRM solutions on the market, but why pay more if all you need is to get your contacts into SendPulse? :)
 

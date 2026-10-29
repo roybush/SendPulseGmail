@@ -36,23 +36,14 @@ Güncel Chrome için baştan yazıldı (Manifest V3):
 
 • Her katılımcının SendPulse durumunu gösterir: hangi listelerde olduğunu ya da “Henüz SendPulse’ta değil”
 • Adı e-posta başlığından, başlıkta yalnızca adres varsa imzadan alır
-• Gönderenin imzasında telefon, şirket, unvan, web sitesi ve LinkedIn profilini bulur (Türkçe, İngilizce, İspanyolca, Almanca, Portekizce, Lehçe, Fransızca ve Ukraynaca imzalar)
+• Gönderenin imzasında telefon, şirket, unvan, web sitesi ve LinkedIn profilini bulur (8 dilde imzalar)
 • “Bul” düğmesi LinkedIn kişi aramasını yeni bir sekmede açar
 • Alanları listenizin değişkenleriyle otomatik eşleştirir (firstName, Name, Company, Phone…) ve her liste için seçiminizi hatırlar
 • noreply ve bildirim gönderenlerini atlar, telefon numaralarını uluslararası biçime çevirir
 • Ayarlar doğrudan Gmail panelinde ya da uzantı simgesinden açılan küçük pencerede açılır
 • Türkçe dahil 8 dilde arayüz
 
-Bu sizin için faydalı mı? Evet! Eğer siz:
-• gelen potansiyel müşterileri, takipleri ve segmentasyonu yöneten bir satış uzmanıysanız;
-• çok sayıda e-posta gönderen bir işletme sahibiyseniz;
-• tüm müşteri tabanını yöneten bir pazarlamacıysanız;
-• tüm müşterileri ve potansiyel müşterileriyle iletişimde kalmak isteyen bir serbest çalışansanız;
-• tebrik ve davet göndereceğiniz çok sayıda arkadaşınız ve akrabanız varsa;
-• tüm adayları tek bir yerde toplamak isteyen bir İK ya da işe alım uzmanıysanız;
-• tüm çalışanlara bilgilendirme gönderen bir yöneticiyseniz;
-• ekibi ve sponsorlarıyla iletişimde kalan bir etkinlik organizatörüyseniz;
-• daha az çabayla daha çok şirkete ulaşmak isteyen bir iş arayansanız.
+Kişilerini SendPulse’ta tutan herkes için kullanışlı: satış, pazarlama, işe alım, serbest çalışma veya etkinlik organizasyonu.
 
 SendPulse Gmail Extension, tam kapsamlı bir CRM’e hafif bir alternatiftir. Piyasada pek çok harika CRM çözümü var, ama tek ihtiyacınız kişilerinizi SendPulse’a aktarmaksa neden daha fazla ödeyesiniz? :)
 

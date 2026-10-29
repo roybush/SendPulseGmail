@@ -36,23 +36,14 @@ Całkowicie przebudowana dla aktualnego Chrome (Manifest V3):
 
 • Pokazuje status każdego uczestnika w SendPulse: na jakich listach jest albo „Jeszcze nie ma w SendPulse”
 • Bierze imię z nagłówka wiadomości, a jeśli jest tam tylko adres — z podpisu
-• Znajduje w podpisie telefon, firmę, stanowisko, stronę WWW i profil LinkedIn (podpisy po polsku, angielsku, hiszpańsku, niemiecku, portugalsku, turecku, francusku i ukraińsku)
+• Znajduje w podpisie telefon, firmę, stanowisko, stronę WWW i profil LinkedIn (podpisy w 8 językach)
 • Przycisk „Szukaj” otwiera wyszukiwanie osób w LinkedIn w nowej karcie
 • Automatycznie przypisuje pola do zmiennych listy (firstName, Name, Company, Phone…) i zapamiętuje wybór dla każdej listy
 • Pomija nadawców noreply i powiadomienia, zamienia numery telefonów na format międzynarodowy
 • Ustawienia otwierają się w panelu Gmaila albo w okienku po kliknięciu ikony rozszerzenia
 • Interfejs w 8 językach, w tym po polsku
 
-Czy to dla Ciebie? Tak! Jeśli jesteś:
-• handlowcem i obsługujesz leady, follow-upy oraz segmentację;
-• właścicielem firmy, który wysyła mnóstwo e-maili;
-• marketerem i zarządzasz całą bazą klientów;
-• freelancerem i chcesz być w kontakcie ze wszystkimi klientami;
-• osobą z wieloma znajomymi i krewnymi, którym wysyłasz życzenia i zaproszenia;
-• rekruterem lub specjalistą HR i chcesz mieć wszystkich kandydatów w jednym miejscu;
-• menedżerem i wysyłasz informacje do wszystkich pracowników;
-• organizatorem wydarzeń w stałym kontakcie z zespołem i sponsorami;
-• osobą szukającą pracy, która chce dotrzeć do większej liczby firm mniejszym wysiłkiem.
+Przyda się każdemu, kto prowadzi kontakty w SendPulse: w sprzedaży, marketingu, rekrutacji, pracy freelancera czy organizacji wydarzeń.
 
 SendPulse Gmail Extension to lekka alternatywa dla pełnego CRM. Na rynku jest wiele świetnych systemów CRM, ale po co płacić więcej, jeśli potrzebujesz tylko przenieść kontakty do SendPulse? :)
 

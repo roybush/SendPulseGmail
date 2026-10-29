@@ -36,23 +36,14 @@ Rehecha por completo para el Chrome actual (Manifest V3):
 
 • Muestra el estado de cada participante en SendPulse: en qué listas está o «Aún no está en SendPulse»
 • Toma el nombre del encabezado del correo o, si solo aparece la dirección, de la firma
-• Encuentra teléfono, empresa, cargo, sitio web y perfil de LinkedIn en la firma del remitente (firmas en español, inglés, alemán, portugués, polaco, turco, francés y ucraniano)
+• Encuentra teléfono, empresa, cargo, sitio web y perfil de LinkedIn en la firma del remitente (firmas en 8 idiomas)
 • El botón «Buscar» abre la búsqueda de personas de LinkedIn en una pestaña nueva
 • Asigna los campos a las variables de tu lista automáticamente (firstName, Name, Company, Phone…) y recuerda tu elección para cada lista
 • Omite los remitentes noreply y las notificaciones, y convierte los teléfonos al formato internacional
 • Los ajustes se abren en el propio panel de Gmail o en una ventana emergente desde el icono de la extensión
 • Interfaz en 8 idiomas, incluido el español
 
-¿Te resultará útil? ¡Sí! Si eres:
-• comercial y gestionas leads entrantes, seguimientos y segmentación;
-• dueño de un negocio con montones de correos que enviar;
-• profesional de marketing y gestionas toda la base de clientes;
-• freelance y quieres mantener el contacto con todos tus clientes y prospectos;
-• alguien con muchos amigos y familiares a quienes enviar felicitaciones e invitaciones;
-• especialista de RR. HH. o reclutador y quieres tener a todos los candidatos en un solo lugar;
-• responsable de equipo y envías novedades a toda la plantilla;
-• organizador de eventos y mantienes el contacto con tu equipo y patrocinadores;
-• alguien que busca trabajo y quiere llegar a más empresas con menos esfuerzo.
+Útil para cualquiera que guarde sus contactos en SendPulse: ventas, marketing, selección de personal, freelance u organización de eventos.
 
 SendPulse Gmail Extension es una alternativa ligera a un CRM completo. Hay muchas soluciones CRM excelentes en el mercado, pero ¿para qué pagar más si solo necesitas llevar tus contactos a SendPulse? :)
 

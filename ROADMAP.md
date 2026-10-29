@@ -49,7 +49,7 @@ Options page (Vue 3): логін SendPulse, налаштування, мапін
 
 - [x] Прибрати з коду Facebook-токен, cookie і ключі SendPulse
 - [ ] **Власник:** відкликати ключі SendPulse API (з `test/responses/mock.ts`) і завершити сесії Facebook
-- [ ] Рішення: чи переписувати історію git (`git filter-repo`), щоб секрети зникли зі старих комітів
+- [x] Історію git переписано (`git filter-repo`), секретів у старих комітах немає
 
 ### Етап 1. Новий каркас
 
@@ -57,7 +57,7 @@ Options page (Vue 3): логін SendPulse, налаштування, мапін
 - [x] ESLint + Prettier, Vitest, `.gitignore`, `.nvmrc`
 - [x] GitHub Actions: lint + test + build zip
 - [x] Старий код видалити (лишається в історії git)
-- [ ] Перевірити вручну: завантажити `dist/` у Chrome, побачити в консолі Gmail `[SendPulse] extension v2.0.0 loaded`
+- [x] Перевірено вручну: розширення з `dist/` працює в Gmail
 
 ### Етап 2. Ядро: SendPulse-клієнт у service worker
 
@@ -92,7 +92,7 @@ Options page (Vue 3): логін SendPulse, налаштування, мапін
 
 ### Етап 5. Збагачення
 
-- [x] Парсер підпису (`src/content/signature.ts`): телефон, компанія, посада, сайт, LinkedIn; англійські й українські підписи; цитати попередніх листів відкидаються (`message-text.ts`)
+- [x] Парсер підпису (`src/content/signature.ts`): телефон, компанія, посада, сайт, LinkedIn; підписи 9 мовами (en, uk, ru, es, de, pt, pl, tr, fr); цитати попередніх листів відкидаються (`message-text.ts`)
 - [x] Сайт за доменом пошти, якщо це не безкоштовна пошта (gmail, ukr.net…)
 - [x] Дані, які вже є в SendPulse, заповнюють прогалини; свіжі дані з листа мають пріоритет
 - [x] LinkedIn: кнопка «Find» відкриває пошук людей у LinkedIn у новій вкладці; URL профілю з підпису або вручну
@@ -112,5 +112,10 @@ Options page (Vue 3): логін SendPulse, налаштування, мапін
 
 ### Етап 7. Публікація
 
-- [ ] Privacy policy, опис і скриншоти для Chrome Web Store
-- [ ] Мінімальні права в маніфесті, перевірка на модерацію
+- [x] Privacy policy, опис і скриншоти для Chrome Web Store (`store/`)
+- [x] Мінімальні права в маніфесті (`storage`, `scripting`, два хости)
+- [x] Інтерфейс, описи й скриншоти 8 мовами (`chrome.i18n`: en, uk, es, de, pt_BR, pl, tr, fr)
+- [x] Пакет 2.0.0 (MV3) завантажено в Dashboard
+- [ ] Модерація: перша спроба відхилена за «ключові слова» (Yellow Argon) — описи виправлено, подати повторно
+- [ ] Носії мов перевіряють переклади es, de, pt_BR, pl, tr, fr
+- [ ] Після публікації — посилання на магазин у README і в About на GitHub

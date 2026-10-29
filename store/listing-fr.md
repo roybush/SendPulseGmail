@@ -36,23 +36,14 @@ Entièrement repensée pour le Chrome actuel (Manifest V3) :
 
 • Affiche le statut SendPulse de chaque participant : les listes où il figure ou « Pas encore dans SendPulse »
 • Reprend le nom de l’en-tête de l’e-mail, ou de la signature quand l’en-tête n’affiche que l’adresse
-• Trouve téléphone, entreprise, poste, site web et profil LinkedIn dans la signature de l’expéditeur (signatures en français, anglais, espagnol, allemand, portugais, polonais, turc et ukrainien)
+• Trouve téléphone, entreprise, poste, site web et profil LinkedIn dans la signature de l’expéditeur (signatures en 8 langues)
 • Le bouton « Chercher » ouvre la recherche de personnes LinkedIn dans un nouvel onglet
 • Associe automatiquement les champs aux variables de votre liste (firstName, Name, Company, Phone…) et mémorise votre choix pour chaque liste
 • Ignore les expéditeurs noreply et les notifications, convertit les numéros au format international
 • Les paramètres s’ouvrent directement dans le panneau Gmail ou dans une fenêtre depuis l’icône de l’extension
 • Interface en 8 langues, dont le français
 
-Est-ce utile pour vous ? Oui ! Si vous êtes :
-• commercial et gérez des prospects entrants, des relances et de la segmentation ;
-• chef d’entreprise avec des tonnes d’e-mails à envoyer ;
-• marketeur et gérez toute votre base clients ;
-• freelance et voulez rester en contact avec tous vos clients et prospects ;
-• entouré de nombreux amis et proches à qui envoyer vœux et invitations ;
-• RH ou recruteur et voulez tous vos candidats au même endroit ;
-• manager et envoyez des informations à tous les collaborateurs ;
-• organisateur d’événements en contact avec votre équipe et vos sponsors ;
-• en recherche d’emploi et voulez contacter plus d’entreprises avec moins d’efforts.
+Utile à tous ceux qui gèrent leurs contacts dans SendPulse : vente, marketing, recrutement, freelance ou organisation d’événements.
 
 SendPulse Gmail Extension est une alternative légère à un CRM complet. Il existe de nombreuses excellentes solutions CRM, mais pourquoi payer plus si vous voulez simplement mettre vos contacts dans SendPulse ? :)
 

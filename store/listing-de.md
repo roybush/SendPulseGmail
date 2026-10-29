@@ -36,23 +36,14 @@ Komplett neu entwickelt für das aktuelle Chrome (Manifest V3):
 
 • Zeigt den SendPulse-Status jedes Beteiligten: in welchen Listen er ist oder „Noch nicht in SendPulse“
 • Übernimmt den Namen aus dem E-Mail-Header – oder aus der Signatur, wenn dort nur die Adresse steht
-• Findet Telefon, Unternehmen, Position, Website und LinkedIn-Profil in der Signatur (Signaturen auf Deutsch, Englisch, Spanisch, Portugiesisch, Polnisch, Türkisch, Französisch und Ukrainisch)
+• Findet Telefon, Unternehmen, Position, Website und LinkedIn-Profil in der Signatur (Signaturen in 8 Sprachen)
 • Die Schaltfläche „Suchen“ öffnet die LinkedIn-Personensuche in einem neuen Tab
 • Ordnet die Felder automatisch den Variablen Ihrer Liste zu (firstName, Name, Company, Phone…) und merkt sich Ihre Wahl für jede Liste
 • Überspringt noreply- und Benachrichtigungsabsender und bringt Telefonnummern ins internationale Format
 • Die Einstellungen öffnen sich direkt im Gmail-Bereich oder in einem Pop-up über das Erweiterungssymbol
 • Oberfläche in 8 Sprachen, darunter Deutsch
 
-Ist das etwas für Sie? Ja, wenn Sie:
-• im Vertrieb eingehende Leads, Follow-ups und Segmentierung betreuen;
-• ein Unternehmen führen und jede Menge E-Mails versenden;
-• im Marketing Ihre gesamte Kundenbasis verwalten;
-• als Freelancer mit allen Kunden und Interessenten in Kontakt bleiben möchten;
-• viele Freunde und Verwandte haben, denen Sie Grüße und Einladungen schicken;
-• im Personalwesen oder Recruiting alle Kandidaten an einem Ort haben möchten;
-• als Führungskraft Neuigkeiten an alle Mitarbeitenden senden;
-• Veranstaltungen organisieren und mit Team und Sponsoren in Kontakt bleiben;
-• auf Jobsuche sind und mit weniger Aufwand mehr Unternehmen erreichen möchten.
+Nützlich für alle, die ihre Kontakte in SendPulse pflegen: Vertrieb, Marketing, Recruiting, Freelancing oder Eventorganisation.
 
 SendPulse Gmail Extension ist eine schlanke Alternative zu einem vollwertigen CRM. Es gibt viele großartige CRM-Lösungen, aber warum mehr bezahlen, wenn Sie nur Ihre Kontakte in SendPulse bringen möchten? :)
 
