@@ -160,5 +160,68 @@
   },
   "connect": {
     "message": "Połącz"
+  },
+  "actions": {
+    "message": "Akcje"
+  },
+  "stats": {
+    "message": "Wysłane $1 · Otwarte $2 · Kliknięcia $3"
+  },
+  "blacklisted": {
+    "message": "Na czarnej liście"
+  },
+  "unsubscribeFrom": {
+    "message": "Wypisz z $1"
+  },
+  "unsubscribedFrom": {
+    "message": "$1 wypisano z $2"
+  },
+  "addToBlacklist": {
+    "message": "Dodaj do czarnej listy"
+  },
+  "removeFromBlacklist": {
+    "message": "Usuń z czarnej listy"
+  },
+  "blacklistAdded": {
+    "message": "$1 dodano do czarnej listy"
+  },
+  "blacklistRemoved": {
+    "message": "$1 usunięto z czarnej listy"
+  },
+  "confirmAgain": {
+    "message": "Kliknij ponownie, aby potwierdzić"
+  },
+  "addToCrm": {
+    "message": "Dodaj do CRM"
+  },
+  "inCrm": {
+    "message": "W CRM"
+  },
+  "addedToCrm": {
+    "message": "$1 dodano do CRM"
+  },
+  "crmDeal": {
+    "message": "Transakcja w CRM"
+  },
+  "pipeline": {
+    "message": "Lejek"
+  },
+  "stage": {
+    "message": "Etap"
+  },
+  "dealName": {
+    "message": "Nazwa transakcji"
+  },
+  "dealHint": {
+    "message": "Zaznaczone osoby (do 5) zostaną powiązane z transakcją."
+  },
+  "createDeal": {
+    "message": "Utwórz transakcję"
+  },
+  "dealCreated": {
+    "message": "Utworzono transakcję „$1”"
+  },
+  "noPipelines": {
+    "message": "W SendPulse CRM nie ma jeszcze lejków."
   }
 }

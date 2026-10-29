@@ -160,5 +160,68 @@
   },
   "connect": {
     "message": "Connecter"
+  },
+  "actions": {
+    "message": "Actions"
+  },
+  "stats": {
+    "message": "Envoyés $1 · Ouverts $2 · Clics $3"
+  },
+  "blacklisted": {
+    "message": "Sur liste noire"
+  },
+  "unsubscribeFrom": {
+    "message": "Désabonner de $1"
+  },
+  "unsubscribedFrom": {
+    "message": "$1 désabonné de $2"
+  },
+  "addToBlacklist": {
+    "message": "Ajouter à la liste noire"
+  },
+  "removeFromBlacklist": {
+    "message": "Retirer de la liste noire"
+  },
+  "blacklistAdded": {
+    "message": "$1 ajouté à la liste noire"
+  },
+  "blacklistRemoved": {
+    "message": "$1 retiré de la liste noire"
+  },
+  "confirmAgain": {
+    "message": "Cliquez à nouveau pour confirmer"
+  },
+  "addToCrm": {
+    "message": "Ajouter au CRM"
+  },
+  "inCrm": {
+    "message": "Dans le CRM"
+  },
+  "addedToCrm": {
+    "message": "$1 ajouté au CRM"
+  },
+  "crmDeal": {
+    "message": "Affaire dans le CRM"
+  },
+  "pipeline": {
+    "message": "Pipeline"
+  },
+  "stage": {
+    "message": "Étape"
+  },
+  "dealName": {
+    "message": "Nom de l'affaire"
+  },
+  "dealHint": {
+    "message": "Les personnes cochées (5 au maximum) sont liées à l'affaire."
+  },
+  "createDeal": {
+    "message": "Créer l'affaire"
+  },
+  "dealCreated": {
+    "message": "Affaire « $1 » créée"
+  },
+  "noPipelines": {
+    "message": "Il n'y a pas encore de pipeline dans SendPulse CRM."
   }
 }

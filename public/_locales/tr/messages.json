@@ -160,5 +160,68 @@
   },
   "connect": {
     "message": "Bağlan"
+  },
+  "actions": {
+    "message": "İşlemler"
+  },
+  "stats": {
+    "message": "Gönderilen $1 · Açılan $2 · Tıklama $3"
+  },
+  "blacklisted": {
+    "message": "Kara listede"
+  },
+  "unsubscribeFrom": {
+    "message": "$1 listesinden çıkar"
+  },
+  "unsubscribedFrom": {
+    "message": "$1, $2 listesinden çıkarıldı"
+  },
+  "addToBlacklist": {
+    "message": "Kara listeye ekle"
+  },
+  "removeFromBlacklist": {
+    "message": "Kara listeden çıkar"
+  },
+  "blacklistAdded": {
+    "message": "$1 kara listeye eklendi"
+  },
+  "blacklistRemoved": {
+    "message": "$1 kara listeden çıkarıldı"
+  },
+  "confirmAgain": {
+    "message": "Onaylamak için tekrar tıklayın"
+  },
+  "addToCrm": {
+    "message": "CRM'e ekle"
+  },
+  "inCrm": {
+    "message": "CRM'de"
+  },
+  "addedToCrm": {
+    "message": "$1 CRM'e eklendi"
+  },
+  "crmDeal": {
+    "message": "CRM fırsatı"
+  },
+  "pipeline": {
+    "message": "Satış hunisi"
+  },
+  "stage": {
+    "message": "Aşama"
+  },
+  "dealName": {
+    "message": "Fırsat adı"
+  },
+  "dealHint": {
+    "message": "İşaretli kişiler (en fazla 5) fırsata bağlanır."
+  },
+  "createDeal": {
+    "message": "Fırsat oluştur"
+  },
+  "dealCreated": {
+    "message": "\"$1\" fırsatı oluşturuldu"
+  },
+  "noPipelines": {
+    "message": "SendPulse CRM'de henüz satış hunisi yok."
   }
 }

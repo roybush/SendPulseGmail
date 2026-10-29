@@ -21,8 +21,8 @@ worker injects InboxSDK's bundled page script (pageWorld.js, shipped inside the 
 Gmail tab. No remote code is executed.
 
 **Host permission: https://api.sendpulse.com/\***
-All calls to the official SendPulse REST API (authentication, mailing lists, contact lookup, adding
-contacts) are made from the extension's service worker.
+All calls to the official SendPulse REST API (authentication, mailing lists, contact lookup and statistics, adding
+contacts, unsubscribe and blacklist, CRM contacts and deals) are made from the extension's service worker.
 
 **Host permission: https://mail.google.com/**
 Needed to show the SendPulse panel in Gmail and to inject InboxSDK's page script into the Gmail tab

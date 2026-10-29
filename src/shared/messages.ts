@@ -7,9 +7,13 @@ import type {
   AddressBook,
   AuthStatus,
   BookVariable,
+  ContactStats,
   Credentials,
+  CrmContactInput,
+  CrmPipeline,
   Membership,
   NewContact,
+  NewDeal,
   Prefs,
 } from './types';
 
@@ -24,6 +28,13 @@ export type Api = {
   'books.variables': { params: { bookId: number }; result: BookVariable[] };
   'contact.find': { params: { email: string }; result: Membership[] };
   'contact.add': { params: { bookId: number; contacts: NewContact[] }; result: void };
+  'contact.stats': { params: { email: string }; result: ContactStats };
+  'contact.unsubscribe': { params: { bookId: number; email: string }; result: void };
+  'contact.blacklist': { params: { email: string; blacklisted: boolean }; result: void };
+  'crm.findContact': { params: { email: string }; result: number | null };
+  'crm.addContact': { params: CrmContactInput; result: { id: number; created: boolean } };
+  'crm.pipelines': { params: void; result: CrmPipeline[] };
+  'crm.createDeal': { params: NewDeal; result: { id: number } };
 };
 
 export type Method = keyof Api;
