@@ -38,25 +38,34 @@ npm run dev
 Then open `chrome://extensions`, enable **Developer mode**, click **Load unpacked** and select
 the `dist` directory. With `npm run dev` running, changes reload automatically.
 
+**Firefox** (140+): run `npm run dev:firefox`, open `about:debugging#/runtime/this-firefox`, click
+**Load Temporary Add-on…** and pick `dist-firefox/manifest.json`. The build is rebuilt on every
+change; press **Reload** on that page to pick it up. Firefox may not grant the Gmail and SendPulse
+host permissions to a temporary add-on automatically — allow them in `about:addons` → the
+extension → **Permissions**.
+
 Before the first run, copy `.env.example` to `.env` and set your InboxSDK app ID
 (free at [register.inboxsdk.com](https://register.inboxsdk.com)); InboxSDK won't load without it.
 
 ### Scripts
 
-| Command             | What it does                                     |
-| ------------------- | ------------------------------------------------ |
-| `npm run dev`       | dev build with hot reload into `dist/`           |
-| `npm run build`     | type-check and production build into `dist/`     |
-| `npm run zip`       | production build packed as `sendpulse-gmail.zip` |
-| `npm test`          | unit tests                                       |
-| `npm run lint`      | ESLint                                           |
-| `npm run typecheck` | `vue-tsc` type check                             |
-| `npm run format`    | Prettier                                         |
+| Command                 | What it does                                                 |
+| ----------------------- | ------------------------------------------------------------ |
+| `npm run dev`           | dev build with hot reload into `dist/`                       |
+| `npm run build`         | type-check and production build into `dist/`                 |
+| `npm run zip`           | production build packed as `sendpulse-gmail.zip`             |
+| `npm run dev:firefox`   | Firefox build in watch mode into `dist-firefox/`             |
+| `npm run build:firefox` | type-check and Firefox production build into `dist-firefox/` |
+| `npm run zip:firefox`   | Firefox build packed as `sendpulse-gmail-firefox.zip`        |
+| `npm test`              | unit tests                                                   |
+| `npm run lint`          | ESLint                                                       |
+| `npm run typecheck`     | `vue-tsc` type check                                         |
+| `npm run format`        | Prettier                                                     |
 
 ### Translations
 
 The UI is available in English, Ukrainian, Spanish, German, Portuguese (Brazil), Polish, Turkish
-and French; Chrome picks the language from the browser's settings (`chrome.i18n`).
+and French; the browser picks the language from its settings (`chrome.i18n`).
 
 All strings live in one table, [scripts/locales.py](scripts/locales.py). Edit it and run
 `python3 scripts/locales.py` to regenerate `public/_locales/*/messages.json`; in code use
@@ -68,16 +77,14 @@ fit their limits.
 
 ```
 src/
-  manifest.ts      MV3 manifest (permissions are covered by tests/manifest.test.ts)
-  background/      service worker: all network calls to SendPulse, token storage
+  manifest.ts      MV3 manifests for Chrome and Firefox (covered by tests/manifest.test.ts)
+  background/      service worker (event page in Firefox): all network calls to SendPulse, token storage
   content/         Gmail sidebar panel; gmail.ts is the only file that talks to InboxSDK
   options/         options page (Vue)
   shared/          typed messages, field mapping, Material UI components
 store/             Chrome Web Store listing, images and their generator
 ```
 
-### Publish
+## License
 
-Bump `version` in `package.json`, run `npm run zip` and upload `sendpulse-gmail.zip` in the
-[Chrome Web Store developer dashboard](https://chrome.google.com/webstore/devconsole). Listing
-texts, images and the privacy answers are in [store/](store/README.md).
+[MIT](LICENSE)
