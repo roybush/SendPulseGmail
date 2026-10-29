@@ -4,6 +4,7 @@
  */
 import * as InboxSDK from '@inboxsdk/core';
 import type { MessageView } from '@inboxsdk/core';
+import { patchInboxSdkForFirefox } from './firefox';
 import { messageSignatureSource } from './message-text';
 import { collectParticipants, type MessageHeaders, type Participant } from './participants';
 
@@ -35,6 +36,7 @@ export type GmailHandlers = {
 
 export async function connectGmail(handlers: GmailHandlers): Promise<void> {
   if (!APP_ID) throw new Error('VITE_INBOXSDK_APP_ID is not set; see .env.example');
+  patchInboxSdkForFirefox();
   const sdk = await InboxSDK.load(2, APP_ID, {
     appName: 'SendPulse',
     // No usage analytics, and don't hook Gmail's own errors. InboxSDK still reports its own

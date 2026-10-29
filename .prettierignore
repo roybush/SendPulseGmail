@@ -1,4 +1,5 @@
 dist
+dist-firefox
 node_modules
 *.zip
 package-lock.json
