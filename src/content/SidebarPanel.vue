@@ -486,12 +486,42 @@ function onMappingChange(next: FieldMapping) {
   call('prefs.set', { mappings: savedMappings.value }).catch((e) => (error.value = message(e)));
 }
 
+// Undo removes only people this click put into the list, never ones who were there before.
+const UNDO_MS = 10_000;
+const undo = ref<{ bookId: number; rows: Row[] } | null>(null);
+let undoTimer: ReturnType<typeof setTimeout> | undefined;
+
+function offerUndo(id: number, rows: Row[]) {
+  clearTimeout(undoTimer);
+  undo.value = rows.length ? { bookId: id, rows } : null;
+  undoTimer = setTimeout(() => (undo.value = null), UNDO_MS);
+}
+
+async function undoAdd() {
+  const pending = undo.value;
+  if (!pending) return;
+  undo.value = null;
+  clearTimeout(undoTimer);
+  await runAction(
+    'undo',
+    async () => {
+      await call('contact.remove', { bookId: pending.bookId, emails: pending.rows.map((r) => r.email) });
+      pending.rows.forEach((r) => (r.selected = true));
+      await forEachLimit(pending.rows, LOOKUP_CONCURRENCY, lookup);
+      return t('addUndone');
+    },
+    false,
+  );
+}
+
 async function add() {
   if (bookId.value === null || !selectedRows.value.length) return;
   busy.value = true;
   error.value = '';
   notice.value = '';
+  undo.value = null;
   const added = [...selectedRows.value];
+  const newcomers = added.filter((r) => !inBook(r));
   try {
     const source = sourceLabel(new Date());
     await call('contact.add', {
@@ -502,7 +532,8 @@ async function add() {
     const who = added.length === 1 ? added[0].email : added.length;
     notice.value = optInSender.value ? t('confirmationSent', who) : t('addedTo', book.value?.name ?? '', who);
     added.forEach((r) => (r.selected = false));
-    await Promise.all(added.map(lookup));
+    offerUndo(bookId.value, newcomers);
+    await forEachLimit(added, LOOKUP_CONCURRENCY, lookup);
   } catch (e) {
     error.value = message(e);
   } finally {
@@ -790,7 +821,18 @@ async function add() {
         </div>
       </template>
 
-      <p v-if="notice" class="sp-ok" role="status">{{ notice }}</p>
+      <p v-if="notice" class="sp-ok sp-notice" role="status">
+        <span>{{ notice }}</span>
+        <button
+          v-if="undo"
+          type="button"
+          class="sp-btn sp-btn--text sp-btn--small"
+          :disabled="busy"
+          @click="undoAdd"
+        >
+          {{ t('undo') }}
+        </button>
+      </p>
       <p v-if="error" class="sp-error" role="alert">{{ error }}</p>
       <button type="button" class="sp-btn sp-btn--text sp-btn--small sp-footer" @click="settingsOpen = true">
         {{ t('settingsTitle') }}
@@ -911,6 +953,12 @@ async function add() {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 8px;
+}
+.sp-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 .sp-changes {
   margin-top: 8px;

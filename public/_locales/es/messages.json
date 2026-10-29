@@ -292,5 +292,11 @@
   },
   "contactUpdated": {
     "message": "$1 actualizado"
+  },
+  "undo": {
+    "message": "Deshacer"
+  },
+  "addUndone": {
+    "message": "Quitados de la lista"
   }
 }

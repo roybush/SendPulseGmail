@@ -292,5 +292,11 @@
   },
   "contactUpdated": {
     "message": "$1 оновлено"
+  },
+  "undo": {
+    "message": "Скасувати"
+  },
+  "addUndone": {
+    "message": "Знову прибрано зі списку"
   }
 }

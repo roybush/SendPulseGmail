@@ -181,6 +181,10 @@ export class SendPulseClient {
     });
   }
 
+  async removeContacts(bookId: number, emails: string[]): Promise<void> {
+    await this.request('DELETE', `/addressbooks/${bookId}/emails`, { emails });
+  }
+
   /** Overwrites the given variables of a contact already in the book (one email per call). */
   async updateVariables(bookId: number, email: string, variables: Record<string, string>): Promise<void> {
     await this.request('POST', `/addressbooks/${bookId}/emails/variable`, {

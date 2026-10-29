@@ -390,5 +390,13 @@
   "contactUpdated": {
     "message": "$1 updated",
     "description": "$1 = email"
+  },
+  "undo": {
+    "message": "Undo",
+    "description": "Button after adding"
+  },
+  "addUndone": {
+    "message": "Removed from the list again",
+    "description": "After undo"
   }
 }
