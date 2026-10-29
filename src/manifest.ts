@@ -57,8 +57,13 @@ export const firefoxManifest = {
       // 140: data_collection_permissions.
       strict_min_version: '140.0',
       data_collection_permissions: {
-        // Contact names, emails and signature details go to SendPulse; so do the user's API credentials.
-        required: ['personallyIdentifyingInfo' as const, 'authenticationInfo' as const],
+        // Contact names, emails and signature details go to SendPulse (and, if the user adds a key,
+        // to Hunter/Apollo); so do the user's API credentials. "Save email to CRM" sends email text.
+        required: [
+          'personallyIdentifyingInfo' as const,
+          'authenticationInfo' as const,
+          'personalCommunications' as const,
+        ],
       },
     },
   },

@@ -66,6 +66,7 @@ describe('Firefox manifest', () => {
     expect(firefoxManifest.browser_specific_settings.gecko.data_collection_permissions.required).toEqual([
       'personallyIdentifyingInfo',
       'authenticationInfo',
+      'personalCommunications',
     ]);
   });
 });
