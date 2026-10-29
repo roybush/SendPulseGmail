@@ -24,6 +24,10 @@ Gmail tab. No remote code is executed.
 All calls to the official SendPulse REST API (authentication, mailing lists, contact lookup and statistics, adding
 contacts, unsubscribe and blacklist, CRM contacts and deals) are made from the extension's service worker.
 
+**Optional host permissions: https://api.hunter.io/\_, https://api.apollo.io/\_**
+Requested only if the user adds their own Hunter or Apollo API key in the settings. Used to look up
+a contact's company, job title and LinkedIn profile when the user clicks "Fill in from Hunter/Apollo".
+
 **Host permission: https://mail.google.com/**
 Needed to show the SendPulse panel in Gmail and to inject InboxSDK's page script into the Gmail tab
 (together with the scripting permission).

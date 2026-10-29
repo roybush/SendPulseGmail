@@ -124,7 +124,7 @@ Options page (Vue 3): логін SendPulse, налаштування, мапін
 - [x] Чат-боти SendPulse: «Перевірити месенджери» — Telegram, Viber, WhatsApp, Instagram, Messenger, Live chat, TikTok
 - [x] Automation 360: подія з листа (назва події вводиться й запам’ятовується; змінні email, phone, first_name, last_name, company, title, website, linkedin)
 - [x] Кілька акаунтів SendPulse: «Додати ще акаунт» у налаштуваннях, перемикач у панелі; налаштування (списки, поля, воронки) окремо для кожного акаунта
-- [ ] Збагачення через Hunter / Apollo за ключем користувача
+- [x] Збагачення через Hunter / Apollo за ключем користувача (опційний дозвіл на хост, лише за кліком, дописує тільки порожні поля)
 - [ ] Експорт учасників у CSV
 - [ ] Edge Add-ons; Firefox (гілка `roybush/firefox`); Outlook Web
 

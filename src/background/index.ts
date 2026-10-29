@@ -1,5 +1,6 @@
 // Injects InboxSDK's page-world script into Gmail on request from the content script.
 import '@inboxsdk/core/background.js';
+import { Enricher } from './enrichment';
 import { createRouter, isRpcRequest } from './router';
 import { SendPulseClient } from './sendpulse';
 import { chromeStore } from './storage';
@@ -7,7 +8,12 @@ import { chromeStore } from './storage';
 // Credentials survive browser restarts; the access token lives only for the session.
 const local = chromeStore(chrome.storage.local);
 const client = new SendPulseClient(local, chromeStore(chrome.storage.session));
-const route = createRouter(client, { version: chrome.runtime.getManifest().version }, local);
+const route = createRouter(
+  client,
+  { version: chrome.runtime.getManifest().version },
+  local,
+  new Enricher(local),
+);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // Only our own extension pages and content scripts may talk to the API.

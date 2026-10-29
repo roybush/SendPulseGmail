@@ -337,5 +337,38 @@
   },
   "cancel": {
     "message": "Cancelar"
+  },
+  "enrichment": {
+    "message": "Enriquecimiento (opcional)"
+  },
+  "enrichmentHint": {
+    "message": "Con tu propia clave de Hunter o Apollo, el panel puede completar empresa, cargo y LinkedIn. La dirección se envía a ese servicio solo al pulsar el botón."
+  },
+  "provider": {
+    "message": "Servicio"
+  },
+  "providerKey": {
+    "message": "Clave API del servicio"
+  },
+  "save": {
+    "message": "Guardar"
+  },
+  "remove": {
+    "message": "Quitar"
+  },
+  "permissionDenied": {
+    "message": "Chrome no permitió el acceso a este servicio."
+  },
+  "fillFrom": {
+    "message": "Completar con $1"
+  },
+  "fieldsFilled": {
+    "message": "Campos completados: $1"
+  },
+  "nothingNew": {
+    "message": "No se encontró nada nuevo"
+  },
+  "nothingFound": {
+    "message": "El servicio no tiene datos de esta dirección"
   }
 }

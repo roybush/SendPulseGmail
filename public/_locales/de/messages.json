@@ -337,5 +337,38 @@
   },
   "cancel": {
     "message": "Abbrechen"
+  },
+  "enrichment": {
+    "message": "Anreicherung (optional)"
+  },
+  "enrichmentHint": {
+    "message": "Mit Ihrem eigenen Hunter- oder Apollo-Schlüssel ergänzt das Panel Unternehmen, Position und LinkedIn. Die Adresse geht nur beim Klick auf die Schaltfläche an den Dienst."
+  },
+  "provider": {
+    "message": "Dienst"
+  },
+  "providerKey": {
+    "message": "API-Schlüssel des Dienstes"
+  },
+  "save": {
+    "message": "Speichern"
+  },
+  "remove": {
+    "message": "Entfernen"
+  },
+  "permissionDenied": {
+    "message": "Chrome hat den Zugriff auf diesen Dienst nicht erlaubt."
+  },
+  "fillFrom": {
+    "message": "Aus $1 ergänzen"
+  },
+  "fieldsFilled": {
+    "message": "Ergänzte Felder: $1"
+  },
+  "nothingNew": {
+    "message": "Nichts Neues gefunden"
+  },
+  "nothingFound": {
+    "message": "Der Dienst kennt diese Adresse nicht"
   }
 }

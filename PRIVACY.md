@@ -63,6 +63,13 @@ a one-way hash of your Gmail address, the extension's ID and the page address
 (`https://mail.google.com`). They are meant for debugging InboxSDK, not for collecting email
 content, and never include your SendPulse credentials. See [Streak's privacy policy](https://www.streak.com/privacy).
 
+**Hunter or Apollo (optional, off by default).** If you add your own Hunter (`api.hunter.io`) or
+Apollo (`api.apollo.io`) API key in the settings, Chrome asks you to allow access to that service.
+Then, only when you click **Fill in from Hunter/Apollo** for a person, their email address is sent to
+that service under your account, and the details it returns are filled into empty fields in the
+panel. How the service processes the address is governed by its own terms and privacy policy. The key
+is stored in `chrome.storage.local` like your SendPulse key; **Remove** deletes it and the access.
+
 **LinkedIn.** The **Find** button opens LinkedIn's public people search in a new tab with the
 contact's name and company in the address. The extension never loads or reads LinkedIn pages itself.
 
@@ -76,6 +83,7 @@ its own.
 | SendPulse API key or client ID + secret | `chrome.storage.local`   | you click Disconnect or remove extension |
 | Access token (1 hour)                   | `chrome.storage.session` | browser closes or you click Disconnect   |
 | Last selected list and pipeline, fields | `chrome.storage.local`   | you remove the extension                 |
+| Hunter / Apollo API key (if added)      | `chrome.storage.local`   | you click Remove or remove the extension |
 
 ## Limited use
 

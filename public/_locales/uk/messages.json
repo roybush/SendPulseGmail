@@ -337,5 +337,38 @@
   },
   "cancel": {
     "message": "Скасувати"
+  },
+  "enrichment": {
+    "message": "Збагачення (за бажанням)"
+  },
+  "enrichmentHint": {
+    "message": "З вашим ключем Hunter або Apollo панель може дописати компанію, посаду й LinkedIn. Адреса йде в цей сервіс лише після натискання кнопки."
+  },
+  "provider": {
+    "message": "Сервіс"
+  },
+  "providerKey": {
+    "message": "API-ключ сервісу"
+  },
+  "save": {
+    "message": "Зберегти"
+  },
+  "remove": {
+    "message": "Прибрати"
+  },
+  "permissionDenied": {
+    "message": "Chrome не дозволив доступ до цього сервісу."
+  },
+  "fillFrom": {
+    "message": "Дописати з $1"
+  },
+  "fieldsFilled": {
+    "message": "Заповнено полів: $1"
+  },
+  "nothingNew": {
+    "message": "Нічого нового не знайдено"
+  },
+  "nothingFound": {
+    "message": "Сервіс нічого не знає про цю адресу"
   }
 }

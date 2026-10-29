@@ -66,6 +66,16 @@ export type ChatbotSubscription = {
   active: boolean;
 };
 
+export type EnrichmentProvider = 'hunter' | 'apollo';
+
+/** The configured provider and its masked key, or null when enrichment is off. */
+export type EnrichmentStatus = { provider: EnrichmentProvider; label: string } | null;
+
+/** What an enrichment provider found; only fields it knows. */
+export type EnrichedProfile = Partial<
+  Record<'firstName' | 'lastName' | 'company' | 'title' | 'website' | 'linkedin' | 'phone', string>
+>;
+
 /** A board of CRM tasks with its columns, in order. */
 export type CrmBoard = {
   id: number;

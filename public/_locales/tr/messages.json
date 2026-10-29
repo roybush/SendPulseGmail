@@ -337,5 +337,38 @@
   },
   "cancel": {
     "message": "İptal"
+  },
+  "enrichment": {
+    "message": "Zenginleştirme (isteğe bağlı)"
+  },
+  "enrichmentHint": {
+    "message": "Kendi Hunter veya Apollo anahtarınızla panel şirket, unvan ve LinkedIn bilgilerini doldurabilir. Adres bu servise yalnızca düğmeye tıkladığınızda gönderilir."
+  },
+  "provider": {
+    "message": "Servis"
+  },
+  "providerKey": {
+    "message": "Servis API anahtarı"
+  },
+  "save": {
+    "message": "Kaydet"
+  },
+  "remove": {
+    "message": "Kaldır"
+  },
+  "permissionDenied": {
+    "message": "Chrome bu servise erişime izin vermedi."
+  },
+  "fillFrom": {
+    "message": "$1'dan doldur"
+  },
+  "fieldsFilled": {
+    "message": "Doldurulan alanlar: $1"
+  },
+  "nothingNew": {
+    "message": "Yeni bir şey bulunamadı"
+  },
+  "nothingFound": {
+    "message": "Servisin bu adres hakkında bilgisi yok"
   }
 }
