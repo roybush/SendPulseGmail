@@ -85,7 +85,6 @@ src/
 store/             Chrome Web Store listing, images and their generator
 ```
 
-
 ## License
 
 [MIT](LICENSE)

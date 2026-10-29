@@ -9,8 +9,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -19,13 +19,13 @@ jobs:
       - run: npx prettier --check .
       - run: npm test
       - run: npm run zip
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: sendpulse-gmail
           path: sendpulse-gmail.zip
       - run: npm run zip:firefox
       - run: npx -y web-ext@8 lint --source-dir dist-firefox --self-hosted=false
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: sendpulse-gmail-firefox
           path: sendpulse-gmail-firefox.zip
