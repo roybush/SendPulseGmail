@@ -506,5 +506,9 @@
   "working": {
     "message": "Working…",
     "description": "Button label while its action runs"
+  },
+  "crmForbidden": {
+    "message": "SendPulse refused access to CRM. Connect this account with Client ID and Secret (Settings → Add another account) and check that CRM is enabled in SendPulse.",
+    "description": "CRM API refused access (HTTP 403)"
   }
 }

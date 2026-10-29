@@ -379,5 +379,8 @@
   },
   "working": {
     "message": "Виконується…"
+  },
+  "crmForbidden": {
+    "message": "SendPulse не дав доступу до CRM. Підключіть цей акаунт через Client ID і Secret (Налаштування → Додати ще акаунт) і перевірте, що CRM увімкнена в SendPulse."
   }
 }

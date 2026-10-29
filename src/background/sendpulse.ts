@@ -66,7 +66,14 @@ export class SendPulseError extends Error {
   }
 }
 
-type ErrorBody = { message?: string; error_description?: string; error_code?: number };
+/** Bulk-email endpoints use message/error_code; CRM and chatbots use error or errors. */
+type ErrorBody = {
+  message?: string;
+  error_description?: string;
+  error_code?: number;
+  error?: string;
+  errors?: unknown;
+};
 
 type AddressBookDto = {
   id: number;
@@ -498,10 +505,30 @@ async function parse<T>(res: Response): Promise<T> {
   }
   if (!res.ok) {
     const err = (data ?? {}) as ErrorBody;
-    const message = err.message || err.error_description || `SendPulse request failed (HTTP ${res.status})`;
+    const detail =
+      err.message ||
+      err.error_description ||
+      (typeof err.error === 'string' ? err.error : '') ||
+      describeErrors(err.errors);
+    // Keep the status visible for access errors: the UI explains them per feature.
+    const message = !detail
+      ? `SendPulse request failed (HTTP ${res.status})`
+      : res.status === 401 || res.status === 403
+        ? `${detail} (HTTP ${res.status})`
+        : detail;
     throw new SendPulseError(message, res.status, err.error_code);
   }
   return data as T;
+}
+
+/** CRM validation errors come as { field: [messages] } or a list of strings / { message }. */
+function describeErrors(errors: unknown): string {
+  if (!errors) return '';
+  const flat = (Array.isArray(errors) ? errors : Object.values(errors as object)).flat();
+  return flat
+    .map((e) => (typeof e === 'string' ? e : (e as { message?: string })?.message))
+    .filter(Boolean)
+    .join('; ');
 }
 
 /** "sp_apikey_123456789abcdef" -> "sp_apikey_…bcdef": enough to recognise, useless to steal. */
