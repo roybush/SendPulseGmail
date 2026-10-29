@@ -16,9 +16,12 @@ body {
 .logo {
   display: grid;
   place-items: center;
-  border-radius: 22%;
-  background: #fff;
-  box-shadow: 0 6px 16px rgb(0 0 0 / 0.18);
+}
+/* The icon art fills 96/128 of the image, so the image overhangs the box on every side. */
+.logo img {
+  width: 133.33%;
+  margin: -16.67%;
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.22));
 }
 h1 {
   margin: 0;
