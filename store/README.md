@@ -1,5 +1,7 @@
 # Chrome Web Store: оновлення до 2.0
 
+Firefox Add-ons (AMO) — див. [AMO.md](AMO.md).
+
 Існуючий запис: **SendPulse Gmail Extension** (`mpcnoobdnjnpajojombadpfjjcajbgcn`), видавець `roybush`.
 
 ## Що де лежить
