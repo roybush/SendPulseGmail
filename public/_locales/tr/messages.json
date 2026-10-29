@@ -283,5 +283,14 @@
   },
   "noBoards": {
     "message": "SendPulse CRM'de henüz görev panosu yok."
+  },
+  "newerDetails": {
+    "message": "Bu e-postada daha yeni bilgiler var:"
+  },
+  "updateInList": {
+    "message": "$1 içinde güncelle"
+  },
+  "contactUpdated": {
+    "message": "$1 güncellendi"
   }
 }

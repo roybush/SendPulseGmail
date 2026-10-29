@@ -299,6 +299,15 @@ M = {
         'In SendPulse CRM gibt es noch keine Aufgabenboards.', 'Ainda não há quadros de tarefas no SendPulse CRM.',
         'W SendPulse CRM nie ma jeszcze tablic zadań.', "SendPulse CRM'de henüz görev panosu yok.",
         "Il n'y a pas encore de tableau de tâches dans SendPulse CRM."),
+    # Updating contacts already in a list
+    'newerDetails': ('Heading above changed variables', 'This email has newer details:', 'У цьому листі новіші дані:',
+        'Este correo tiene datos más recientes:', 'Diese E-Mail enthält neuere Angaben:',
+        'Este e-mail tem dados mais recentes:', 'Ten e-mail zawiera nowsze dane:', 'Bu e-postada daha yeni bilgiler var:',
+        'Cet e-mail contient des informations plus récentes :'),
+    'updateInList': ('$1 = list name', 'Update in $1', 'Оновити в $1', 'Actualizar en $1', 'In $1 aktualisieren',
+        'Atualizar em $1', 'Zaktualizuj w $1', '$1 içinde güncelle', 'Mettre à jour dans $1'),
+    'contactUpdated': ('$1 = email', '$1 updated', '$1 оновлено', '$1 actualizado', '$1 aktualisiert', '$1 atualizado',
+        '$1 zaktualizowano', '$1 güncellendi', '$1 mis à jour'),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'

@@ -300,6 +300,19 @@ describe('SendPulseClient', () => {
       });
     });
 
+    it('updates variables of an existing contact', async () => {
+      on('POST', '/addressbooks/7/emails/variable', () => json({ result: true }));
+
+      await client().updateVariables(7, 'a@test.com', { Company: 'Acme', title: 'CTO' });
+      expect(JSON.parse(requestsTo('/addressbooks/7/emails/variable')[0][1].body)).toEqual({
+        email: 'a@test.com',
+        variables: [
+          { name: 'Company', value: 'Acme' },
+          { name: 'title', value: 'CTO' },
+        ],
+      });
+    });
+
     it('lists only active senders', async () => {
       on('GET', '/senders', () =>
         json([

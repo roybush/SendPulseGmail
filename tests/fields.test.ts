@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { detectFieldMapping, fromVariables, sourceLabel, toVariables } from '../src/shared/fields';
+import {
+  detectFieldMapping,
+  fromVariables,
+  sourceLabel,
+  toVariables,
+  variableChanges,
+} from '../src/shared/fields';
 
 const vars = (...names: string[]) => names.map((name) => ({ name }));
 const ann = { firstName: 'Ann', lastName: 'Lee' };
@@ -102,5 +108,19 @@ describe('source', () => {
       source: 'Gmail, 2026-10-29',
     });
     expect(toVariables(profile, { first: 'firstName' }, 'Gmail, 2026-10-29')).toEqual({ firstName: 'Ann' });
+  });
+});
+
+describe('variableChanges', () => {
+  it('lists new and changed values, never erasing or touching Phone', () => {
+    expect(
+      variableChanges(
+        { name: 'Ann Lee', Company: 'Acme Inc', title: 'CTO', Phone: '+380501112233' },
+        { name: 'Ann Lee', Company: 'Acme', Phone: '+380500000000', website: 'acme.com' },
+      ),
+    ).toEqual([
+      { name: 'Company', from: 'Acme', to: 'Acme Inc' },
+      { name: 'title', from: '', to: 'CTO' },
+    ]);
   });
 });
