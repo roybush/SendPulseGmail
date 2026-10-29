@@ -15,6 +15,7 @@ import { t, uiLanguage, type MessageKey } from '../shared/i18n';
 import type {
   AddressBook,
   BookVariable,
+  ChatbotSubscription,
   ContactStats,
   CrmPipeline,
   EmailNote,
@@ -58,6 +59,8 @@ type Row = {
     /** Campaign history; only fetched for people already in SendPulse. */
     stats: ContactStats | null;
     actionsOpen: boolean;
+    /** Chatbot subscriptions; null until checked on request. */
+    chatbots: ChatbotSubscription[] | null;
     /** undefined until checked, null if the CRM has no such contact */
     crmId: number | null | undefined;
   };
@@ -89,6 +92,7 @@ const rows = reactive<Row[]>(
     stats: null,
     actionsOpen: false,
     crmId: undefined,
+    chatbots: null,
   })),
 );
 
@@ -257,6 +261,17 @@ function updateContact(row: Row) {
       await call('contact.update', { bookId: id, email: row.email, variables });
       await lookup(row);
       return t('contactUpdated', row.email);
+    },
+    false,
+  );
+}
+
+function checkChatbots(row: Row) {
+  runAction(
+    `bots:${row.email}`,
+    async () => {
+      row.chatbots = await call('contact.chatbots', { email: row.email });
+      return '';
     },
     false,
   );
@@ -717,6 +732,26 @@ async function add() {
                   >
                     {{ t('addToCrm') }}
                   </button>
+                  <button
+                    v-if="!row.chatbots"
+                    type="button"
+                    class="sp-btn sp-btn--outlined sp-btn--small"
+                    :disabled="busy"
+                    @click="checkChatbots(row)"
+                  >
+                    {{ t('checkMessengers') }}
+                  </button>
+                  <div v-else class="sp-bots">
+                    <template v-if="row.chatbots.length">
+                      <div v-for="b in row.chatbots" :key="b.channel + b.bot">
+                        {{ b.channel }} · {{ b.bot }} —
+                        <span :class="b.active ? 'sp-ok' : 'sp-muted'">{{
+                          b.active ? t('subscribed') : t('notSubscribed')
+                        }}</span>
+                      </div>
+                    </template>
+                    <span v-else class="sp-muted">{{ t('noMessengers') }}</span>
+                  </div>
                   <template v-if="email">
                     <button
                       type="button"
@@ -991,6 +1026,10 @@ async function add() {
 }
 .sp-changes s {
   color: #5f6368;
+}
+.sp-bots {
+  width: 100%;
+  font-size: 12px;
 }
 .sp-reminder {
   display: grid;

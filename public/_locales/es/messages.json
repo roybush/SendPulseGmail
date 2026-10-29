@@ -301,5 +301,17 @@
   },
   "labelRemembered": {
     "message": "Se recuerda para la etiqueta «$1»"
+  },
+  "checkMessengers": {
+    "message": "Ver mensajeros"
+  },
+  "subscribed": {
+    "message": "suscrito"
+  },
+  "notSubscribed": {
+    "message": "dado de baja"
+  },
+  "noMessengers": {
+    "message": "No está suscrito a ninguno de tus chatbots"
   }
 }

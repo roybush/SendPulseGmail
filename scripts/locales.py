@@ -318,6 +318,18 @@ M = {
     'labelRemembered': ('$1 = Gmail label', 'Remembered for the label «$1»', 'Запам’ятовується для ярлика «$1»',
         'Se recuerda para la etiqueta «$1»', 'Wird für das Label „$1“ gemerkt', 'Lembrado para o marcador "$1"',
         'Zapamiętywana dla etykiety „$1”', '"$1" etiketi için hatırlanır', "Mémorisée pour le libellé « $1 »"),
+    # Chatbot subscriptions
+    'checkMessengers': ('Button', 'Check messengers', 'Перевірити месенджери', 'Ver mensajeros', 'Messenger prüfen',
+        'Ver mensageiros', 'Sprawdź komunikatory', 'Mesajlaşma kanallarını kontrol et', 'Vérifier les messageries'),
+    'subscribed': ('Chatbot status', 'subscribed', 'підписаний', 'suscrito', 'abonniert', 'inscrito', 'subskrybuje',
+        'abone', 'abonné'),
+    'notSubscribed': ('Chatbot status', 'unsubscribed', 'відписаний', 'dado de baja', 'abgemeldet', 'descadastrado',
+        'wypisany', 'abonelikten çıktı', 'désabonné'),
+    'noMessengers': ('No chatbot subscriptions', 'Not subscribed to any of your chatbots',
+        'Не підписаний на жоден із ваших чат-ботів', 'No está suscrito a ninguno de tus chatbots',
+        'Hat keinen Ihrer Chatbots abonniert', 'Não está inscrito em nenhum dos seus chatbots',
+        'Nie subskrybuje żadnego z Twoich chatbotów', 'Sohbet botlarınızın hiçbirine abone değil',
+        "N'est abonné à aucun de vos chatbots"),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'

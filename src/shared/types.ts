@@ -52,6 +52,13 @@ export type CrmContactInput = {
   phone?: string;
 };
 
+/** The person as a subscriber of one of the account's chatbots. */
+export type ChatbotSubscription = {
+  channel: string;
+  bot: string;
+  active: boolean;
+};
+
 /** A board of CRM tasks with its columns, in order. */
 export type CrmBoard = {
   id: number;

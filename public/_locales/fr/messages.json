@@ -301,5 +301,17 @@
   },
   "labelRemembered": {
     "message": "Mémorisée pour le libellé « $1 »"
+  },
+  "checkMessengers": {
+    "message": "Vérifier les messageries"
+  },
+  "subscribed": {
+    "message": "abonné"
+  },
+  "notSubscribed": {
+    "message": "désabonné"
+  },
+  "noMessengers": {
+    "message": "N'est abonné à aucun de vos chatbots"
   }
 }

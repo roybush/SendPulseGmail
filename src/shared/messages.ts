@@ -7,6 +7,7 @@ import type {
   AddressBook,
   AuthStatus,
   BookVariable,
+  ChatbotSubscription,
   ContactStats,
   Credentials,
   CrmBoard,
@@ -37,6 +38,7 @@ export type Api = {
     params: { bookId: number; email: string; variables: Record<string, string> };
     result: void;
   };
+  'contact.chatbots': { params: { email: string }; result: ChatbotSubscription[] };
   'senders.list': { params: void; result: Sender[] };
   'contact.stats': { params: { email: string }; result: ContactStats };
   'contact.unsubscribe': { params: { bookId: number; email: string }; result: void };

@@ -301,5 +301,17 @@
   },
   "labelRemembered": {
     "message": "Запам’ятовується для ярлика «$1»"
+  },
+  "checkMessengers": {
+    "message": "Перевірити месенджери"
+  },
+  "subscribed": {
+    "message": "підписаний"
+  },
+  "notSubscribed": {
+    "message": "відписаний"
+  },
+  "noMessengers": {
+    "message": "Не підписаний на жоден із ваших чат-ботів"
   }
 }
