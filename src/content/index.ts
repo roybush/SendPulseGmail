@@ -1,11 +1,28 @@
 import { createApp } from 'vue';
-import { onThreadOpen } from './gmail';
+import { t } from '../shared/i18n';
+import { connectGmail } from './gmail';
+import type { Participant } from './participants';
 import SidebarPanel from './SidebarPanel.vue';
 
-onThreadOpen((thread) => {
+type PanelProps = { participants: Participant[]; subject?: string; bulk?: boolean };
+
+function mountPanel(props: PanelProps, width?: string) {
   const el = document.createElement('div');
-  const app = createApp(SidebarPanel, { participants: thread.participants, subject: thread.subject });
+  if (width) el.style.width = width;
+  const app = createApp(SidebarPanel, props);
   app.mount(el);
-  thread.showPanel(el);
-  thread.onClose(() => app.unmount());
+  return { el, unmount: () => app.unmount() };
+}
+
+connectGmail({
+  bulkButtonTitle: t('bulkButton'),
+  onThreadOpen(thread) {
+    const panel = mountPanel({ participants: thread.participants, subject: thread.subject });
+    thread.showPanel(panel.el);
+    thread.onClose(panel.unmount);
+  },
+  onBulkSelect(selection) {
+    const panel = mountPanel({ participants: selection.participants, bulk: true }, '400px');
+    selection.showDrawer(panel.el, t('bulkTitle'), panel.unmount);
+  },
 }).catch((e) => console.error('[SendPulse] failed to start in Gmail', e));

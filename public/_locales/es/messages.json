@@ -223,5 +223,23 @@
   },
   "noPipelines": {
     "message": "Aún no hay embudos en SendPulse CRM."
+  },
+  "bulkButton": {
+    "message": "Añadir remitentes a SendPulse"
+  },
+  "bulkTitle": {
+    "message": "SendPulse: remitentes de los correos marcados"
+  },
+  "selectedCount": {
+    "message": "Seleccionados: $1 de $2"
+  },
+  "selectAll": {
+    "message": "Todos"
+  },
+  "selectNone": {
+    "message": "Ninguno"
+  },
+  "edit": {
+    "message": "Editar"
   }
 }

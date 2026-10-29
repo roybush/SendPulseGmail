@@ -223,5 +223,23 @@
   },
   "noPipelines": {
     "message": "Ainda não há funis no SendPulse CRM."
+  },
+  "bulkButton": {
+    "message": "Adicionar remetentes ao SendPulse"
+  },
+  "bulkTitle": {
+    "message": "SendPulse: remetentes dos e-mails marcados"
+  },
+  "selectedCount": {
+    "message": "Selecionados: $1 de $2"
+  },
+  "selectAll": {
+    "message": "Todos"
+  },
+  "selectNone": {
+    "message": "Nenhum"
+  },
+  "edit": {
+    "message": "Editar"
   }
 }

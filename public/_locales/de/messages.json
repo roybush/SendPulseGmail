@@ -223,5 +223,23 @@
   },
   "noPipelines": {
     "message": "In SendPulse CRM gibt es noch keine Pipelines."
+  },
+  "bulkButton": {
+    "message": "Absender zu SendPulse hinzufügen"
+  },
+  "bulkTitle": {
+    "message": "SendPulse: Absender der markierten E-Mails"
+  },
+  "selectedCount": {
+    "message": "Ausgewählt: $1 von $2"
+  },
+  "selectAll": {
+    "message": "Alle"
+  },
+  "selectNone": {
+    "message": "Keine"
+  },
+  "edit": {
+    "message": "Bearbeiten"
   }
 }

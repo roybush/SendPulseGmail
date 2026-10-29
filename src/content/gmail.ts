@@ -19,7 +19,21 @@ export type OpenThread = {
   onClose(callback: () => void): void;
 };
 
-export async function onThreadOpen(handler: (thread: OpenThread) => void): Promise<void> {
+/** People from the threads checked in a Gmail list (inbox, search, label). */
+export type BulkSelection = {
+  participants: Participant[];
+  /** Opens `el` in a drawer over Gmail; `onClose` runs when the user closes it. */
+  showDrawer(el: HTMLElement, title: string, onClose: () => void): void;
+};
+
+export type GmailHandlers = {
+  onThreadOpen(thread: OpenThread): void;
+  onBulkSelect(selection: BulkSelection): void;
+  /** Toolbar button title above a list with checked threads. */
+  bulkButtonTitle: string;
+};
+
+export async function connectGmail(handlers: GmailHandlers): Promise<void> {
   if (!APP_ID) throw new Error('VITE_INBOXSDK_APP_ID is not set; see .env.example');
   const sdk = await InboxSDK.load(2, APP_ID, {
     appName: 'SendPulse',
@@ -39,7 +53,7 @@ export async function onThreadOpen(handler: (thread: OpenThread) => void): Promi
     );
     if (threadView.destroyed) return;
 
-    handler({
+    handlers.onThreadOpen({
       subject: threadView.getSubject(),
       participants: collectParticipants(headers, selfEmail),
       showPanel(el) {
@@ -54,6 +68,24 @@ export async function onThreadOpen(handler: (thread: OpenThread) => void): Promi
         threadView.on('destroy', callback);
       },
     });
+  });
+
+  // Only the senders shown in each row: reading every message of many threads would be slow.
+  sdk.Toolbars.registerThreadButton({
+    title: handlers.bulkButtonTitle,
+    iconUrl: chrome.runtime.getURL('icons/icon-128.png'),
+    positions: ['LIST'],
+    onClick({ selectedThreadRowViews }) {
+      const headers = selectedThreadRowViews.flatMap((row) =>
+        row.getContacts().map((sender) => ({ sender, recipients: [] })),
+      );
+      handlers.onBulkSelect({
+        participants: collectParticipants(headers, selfEmail),
+        showDrawer(el, title, onClose) {
+          sdk.Widgets.showDrawerView({ el, title }).on('destroy', onClose);
+        },
+      });
+    },
   });
 }
 

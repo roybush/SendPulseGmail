@@ -298,5 +298,29 @@
   "noPipelines": {
     "message": "There are no pipelines in SendPulse CRM yet.",
     "description": "Deal form, CRM is empty"
+  },
+  "bulkButton": {
+    "message": "Add senders to SendPulse",
+    "description": "Gmail toolbar button above checked threads"
+  },
+  "bulkTitle": {
+    "message": "SendPulse: senders of the checked emails",
+    "description": "Drawer title"
+  },
+  "selectedCount": {
+    "message": "Selected: $1 of $2",
+    "description": "$1 selected of $2 people"
+  },
+  "selectAll": {
+    "message": "All",
+    "description": "Button"
+  },
+  "selectNone": {
+    "message": "None",
+    "description": "Button"
+  },
+  "edit": {
+    "message": "Edit",
+    "description": "Toggle for name fields in bulk mode"
   }
 }

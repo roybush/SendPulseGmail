@@ -223,5 +223,23 @@
   },
   "noPipelines": {
     "message": "W SendPulse CRM nie ma jeszcze lejków."
+  },
+  "bulkButton": {
+    "message": "Dodaj nadawców do SendPulse"
+  },
+  "bulkTitle": {
+    "message": "SendPulse: nadawcy zaznaczonych wiadomości"
+  },
+  "selectedCount": {
+    "message": "Wybrano: $1 z $2"
+  },
+  "selectAll": {
+    "message": "Wszystkie"
+  },
+  "selectNone": {
+    "message": "Żadne"
+  },
+  "edit": {
+    "message": "Edytuj"
   }
 }

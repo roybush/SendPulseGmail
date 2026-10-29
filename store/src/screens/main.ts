@@ -81,6 +81,7 @@ if (scene === 'connect') {
 } else {
   createApp(SidebarPanel, {
     subject: 'Partnership proposal',
+    bulk: scene === 'bulk',
     participants: [
       {
         email: 'bob@stonelabs.io',
