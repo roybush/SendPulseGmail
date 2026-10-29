@@ -300,6 +300,13 @@ describe('SendPulseClient', () => {
       });
     });
 
+    it('removes contacts from a book', async () => {
+      on('DELETE', '/addressbooks/7/emails', () => json({ result: true }));
+
+      await client().removeContacts(7, ['a@test.com']);
+      expect(JSON.parse(requestsTo('/addressbooks/7/emails')[0][1].body)).toEqual({ emails: ['a@test.com'] });
+    });
+
     it('updates variables of an existing contact', async () => {
       on('POST', '/addressbooks/7/emails/variable', () => json({ result: true }));
 

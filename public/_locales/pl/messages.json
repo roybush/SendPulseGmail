@@ -292,5 +292,11 @@
   },
   "contactUpdated": {
     "message": "$1 zaktualizowano"
+  },
+  "undo": {
+    "message": "Cofnij"
+  },
+  "addUndone": {
+    "message": "Usunięto z listy"
   }
 }

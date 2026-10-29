@@ -308,6 +308,12 @@ M = {
         'Atualizar em $1', 'Zaktualizuj w $1', '$1 içinde güncelle', 'Mettre à jour dans $1'),
     'contactUpdated': ('$1 = email', '$1 updated', '$1 оновлено', '$1 actualizado', '$1 aktualisiert', '$1 atualizado',
         '$1 zaktualizowano', '$1 güncellendi', '$1 mis à jour'),
+    # Undo
+    'undo': ('Button after adding', 'Undo', 'Скасувати', 'Deshacer', 'Rückgängig', 'Desfazer', 'Cofnij', 'Geri al',
+        'Annuler'),
+    'addUndone': ('After undo', 'Removed from the list again', 'Знову прибрано зі списку', 'Quitados de la lista',
+        'Wieder aus der Liste entfernt', 'Removidos da lista', 'Usunięto z listy', 'Listeden tekrar çıkarıldı',
+        'Retirés de la liste'),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'

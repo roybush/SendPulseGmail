@@ -32,6 +32,7 @@ export type Api = {
   'books.variables': { params: { bookId: number }; result: BookVariable[] };
   'contact.find': { params: { email: string }; result: Membership[] };
   'contact.add': { params: { bookId: number; contacts: NewContact[]; optIn?: OptIn }; result: void };
+  'contact.remove': { params: { bookId: number; emails: string[] }; result: void };
   'contact.update': {
     params: { bookId: number; email: string; variables: Record<string, string> };
     result: void;

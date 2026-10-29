@@ -292,5 +292,11 @@
   },
   "contactUpdated": {
     "message": "$1 güncellendi"
+  },
+  "undo": {
+    "message": "Geri al"
+  },
+  "addUndone": {
+    "message": "Listeden tekrar çıkarıldı"
   }
 }
