@@ -370,5 +370,11 @@
   },
   "nothingFound": {
     "message": "Servisin bu adres hakkında bilgisi yok"
+  },
+  "exportCsv": {
+    "message": "CSV dışa aktar"
+  },
+  "exportCsvTitle": {
+    "message": "İşaretli kişileri (veya herkesi) CSV dosyası olarak indir"
   }
 }

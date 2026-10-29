@@ -370,5 +370,11 @@
   },
   "nothingFound": {
     "message": "Usługa nic nie wie o tym adresie"
+  },
+  "exportCsv": {
+    "message": "Eksportuj CSV"
+  },
+  "exportCsvTitle": {
+    "message": "Pobierz zaznaczone osoby (lub wszystkie) jako plik CSV"
   }
 }

@@ -370,5 +370,11 @@
   },
   "nothingFound": {
     "message": "Le service ne connaît pas cette adresse"
+  },
+  "exportCsv": {
+    "message": "Exporter en CSV"
+  },
+  "exportCsvTitle": {
+    "message": "Télécharger les personnes cochées (ou toutes) en fichier CSV"
   }
 }
