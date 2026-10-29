@@ -346,5 +346,37 @@
   "source": {
     "message": "Source (Gmail, date)",
     "description": "Field mapping row: where the contact came from"
+  },
+  "saveEmailToCrm": {
+    "message": "Save email to CRM",
+    "description": "Button: save the open email as a CRM comment"
+  },
+  "emailSavedToCrm": {
+    "message": "Email saved to the CRM contact $1",
+    "description": "$1 = email"
+  },
+  "reminder": {
+    "message": "Reminder",
+    "description": "Select label"
+  },
+  "inDays": {
+    "message": "in $1 d",
+    "description": "$1 = number of days"
+  },
+  "createReminder": {
+    "message": "Create task",
+    "description": "Button: create a CRM task"
+  },
+  "followUpTask": {
+    "message": "Follow up: $1",
+    "description": "Task name, $1 = person"
+  },
+  "reminderCreated": {
+    "message": "Task created, due $1",
+    "description": "$1 = due date"
+  },
+  "noBoards": {
+    "message": "There are no task boards in SendPulse CRM yet.",
+    "description": "No task boards in CRM"
   }
 }

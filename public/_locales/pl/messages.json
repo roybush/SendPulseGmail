@@ -259,5 +259,29 @@
   },
   "source": {
     "message": "Źródło (Gmail, data)"
+  },
+  "saveEmailToCrm": {
+    "message": "Zapisz e-mail w CRM"
+  },
+  "emailSavedToCrm": {
+    "message": "E-mail zapisano w kontakcie CRM $1"
+  },
+  "reminder": {
+    "message": "Przypomnienie"
+  },
+  "inDays": {
+    "message": "za $1 dni"
+  },
+  "createReminder": {
+    "message": "Utwórz zadanie"
+  },
+  "followUpTask": {
+    "message": "Przypomnij: $1"
+  },
+  "reminderCreated": {
+    "message": "Utworzono zadanie, termin $1"
+  },
+  "noBoards": {
+    "message": "W SendPulse CRM nie ma jeszcze tablic zadań."
   }
 }

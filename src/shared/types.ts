@@ -52,6 +52,32 @@ export type CrmContactInput = {
   phone?: string;
 };
 
+/** A board of CRM tasks with its columns, in order. */
+export type CrmBoard = {
+  id: number;
+  name: string;
+  steps: { id: number; name: string }[];
+};
+
+export type NewTask = {
+  boardId: number;
+  stepId: number;
+  name: string;
+  description?: string;
+  /** ISO date-time. */
+  finishAt: string;
+  contactIds: number[];
+};
+
+/** The open email, for saving it to the CRM. */
+export type EmailNote = {
+  subject: string;
+  /** Link back to the thread in Gmail. */
+  url: string;
+  /** The latest message's own text, quotes removed. */
+  text: string;
+};
+
 export type NewDeal = {
   pipelineId: number;
   stepId: number;

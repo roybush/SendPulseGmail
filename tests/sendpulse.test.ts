@@ -441,6 +441,69 @@ describe('SendPulseClient', () => {
         ]);
       });
 
+      it('adds a comment to a contact', async () => {
+        on('POST', '/crm/v1/contacts/5/comments', () => json({ success: true, data: { id: 1 } }));
+
+        await client().crmAddComment(5, 'Hello');
+        expect(JSON.parse(requestsTo('/crm/v1/contacts/5/comments')[0][1].body)).toEqual({
+          message: 'Hello',
+        });
+      });
+
+      it('lists task boards from the double-wrapped response', async () => {
+        on('GET', '/crm/v1/boards', () =>
+          json({
+            success: true,
+            data: {
+              data: [
+                {
+                  id: 4,
+                  name: 'Tasks',
+                  steps: [
+                    { id: 21, name: 'Done', order: 3 },
+                    { id: 20, name: 'To do', order: 1 },
+                  ],
+                },
+              ],
+            },
+          }),
+        );
+
+        expect(await client().crmBoards()).toEqual([
+          {
+            id: 4,
+            name: 'Tasks',
+            steps: [
+              { id: 20, name: 'To do' },
+              { id: 21, name: 'Done' },
+            ],
+          },
+        ]);
+      });
+
+      it('creates a task linked to contacts', async () => {
+        on('POST', '/crm/v1/tasks', () => json({ success: true, data: { id: 99 } }));
+
+        expect(
+          await client().crmCreateTask({
+            boardId: 4,
+            stepId: 20,
+            name: 'Follow up: Ann',
+            finishAt: '2026-11-01T10:00:00.000Z',
+            contactIds: [5],
+          }),
+        ).toEqual({ id: 99 });
+        expect(JSON.parse(requestsTo('/crm/v1/tasks')[0][1].body)).toEqual({
+          boardId: 4,
+          stepId: 20,
+          priority: 1,
+          name: 'Follow up: Ann',
+          description: null,
+          finishAt: '2026-11-01T10:00:00.000Z',
+          connections: { contactIds: [5] },
+        });
+      });
+
       it('creates a deal linked to at most five contacts', async () => {
         on('POST', '/crm/v1/contacts/get-list-by-email', (init) =>
           found([{ id: Number(JSON.parse(init.body as string).email[0]), emails: [] }]),
