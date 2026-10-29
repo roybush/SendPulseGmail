@@ -370,5 +370,11 @@
   },
   "nothingFound": {
     "message": "Der Dienst kennt diese Adresse nicht"
+  },
+  "exportCsv": {
+    "message": "CSV exportieren"
+  },
+  "exportCsvTitle": {
+    "message": "Markierte Personen (oder alle) als CSV-Datei herunterladen"
   }
 }

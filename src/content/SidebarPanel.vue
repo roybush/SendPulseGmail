@@ -32,6 +32,7 @@ import FieldMappingEditor from './FieldMappingEditor.vue';
 import type { Participant } from './participants';
 import { websiteFromEmail } from './signature';
 import { forEachLimit } from '../shared/limit';
+import { toCsv } from '../shared/csv';
 
 const props = defineProps<{
   participants: Participant[];
@@ -478,6 +479,25 @@ function enrichRow(row: Row) {
     },
     false,
   );
+}
+
+/** Checked people, or everyone if nobody is checked, as a CSV download. */
+function exportCsv() {
+  const people = selectedRows.value.length ? selectedRows.value : rows;
+  const header = ['email', 'first_name', 'last_name', ...DETAIL_FIELDS, 'sendpulse_lists'];
+  const lines = people.map((r) => [
+    r.email,
+    r.firstName,
+    r.lastName,
+    ...DETAIL_FIELDS.map((f) => r[f]),
+    (r.memberships ?? []).map((m) => bookNames.value.get(m.bookId) ?? `#${m.bookId}`).join('; '),
+  ]);
+  const url = URL.createObjectURL(new Blob([toCsv([header, ...lines])], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sendpulse-contacts-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 const accounts = ref<Account[]>([]);
@@ -1004,9 +1024,20 @@ async function add() {
         </button>
       </p>
       <p v-if="error" class="sp-error" role="alert">{{ error }}</p>
-      <button type="button" class="sp-btn sp-btn--text sp-btn--small sp-footer" @click="settingsOpen = true">
-        {{ t('settingsTitle') }}
-      </button>
+      <div class="sp-footer">
+        <button type="button" class="sp-btn sp-btn--text sp-btn--small" @click="settingsOpen = true">
+          {{ t('settingsTitle') }}
+        </button>
+        <button
+          v-if="rows.length"
+          type="button"
+          class="sp-btn sp-btn--text sp-btn--small"
+          :title="t('exportCsvTitle')"
+          @click="exportCsv"
+        >
+          {{ t('exportCsv') }}
+        </button>
+      </div>
     </template>
 
     <p v-else-if="error" class="sp-error" role="alert">{{ error }}</p>
@@ -1089,9 +1120,13 @@ async function add() {
   width: 100%;
   border: 0;
 }
-.sp-back,
-.sp-footer {
+.sp-back {
   margin: 12px 0 0 -12px;
+}
+.sp-footer {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px -12px 0;
 }
 .sp-optin {
   display: flex;

@@ -370,5 +370,11 @@
   },
   "nothingFound": {
     "message": "O serviço não tem dados sobre este endereço"
+  },
+  "exportCsv": {
+    "message": "Exportar CSV"
+  },
+  "exportCsvTitle": {
+    "message": "Baixar as pessoas marcadas (ou todas) como arquivo CSV"
   }
 }

@@ -388,6 +388,17 @@ M = {
         'Der Dienst kennt diese Adresse nicht', 'O serviço não tem dados sobre este endereço',
         'Usługa nic nie wie o tym adresie', 'Servisin bu adres hakkında bilgisi yok',
         "Le service ne connaît pas cette adresse"),
+    # CSV export
+    'exportCsv': ('Button', 'Export CSV', 'Експорт у CSV', 'Exportar CSV', 'CSV exportieren', 'Exportar CSV',
+        'Eksportuj CSV', 'CSV dışa aktar', 'Exporter en CSV'),
+    'exportCsvTitle': ('Tooltip', 'Download the checked people (or everyone) as a CSV file',
+        'Завантажити позначених людей (або всіх) у файл CSV',
+        'Descargar las personas marcadas (o todas) como archivo CSV',
+        'Markierte Personen (oder alle) als CSV-Datei herunterladen',
+        'Baixar as pessoas marcadas (ou todas) como arquivo CSV',
+        'Pobierz zaznaczone osoby (lub wszystkie) jako plik CSV',
+        'İşaretli kişileri (veya herkesi) CSV dosyası olarak indir',
+        'Télécharger les personnes cochées (ou toutes) en fichier CSV'),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'

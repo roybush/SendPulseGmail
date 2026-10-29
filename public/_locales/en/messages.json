@@ -494,5 +494,13 @@
   "nothingFound": {
     "message": "The service knows nothing about this address",
     "description": "Enrichment found nothing"
+  },
+  "exportCsv": {
+    "message": "Export CSV",
+    "description": "Button"
+  },
+  "exportCsvTitle": {
+    "message": "Download the checked people (or everyone) as a CSV file",
+    "description": "Tooltip"
   }
 }

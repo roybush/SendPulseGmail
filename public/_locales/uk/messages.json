@@ -370,5 +370,11 @@
   },
   "nothingFound": {
     "message": "Сервіс нічого не знає про цю адресу"
+  },
+  "exportCsv": {
+    "message": "Експорт у CSV"
+  },
+  "exportCsvTitle": {
+    "message": "Завантажити позначених людей (або всіх) у файл CSV"
   }
 }
