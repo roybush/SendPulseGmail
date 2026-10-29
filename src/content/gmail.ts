@@ -26,6 +26,8 @@ export type OpenThread = {
 /** People from the threads checked in a Gmail list (inbox, search, label). */
 export type BulkSelection = {
   participants: Participant[];
+  /** Gmail label being viewed, if any. */
+  label?: string;
   /** Opens `el` in a drawer over Gmail; `onClose` runs when the user closes it. */
   showDrawer(el: HTMLElement, title: string, onClose: () => void): void;
 };
@@ -90,12 +92,21 @@ export async function connectGmail(handlers: GmailHandlers): Promise<void> {
       );
       handlers.onBulkSelect({
         participants: collectParticipants(headers, selfEmail),
+        label: currentLabel(sdk),
         showDrawer(el, title, onClose) {
           sdk.Widgets.showDrawerView({ el, title }).on('destroy', onClose);
         },
       });
     },
   });
+}
+
+/** "label/Clients+2026/p2" -> "Clients 2026". */
+function currentLabel(sdk: InboxSDK.InboxSDK): string | undefined {
+  const route = sdk.Router.getCurrentRouteView();
+  if (route.getRouteID() !== sdk.Router.NativeListRouteIDs.LABEL) return undefined;
+  const name = route.getParams().labelName;
+  return name ? decodeURIComponent(name.replace(/\+/g, ' ')) : undefined;
 }
 
 async function readHeaders(message: MessageView): Promise<MessageHeaders> {

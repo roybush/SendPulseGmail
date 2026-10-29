@@ -298,5 +298,8 @@
   },
   "addUndone": {
     "message": "Usunięto z listy"
+  },
+  "labelRemembered": {
+    "message": "Zapamiętywana dla etykiety „$1”"
   }
 }

@@ -298,5 +298,8 @@
   },
   "addUndone": {
     "message": "Listeden tekrar çıkarıldı"
+  },
+  "labelRemembered": {
+    "message": "\"$1\" etiketi için hatırlanır"
   }
 }

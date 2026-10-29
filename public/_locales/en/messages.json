@@ -398,5 +398,9 @@
   "addUndone": {
     "message": "Removed from the list again",
     "description": "After undo"
+  },
+  "labelRemembered": {
+    "message": "Remembered for the label «$1»",
+    "description": "$1 = Gmail label"
   }
 }
