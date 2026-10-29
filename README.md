@@ -85,17 +85,6 @@ src/
 store/             Chrome Web Store listing, images and their generator
 ```
 
-### Publish
-
-Bump `version` in `package.json`, run `npm run zip` and upload `sendpulse-gmail.zip` in the
-[Chrome Web Store developer dashboard](https://chrome.google.com/webstore/devconsole). Listing
-texts, images and the privacy answers are in [store/](store/README.md).
-
-**Firefox Add-ons (AMO).** Run `npm run zip:firefox` and upload `sendpulse-gmail-firefox.zip` at
-[addons.mozilla.org/developers](https://addons.mozilla.org/developers/). Because the code is bundled,
-AMO also asks for the source: upload `git archive -o source.zip HEAD` and point the reviewer to
-this README (Node ≥ 22, `npm ci`, set `VITE_INBOXSDK_APP_ID` in `.env`, `npm run build:firefox`).
-The add-on ID `sendpulse-gmail@roybush.github.io` in `src/manifest.ts` is permanent once published.
 
 ## License
 
