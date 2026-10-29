@@ -7,6 +7,7 @@ import type {
   AddressBook,
   AuthStatus,
   BookVariable,
+  ChatbotSubscription,
   ContactStats,
   Credentials,
   CrmBoard,
@@ -32,6 +33,18 @@ const NO_SUCH_EMAIL_CODE = 502;
 // CRM API: https://login.sendpulse.com/api/crm-service/v1/openapi/en
 const CRM = '/crm/v1';
 export const MAX_DEAL_CONTACTS = 5;
+// Chatbot channels and their API roots: https://sendpulse.com/integrations/api/chatbot
+const CHATBOT_CHANNELS = [
+  { name: 'Telegram', path: '/telegram' },
+  { name: 'Viber', path: '/viber/chatbots' },
+  { name: 'WhatsApp', path: '/whatsapp' },
+  { name: 'Instagram', path: '/instagram' },
+  { name: 'Messenger', path: '/messenger' },
+  { name: 'Live chat', path: '/live-chat' },
+  { name: 'TikTok', path: '/tiktok' },
+];
+const CHATBOT_ACTIVE = 1;
+const BOTS_CACHE_MS = 10 * 60_000;
 
 type Token = { value: string; expiresAt: number };
 
@@ -79,7 +92,12 @@ type MembershipDto = {
   variables?: { name: string; value: string }[] | Record<string, string>;
 };
 
+type BotDto = { id: string; channel_data?: { name?: string; username?: string } };
+
 export class SendPulseClient {
+  /** Bots rarely change; looking up several people shouldn't refetch them every time. */
+  private bots?: { at: number; list: { channel: string; path: string; id: string; name: string }[] };
+
   constructor(
     /** Long-lived: API key, or client id and secret needed to refresh the token silently. */
     private readonly credentialsStore: KeyValueStore,
@@ -263,6 +281,46 @@ export class SendPulseClient {
   async crmPipelines(): Promise<CrmPipeline[]> {
     const { data } = await this.request<CrmResponse<PipelineDto[]>>('GET', `${CRM}/pipelines`);
     return data.map(withOrderedSteps);
+  }
+
+  /** Which of the account's chatbots this email is subscribed to, across all channels. */
+  async chatbotSubscriptions(email: string): Promise<ChatbotSubscription[]> {
+    const bots = await this.chatbots();
+    const found = await Promise.all(
+      bots.map(async (bot) => {
+        const query = new URLSearchParams({ bot_id: bot.id, variable_name: 'email', variable_value: email });
+        const res = await this.request<{ data?: { status: number }[] }>(
+          'GET',
+          `${bot.path}/contacts/getByVariable?${query}`,
+        ).catch(() => ({ data: [] }));
+        return (res.data ?? []).map((c) => ({
+          channel: bot.channel,
+          bot: bot.name,
+          active: c.status === CHATBOT_ACTIVE,
+        }));
+      }),
+    );
+    return found.flat();
+  }
+
+  private async chatbots() {
+    if (this.bots && this.now() - this.bots.at < BOTS_CACHE_MS) return this.bots.list;
+    // A channel the account doesn't use may answer with an error; that just means no bots.
+    const perChannel = await Promise.all(
+      CHATBOT_CHANNELS.map(async ({ name, path }) => {
+        const res = await this.request<{ data?: BotDto[] }>('GET', `${path}/bots`).catch(() => ({
+          data: [],
+        }));
+        return (res.data ?? []).map((b) => ({
+          channel: name,
+          path,
+          id: b.id,
+          name: b.channel_data?.name || b.channel_data?.username || b.id,
+        }));
+      }),
+    );
+    this.bots = { at: this.now(), list: perChannel.flat() };
+    return this.bots.list;
   }
 
   async crmAddComment(contactId: number, message: string): Promise<void> {

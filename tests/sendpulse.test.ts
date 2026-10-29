@@ -380,6 +380,29 @@ describe('SendPulseClient', () => {
       expect(new TextDecoder().decode(bytes)).toBe('пошта@приклад.укр');
     });
 
+    it('finds chatbot subscriptions across channels and caches the bots', async () => {
+      routes.push((url, init) => {
+        if (init.method !== 'GET') return undefined;
+        if (url === `${API_URL}/telegram/bots`)
+          return json({ success: true, data: [{ id: 'tg1', channel_data: { name: 'Shop bot' } }] });
+        if (url === `${API_URL}/viber/chatbots/bots`)
+          return json({ error_code: 403, message: 'Forbidden' }, 403);
+        if (url.endsWith('/bots')) return json({ success: true, data: [] });
+        if (url.startsWith(`${API_URL}/telegram/contacts/getByVariable?`)) {
+          expect(new URL(url).searchParams.get('variable_value')).toBe('a@test.com');
+          return json({ success: true, data: [{ status: 1 }] });
+        }
+        return undefined;
+      });
+
+      const c = client();
+      expect(await c.chatbotSubscriptions('a@test.com')).toEqual([
+        { channel: 'Telegram', bot: 'Shop bot', active: true },
+      ]);
+      await c.chatbotSubscriptions('a@test.com');
+      expect(requestsTo('/telegram/bots')).toHaveLength(1);
+    });
+
     describe('CRM', () => {
       const found = (list: unknown[]) => json({ success: true, data: { list, total: list.length } });
 

@@ -40,8 +40,8 @@ The extension does not read other emails, your contact list, or anything outside
   mailing list you selected. With **Ask for confirmation** on, SendPulse first emails each new contact
   a confirmation link from the sender address you chose;
 - when you use **Actions** — the contact's email address, to unsubscribe it from the selected list,
-  add it to or remove it from your blacklist, or look it up in and add it to SendPulse CRM (with the
-  name and phone shown in the panel);
+  add it to or remove it from your blacklist, look it up in and add it to SendPulse CRM (with the
+  name and phone shown in the panel), or check which of your SendPulse chatbots it is subscribed to;
 - when you click **Save email to CRM** — the email's subject, a link to it in Gmail and the text of
   the latest message (up to 1,500 characters), as a comment on the CRM contact;
 - when you click **Create task** — a reminder task with the person's name, the email's subject and

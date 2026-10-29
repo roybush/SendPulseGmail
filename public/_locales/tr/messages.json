@@ -301,5 +301,17 @@
   },
   "labelRemembered": {
     "message": "\"$1\" etiketi için hatırlanır"
+  },
+  "checkMessengers": {
+    "message": "Mesajlaşma kanallarını kontrol et"
+  },
+  "subscribed": {
+    "message": "abone"
+  },
+  "notSubscribed": {
+    "message": "abonelikten çıktı"
+  },
+  "noMessengers": {
+    "message": "Sohbet botlarınızın hiçbirine abone değil"
   }
 }

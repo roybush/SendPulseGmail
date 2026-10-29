@@ -402,5 +402,21 @@
   "labelRemembered": {
     "message": "Remembered for the label «$1»",
     "description": "$1 = Gmail label"
+  },
+  "checkMessengers": {
+    "message": "Check messengers",
+    "description": "Button"
+  },
+  "subscribed": {
+    "message": "subscribed",
+    "description": "Chatbot status"
+  },
+  "notSubscribed": {
+    "message": "unsubscribed",
+    "description": "Chatbot status"
+  },
+  "noMessengers": {
+    "message": "Not subscribed to any of your chatbots",
+    "description": "No chatbot subscriptions"
   }
 }

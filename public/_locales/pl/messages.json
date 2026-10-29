@@ -301,5 +301,17 @@
   },
   "labelRemembered": {
     "message": "Zapamiętywana dla etykiety „$1”"
+  },
+  "checkMessengers": {
+    "message": "Sprawdź komunikatory"
+  },
+  "subscribed": {
+    "message": "subskrybuje"
+  },
+  "notSubscribed": {
+    "message": "wypisany"
+  },
+  "noMessengers": {
+    "message": "Nie subskrybuje żadnego z Twoich chatbotów"
   }
 }

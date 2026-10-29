@@ -301,5 +301,17 @@
   },
   "labelRemembered": {
     "message": "Lembrado para o marcador \"$1\""
+  },
+  "checkMessengers": {
+    "message": "Ver mensageiros"
+  },
+  "subscribed": {
+    "message": "inscrito"
+  },
+  "notSubscribed": {
+    "message": "descadastrado"
+  },
+  "noMessengers": {
+    "message": "Não está inscrito em nenhum dos seus chatbots"
   }
 }

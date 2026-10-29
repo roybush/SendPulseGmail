@@ -34,6 +34,7 @@ export function createRouter(client: SendPulseClient, app: AppInfo, prefs: KeyVa
     'contact.add': (p) => client.addContacts(p.bookId, p.contacts, p.optIn),
     'contact.remove': (p) => client.removeContacts(p.bookId, p.emails),
     'contact.update': (p) => client.updateVariables(p.bookId, p.email, p.variables),
+    'contact.chatbots': (p) => client.chatbotSubscriptions(p.email),
     'senders.list': () => client.listSenders(),
     'contact.stats': (p) => client.contactStats(p.email),
     'contact.unsubscribe': (p) => client.unsubscribe(p.bookId, [p.email]),
