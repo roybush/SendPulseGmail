@@ -298,5 +298,8 @@
   },
   "addUndone": {
     "message": "Wieder aus der Liste entfernt"
+  },
+  "labelRemembered": {
+    "message": "Wird für das Label „$1“ gemerkt"
   }
 }

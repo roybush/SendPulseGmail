@@ -298,5 +298,8 @@
   },
   "addUndone": {
     "message": "Retirés de la liste"
+  },
+  "labelRemembered": {
+    "message": "Mémorisée pour le libellé « $1 »"
   }
 }

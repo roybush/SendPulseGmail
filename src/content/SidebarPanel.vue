@@ -19,6 +19,7 @@ import type {
   CrmPipeline,
   EmailNote,
   Membership,
+  Prefs,
   Sender,
 } from '../shared/types';
 import SpSelect from '../shared/ui/SpSelect.vue';
@@ -36,6 +37,8 @@ const props = defineProps<{
   email?: EmailNote;
   /** Many people from checked threads: name fields stay folded until asked for. */
   bulk?: boolean;
+  /** Gmail label the people come from; its list choice is remembered. */
+  label?: string;
 }>();
 
 type Row = {
@@ -417,9 +420,9 @@ async function init() {
       optInSender.value = prefs.optInSender;
       loadSenders();
     }
-    bookId.value = allBooks.some((b) => b.id === prefs.lastBookId)
-      ? prefs.lastBookId!
-      : (allBooks[0]?.id ?? null);
+    labelBooks.value = prefs.labelBooks ?? {};
+    const preferred = (props.label && labelBooks.value[props.label]) || prefs.lastBookId;
+    bookId.value = allBooks.some((b) => b.id === preferred) ? preferred! : (allBooks[0]?.id ?? null);
 
     await forEachLimit(rows, LOOKUP_CONCURRENCY, async (row) => {
       await lookup(row);
@@ -463,11 +466,20 @@ onMounted(() => {
 });
 onUnmounted(() => window.removeEventListener('message', onSettingsMessage));
 
+const labelBooks = ref<Record<string, number>>({});
+
 watch(bookId, async (id, previous) => {
   mapping.value = {};
   bookVariables.value = [];
   if (id === null) return;
-  if (previous !== undefined && previous !== null) call('prefs.set', { lastBookId: id }).catch(() => {});
+  if (previous !== undefined && previous !== null) {
+    const update: Prefs = { lastBookId: id };
+    if (props.label) {
+      labelBooks.value = { ...labelBooks.value, [props.label]: id };
+      update.labelBooks = labelBooks.value;
+    }
+    call('prefs.set', update).catch(() => {});
+  }
   try {
     const variables = await call('books.variables', { bookId: id });
     // Ignore a slow response for a book the user has already switched away from.
@@ -741,6 +753,7 @@ async function add() {
           <p v-if="!books.length" class="sp-muted">{{ t('noListsPanel') }}</p>
           <template v-else>
             <SpSelect v-model="bookId" :label="t('mailingList')" :options="bookOptions" :disabled="busy" />
+            <p v-if="label" class="sp-muted sp-hint">{{ t('labelRemembered', label) }}</p>
             <button
               type="button"
               class="sp-btn sp-btn--text sp-btn--small sp-toggle"
@@ -953,6 +966,9 @@ async function add() {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 8px;
+}
+.sp-hint {
+  margin: -6px 12px 0;
 }
 .sp-notice {
   display: flex;

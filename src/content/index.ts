@@ -5,7 +5,13 @@ import type { EmailNote } from '../shared/types';
 import type { Participant } from './participants';
 import SidebarPanel from './SidebarPanel.vue';
 
-type PanelProps = { participants: Participant[]; subject?: string; email?: EmailNote; bulk?: boolean };
+type PanelProps = {
+  participants: Participant[];
+  subject?: string;
+  email?: EmailNote;
+  bulk?: boolean;
+  label?: string;
+};
 
 function mountPanel(props: PanelProps, width?: string) {
   const el = document.createElement('div');
@@ -27,7 +33,10 @@ connectGmail({
     thread.onClose(panel.unmount);
   },
   onBulkSelect(selection) {
-    const panel = mountPanel({ participants: selection.participants, bulk: true }, '400px');
+    const panel = mountPanel(
+      { participants: selection.participants, bulk: true, label: selection.label },
+      '400px',
+    );
     selection.showDrawer(panel.el, t('bulkTitle'), panel.unmount);
   },
 }).catch((e) => console.error('[SendPulse] failed to start in Gmail', e));

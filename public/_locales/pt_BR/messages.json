@@ -298,5 +298,8 @@
   },
   "addUndone": {
     "message": "Removidos da lista"
+  },
+  "labelRemembered": {
+    "message": "Lembrado para o marcador \"$1\""
   }
 }

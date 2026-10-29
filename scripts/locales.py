@@ -314,6 +314,10 @@ M = {
     'addUndone': ('After undo', 'Removed from the list again', 'Знову прибрано зі списку', 'Quitados de la lista',
         'Wieder aus der Liste entfernt', 'Removidos da lista', 'Usunięto z listy', 'Listeden tekrar çıkarıldı',
         'Retirés de la liste'),
+    # Label -> list memory
+    'labelRemembered': ('$1 = Gmail label', 'Remembered for the label «$1»', 'Запам’ятовується для ярлика «$1»',
+        'Se recuerda para la etiqueta «$1»', 'Wird für das Label „$1“ gemerkt', 'Lembrado para o marcador "$1"',
+        'Zapamiętywana dla etykiety „$1”', '"$1" etiketi için hatırlanır', "Mémorisée pour le libellé « $1 »"),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'
