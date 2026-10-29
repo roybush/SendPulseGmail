@@ -41,4 +41,28 @@ export const manifest = {
   ],
 } satisfies chrome.runtime.ManifestV3;
 
+// Firefox has no service workers for extensions (it runs the same module as an event page),
+// prefers `options_ui`, and needs an add-on ID plus a data collection declaration for AMO.
+const { service_worker, ...background } = manifest.background;
+const { options_page, ...shared } = manifest;
+
+export const firefoxManifest = {
+  ...shared,
+  background: { ...background, scripts: [service_worker] },
+  options_ui: { page: options_page, open_in_tab: true },
+  browser_specific_settings: {
+    gecko: {
+      id: 'sendpulse-gmail@roybush.github.io',
+      // 128: scripting.executeScript into the MAIN world (InboxSDK's pageWorld.js).
+      // 140: data_collection_permissions.
+      strict_min_version: '140.0',
+      data_collection_permissions: {
+        // Contact names, emails and signature details go to SendPulse; so do the user's API credentials.
+        required: ['personallyIdentifyingInfo' as const, 'authenticationInfo' as const],
+      },
+    },
+  },
+};
+
 export default defineManifest(manifest);
+export const firefox = defineManifest(firefoxManifest);
