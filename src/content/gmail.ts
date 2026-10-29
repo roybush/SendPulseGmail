@@ -13,6 +13,9 @@ const APP_ID = import.meta.env.VITE_INBOXSDK_APP_ID;
 
 export type OpenThread = {
   subject: string;
+  /** Link to the thread and the latest message's own text. */
+  url: string;
+  text: string;
   participants: Participant[];
   /** Puts `el` into Gmail's right sidebar for this thread. */
   showPanel(el: HTMLElement): void;
@@ -51,10 +54,14 @@ export async function connectGmail(handlers: GmailHandlers): Promise<void> {
         .filter((m) => m.isLoaded())
         .map(readHeaders),
     );
+    const threadId = await threadView.getThreadIDAsync().catch(() => '');
     if (threadView.destroyed) return;
 
     handlers.onThreadOpen({
       subject: threadView.getSubject(),
+      // Keep the account part (/mail/u/1/) so the link opens in the right mailbox.
+      url: threadId ? `${location.origin}${location.pathname}#all/${threadId}` : location.href,
+      text: headers.at(-1)?.signature?.text.trim() ?? '',
       participants: collectParticipants(headers, selfEmail),
       showPanel(el) {
         threadView.addSidebarContentPanel({

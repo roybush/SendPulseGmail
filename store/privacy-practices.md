@@ -40,7 +40,8 @@ Collected / handled:
       phone, company and job title from signatures.
 - [x] **Authentication information** — the user's SendPulse API key or client ID/secret.
 - [x] **Personal communications** — the open email is read locally to find participants and
-      signatures.
+      signatures; its subject, link and text are sent to the user's SendPulse CRM only when they
+      click "Save email to CRM".
 - [x] **Website content** — text and links of the open email (same as above).
 - [ ] Health information
 - [ ] Financial and payment information

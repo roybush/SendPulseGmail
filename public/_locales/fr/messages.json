@@ -259,5 +259,29 @@
   },
   "source": {
     "message": "Source (Gmail, date)"
+  },
+  "saveEmailToCrm": {
+    "message": "Enregistrer l'e-mail dans le CRM"
+  },
+  "emailSavedToCrm": {
+    "message": "E-mail enregistré dans le contact CRM $1"
+  },
+  "reminder": {
+    "message": "Rappel"
+  },
+  "inDays": {
+    "message": "dans $1 j"
+  },
+  "createReminder": {
+    "message": "Créer une tâche"
+  },
+  "followUpTask": {
+    "message": "Relancer : $1"
+  },
+  "reminderCreated": {
+    "message": "Tâche créée, échéance $1"
+  },
+  "noBoards": {
+    "message": "Il n'y a pas encore de tableau de tâches dans SendPulse CRM."
   }
 }

@@ -40,6 +40,9 @@ export function createRouter(client: SendPulseClient, app: AppInfo, prefs: KeyVa
     'crm.addContact': (p) => client.crmEnsureContact(p),
     'crm.pipelines': () => client.crmPipelines(),
     'crm.createDeal': (p) => client.crmCreateDeal(p),
+    'crm.addComment': (p) => client.crmAddComment(p.contactId, p.message),
+    'crm.boards': () => client.crmBoards(),
+    'crm.createTask': (p) => client.crmCreateTask(p),
   };
 
   return async function route(request: RpcRequest): Promise<RpcResponse> {

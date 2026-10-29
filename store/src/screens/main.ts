@@ -83,6 +83,10 @@ if (scene === 'connect') {
   createApp(SidebarPanel, {
     subject: 'Partnership proposal',
     bulk: scene === 'bulk',
+    email:
+      scene === 'bulk'
+        ? undefined
+        : { subject: 'Partnership proposal', url: 'https://mail.google.com/mail/u/0/#all/1', text: 'Hi!' },
     participants: [
       {
         email: 'bob@stonelabs.io',

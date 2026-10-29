@@ -259,5 +259,29 @@
   },
   "source": {
     "message": "Джерело (Gmail, дата)"
+  },
+  "saveEmailToCrm": {
+    "message": "Зберегти лист у CRM"
+  },
+  "emailSavedToCrm": {
+    "message": "Лист збережено в CRM-контакт $1"
+  },
+  "reminder": {
+    "message": "Нагадування"
+  },
+  "inDays": {
+    "message": "через $1 дн."
+  },
+  "createReminder": {
+    "message": "Створити задачу"
+  },
+  "followUpTask": {
+    "message": "Нагадати: $1"
+  },
+  "reminderCreated": {
+    "message": "Задачу створено, термін $1"
+  },
+  "noBoards": {
+    "message": "У SendPulse CRM ще немає дошок задач."
   }
 }

@@ -16,6 +16,7 @@ import type {
   BookVariable,
   ContactStats,
   CrmPipeline,
+  EmailNote,
   Membership,
   Sender,
 } from '../shared/types';
@@ -30,6 +31,8 @@ import { forEachLimit } from '../shared/limit';
 const props = defineProps<{
   participants: Participant[];
   subject?: string;
+  /** The open email; enables saving it and reminders to the CRM. */
+  email?: EmailNote;
   /** Many people from checked threads: name fields stay folded until asked for. */
   bulk?: boolean;
 }>();
@@ -227,6 +230,56 @@ function addToCrm(row: Row) {
     async () => {
       row.crmId = (await call('crm.addContact', crmInput(row))).id;
       return t('addedToCrm', row.email);
+    },
+    false,
+  );
+}
+
+async function ensureCrmContact(row: Row): Promise<number> {
+  row.crmId ||= (await call('crm.addContact', crmInput(row))).id;
+  return row.crmId;
+}
+
+const NOTE_TEXT_LIMIT = 1500;
+
+function saveEmailToCrm(row: Row) {
+  const email = props.email;
+  if (!email) return;
+  runAction(
+    `note:${row.email}`,
+    async () => {
+      const text =
+        email.text.length > NOTE_TEXT_LIMIT ? `${email.text.slice(0, NOTE_TEXT_LIMIT)}…` : email.text;
+      const message = [`✉ ${email.subject}`, email.url, text].filter(Boolean).join('\n\n');
+      await call('crm.addComment', { contactId: await ensureCrmContact(row), message });
+      return t('emailSavedToCrm', row.email);
+    },
+    false,
+  );
+}
+
+// Follow-up reminder: a CRM task in the first column of the first task board.
+const REMINDER_DAYS = [1, 3, 7, 14];
+const reminderDays = ref(3);
+const reminderOptions = REMINDER_DAYS.map((d) => ({ value: d, label: t('inDays', d) }));
+
+function createReminder(row: Row) {
+  const email = props.email;
+  runAction(
+    `task:${row.email}`,
+    async () => {
+      const board = (await call('crm.boards')).find((b) => b.steps.length);
+      if (!board) throw new Error(t('noBoards'));
+      const due = new Date(Date.now() + reminderDays.value * 86_400_000);
+      await call('crm.createTask', {
+        boardId: board.id,
+        stepId: board.steps[0].id,
+        name: t('followUpTask', row.displayName || row.email),
+        description: email ? `${email.subject}\n${email.url}` : undefined,
+        finishAt: due.toISOString(),
+        contactIds: [await ensureCrmContact(row)],
+      });
+      return t('reminderCreated', due.toLocaleDateString(uiLanguage()));
     },
     false,
   );
@@ -579,6 +632,32 @@ async function add() {
                   >
                     {{ t('addToCrm') }}
                   </button>
+                  <template v-if="email">
+                    <button
+                      type="button"
+                      class="sp-btn sp-btn--outlined sp-btn--small"
+                      :disabled="busy"
+                      @click="saveEmailToCrm(row)"
+                    >
+                      {{ t('saveEmailToCrm') }}
+                    </button>
+                    <div class="sp-reminder">
+                      <SpSelect
+                        v-model="reminderDays"
+                        :label="t('reminder')"
+                        :options="reminderOptions"
+                        :disabled="busy"
+                      />
+                      <button
+                        type="button"
+                        class="sp-btn sp-btn--outlined sp-btn--small"
+                        :disabled="busy"
+                        @click="createReminder(row)"
+                      >
+                        {{ t('createReminder') }}
+                      </button>
+                    </div>
+                  </template>
                 </div>
               </template>
             </div>
@@ -790,6 +869,14 @@ async function add() {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 8px;
+}
+.sp-reminder {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  margin-top: 6px;
 }
 .sp-crm {
   align-self: center;

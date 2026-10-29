@@ -9,11 +9,13 @@ import type {
   BookVariable,
   ContactStats,
   Credentials,
+  CrmBoard,
   CrmContactInput,
   CrmPipeline,
   Membership,
   NewContact,
   NewDeal,
+  NewTask,
   OptIn,
   Prefs,
   Sender,
@@ -38,6 +40,9 @@ export type Api = {
   'crm.addContact': { params: CrmContactInput; result: { id: number; created: boolean } };
   'crm.pipelines': { params: void; result: CrmPipeline[] };
   'crm.createDeal': { params: NewDeal; result: { id: number } };
+  'crm.addComment': { params: { contactId: number; message: string }; result: void };
+  'crm.boards': { params: void; result: CrmBoard[] };
+  'crm.createTask': { params: NewTask; result: { id: number } };
 };
 
 export type Method = keyof Api;

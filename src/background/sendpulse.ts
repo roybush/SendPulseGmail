@@ -9,11 +9,13 @@ import type {
   BookVariable,
   ContactStats,
   Credentials,
+  CrmBoard,
   CrmContactInput,
   CrmPipeline,
   Membership,
   NewContact,
   NewDeal,
+  NewTask,
   OptIn,
   Sender,
 } from '../shared/types';
@@ -248,11 +250,33 @@ export class SendPulseClient {
 
   async crmPipelines(): Promise<CrmPipeline[]> {
     const { data } = await this.request<CrmResponse<PipelineDto[]>>('GET', `${CRM}/pipelines`);
-    return data.map((p) => ({
-      id: p.id,
-      name: p.name,
-      steps: [...(p.steps ?? [])].sort((a, b) => a.order - b.order).map(({ id, name }) => ({ id, name })),
-    }));
+    return data.map(withOrderedSteps);
+  }
+
+  async crmAddComment(contactId: number, message: string): Promise<void> {
+    await this.request('POST', `${CRM}/contacts/${contactId}/comments`, { message });
+  }
+
+  async crmBoards(): Promise<CrmBoard[]> {
+    // The list comes double-wrapped: { success, data: { data: [...] } }.
+    const { data } = await this.request<CrmResponse<PipelineDto[] | { data: PipelineDto[] }>>(
+      'GET',
+      `${CRM}/boards`,
+    );
+    return (Array.isArray(data) ? data : data.data).map(withOrderedSteps);
+  }
+
+  async crmCreateTask(task: NewTask): Promise<{ id: number }> {
+    const { data } = await this.request<CrmResponse<{ id: number }>>('POST', `${CRM}/tasks`, {
+      boardId: task.boardId,
+      stepId: task.stepId,
+      priority: 1,
+      name: task.name,
+      description: task.description ?? null,
+      finishAt: task.finishAt,
+      connections: { contactIds: task.contactIds },
+    });
+    return { id: data.id };
   }
 
   /** Creates a deal and links its contacts, creating missing CRM contacts first. */
@@ -354,6 +378,15 @@ async function parse<T>(res: Response): Promise<T> {
 export function mask(secret: string): string {
   const prefix = secret.match(/^sp_[a-z]+_/i)?.[0] ?? '';
   return `${prefix}…${secret.slice(-5)}`;
+}
+
+/** Pipelines and task boards share a shape: columns ("steps") with an order. */
+function withOrderedSteps(p: PipelineDto) {
+  return {
+    id: p.id,
+    name: p.name,
+    steps: [...(p.steps ?? [])].sort((a, b) => a.order - b.order).map(({ id, name }) => ({ id, name })),
+  };
 }
 
 /** SendPulse has confirmation emails in these languages only; it calls Ukrainian "ua". */

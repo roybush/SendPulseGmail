@@ -259,5 +259,29 @@
   },
   "source": {
     "message": "Kaynak (Gmail, tarih)"
+  },
+  "saveEmailToCrm": {
+    "message": "E-postayı CRM'e kaydet"
+  },
+  "emailSavedToCrm": {
+    "message": "E-posta CRM kişisine kaydedildi: $1"
+  },
+  "reminder": {
+    "message": "Hatırlatma"
+  },
+  "inDays": {
+    "message": "$1 gün sonra"
+  },
+  "createReminder": {
+    "message": "Görev oluştur"
+  },
+  "followUpTask": {
+    "message": "Takip: $1"
+  },
+  "reminderCreated": {
+    "message": "Görev oluşturuldu, son tarih $1"
+  },
+  "noBoards": {
+    "message": "SendPulse CRM'de henüz görev panosu yok."
   }
 }

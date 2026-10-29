@@ -259,5 +259,29 @@
   },
   "source": {
     "message": "Quelle (Gmail, Datum)"
+  },
+  "saveEmailToCrm": {
+    "message": "E-Mail im CRM speichern"
+  },
+  "emailSavedToCrm": {
+    "message": "E-Mail beim CRM-Kontakt $1 gespeichert"
+  },
+  "reminder": {
+    "message": "Erinnerung"
+  },
+  "inDays": {
+    "message": "in $1 T."
+  },
+  "createReminder": {
+    "message": "Aufgabe anlegen"
+  },
+  "followUpTask": {
+    "message": "Nachfassen: $1"
+  },
+  "reminderCreated": {
+    "message": "Aufgabe angelegt, fällig am $1"
+  },
+  "noBoards": {
+    "message": "In SendPulse CRM gibt es noch keine Aufgabenboards."
   }
 }
