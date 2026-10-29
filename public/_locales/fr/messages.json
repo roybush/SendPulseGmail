@@ -376,5 +376,8 @@
   },
   "exportCsvTitle": {
     "message": "Télécharger les personnes cochées (ou toutes) en fichier CSV"
+  },
+  "working": {
+    "message": "En cours…"
   }
 }

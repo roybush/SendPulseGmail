@@ -376,5 +376,8 @@
   },
   "exportCsvTitle": {
     "message": "Descargar las personas marcadas (o todas) como archivo CSV"
+  },
+  "working": {
+    "message": "Procesando…"
   }
 }

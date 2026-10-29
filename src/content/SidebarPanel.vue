@@ -64,6 +64,8 @@ type Row = {
     actionsOpen: boolean;
     /** Chatbot subscriptions; null until checked on request. */
     chatbots: ChatbotSubscription[] | null;
+    /** Result of the last action on this person, shown right under them. */
+    feedback: { text: string; error: boolean } | null;
     /** undefined until checked, null if the CRM has no such contact */
     crmId: number | null | undefined;
   };
@@ -96,6 +98,7 @@ const rows = reactive<Row[]>(
     actionsOpen: false,
     crmId: undefined,
     chatbots: null,
+    feedback: null,
   })),
 );
 
@@ -179,10 +182,18 @@ async function lookup(row: Row) {
 const confirming = ref('');
 let confirmTimer: ReturnType<typeof setTimeout> | undefined;
 
-function confirmLabel(key: string, label: string) {
+/** Key of the action in progress, so its button can say so. */
+const running = ref('');
+
+function actionLabel(key: string, label: string) {
+  if (running.value === key) return t('working');
   return confirming.value === key ? t('confirmAgain') : label;
 }
 
+/**
+ * Person actions are keyed "<action>:<email>" and report under that person; the rest (deal, undo)
+ * report at the bottom of the panel.
+ */
 async function runAction(key: string, action: () => Promise<string>, needsConfirm = true) {
   if (needsConfirm && confirming.value !== key) {
     confirming.value = key;
@@ -190,16 +201,23 @@ async function runAction(key: string, action: () => Promise<string>, needsConfir
     confirmTimer = setTimeout(() => (confirming.value = ''), 4000);
     return;
   }
+  const row = rows.find((r) => key === `${key.split(':')[0]}:${r.email}`);
   confirming.value = '';
+  running.value = key;
   busy.value = true;
   error.value = '';
   notice.value = '';
+  if (row) row.feedback = null;
   try {
-    notice.value = await action();
+    const text = await action();
+    if (row) row.feedback = text ? { text, error: false } : null;
+    else notice.value = text;
   } catch (e) {
-    error.value = message(e);
+    if (row) row.feedback = { text: message(e), error: true };
+    else error.value = message(e);
   } finally {
     busy.value = false;
+    running.value = '';
   }
 }
 
@@ -773,7 +791,9 @@ async function add() {
                     :disabled="busy"
                     @click="enrichRow(row)"
                   >
-                    {{ t('fillFrom', PROVIDER_NAMES[enrichment.provider]) }}
+                    {{
+                      actionLabel(`enrich:${row.email}`, t('fillFrom', PROVIDER_NAMES[enrichment.provider]))
+                    }}
                   </button>
                   <SpTextField
                     v-for="f in DETAIL_FIELDS"
@@ -810,7 +830,7 @@ async function add() {
                   :disabled="busy"
                   @click="updateContact(row)"
                 >
-                  {{ t('updateInList', book?.name ?? '') }}
+                  {{ actionLabel(`update:${row.email}`, t('updateInList', book?.name ?? '')) }}
                 </button>
               </div>
 
@@ -831,7 +851,7 @@ async function add() {
                     :disabled="busy"
                     @click="unsubscribe(row)"
                   >
-                    {{ confirmLabel(`unsub:${row.email}`, t('unsubscribeFrom', book?.name ?? '')) }}
+                    {{ actionLabel(`unsub:${row.email}`, t('unsubscribeFrom', book?.name ?? '')) }}
                   </button>
                   <button
                     type="button"
@@ -840,9 +860,10 @@ async function add() {
                     @click="toggleBlacklist(row)"
                   >
                     {{
-                      row.stats?.blacklisted
-                        ? t('removeFromBlacklist')
-                        : confirmLabel(`black:${row.email}`, t('addToBlacklist'))
+                      actionLabel(
+                        `black:${row.email}`,
+                        row.stats?.blacklisted ? t('removeFromBlacklist') : t('addToBlacklist'),
+                      )
                     }}
                   </button>
                   <span v-if="row.crmId" class="sp-muted sp-crm">✓ {{ t('inCrm') }}</span>
@@ -853,7 +874,7 @@ async function add() {
                     :disabled="busy"
                     @click="addToCrm(row)"
                   >
-                    {{ t('addToCrm') }}
+                    {{ actionLabel(`crm:${row.email}`, t('addToCrm')) }}
                   </button>
                   <template v-if="email">
                     <button
@@ -862,7 +883,7 @@ async function add() {
                       :disabled="busy"
                       @click="saveEmailToCrm(row)"
                     >
-                      {{ t('saveEmailToCrm') }}
+                      {{ actionLabel(`note:${row.email}`, t('saveEmailToCrm')) }}
                     </button>
                     <div class="sp-reminder">
                       <SpSelect
@@ -877,7 +898,7 @@ async function add() {
                         :disabled="busy"
                         @click="createReminder(row)"
                       >
-                        {{ t('createReminder') }}
+                        {{ actionLabel(`task:${row.email}`, t('createReminder')) }}
                       </button>
                     </div>
                   </template>
@@ -888,7 +909,7 @@ async function add() {
                     :disabled="busy"
                     @click="checkChatbots(row)"
                   >
-                    {{ t('checkMessengers') }}
+                    {{ actionLabel(`bots:${row.email}`, t('checkMessengers')) }}
                   </button>
                   <div v-else class="sp-bots">
                     <template v-if="row.chatbots.length">
@@ -914,7 +935,7 @@ async function add() {
                       :title="t('automationHint')"
                       @click="sendEvent(row)"
                     >
-                      {{ confirmLabel(`event:${row.email}`, t('runAutomation')) }}
+                      {{ actionLabel(`event:${row.email}`, t('runAutomation')) }}
                     </button>
                     <datalist :id="`sp-events-${row.email}`">
                       <option v-for="e in savedEvents" :key="e" :value="e" />
@@ -922,6 +943,14 @@ async function add() {
                   </div>
                 </div>
               </template>
+              <p
+                v-if="row.feedback"
+                class="sp-feedback"
+                :class="row.feedback.error ? 'sp-error' : 'sp-ok'"
+                :role="row.feedback.error ? 'alert' : 'status'"
+              >
+                {{ row.feedback.error ? '⚠' : '✓' }} {{ row.feedback.text }}
+              </p>
             </div>
           </li>
         </ul>
@@ -1004,7 +1033,7 @@ async function add() {
                 :disabled="busy || stepId === null || !selectedRows.length"
                 @click="createDeal"
               >
-                {{ t('createDeal') }}
+                {{ actionLabel('deal', t('createDeal')) }}
               </button>
             </template>
           </template>
@@ -1190,6 +1219,16 @@ async function add() {
 .sp-bots {
   width: 100%;
   font-size: 12px;
+}
+.sp-feedback {
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #e6f4ea;
+  font-size: 12px;
+}
+.sp-feedback.sp-error {
+  background: #fce8e6;
 }
 .sp-enrich {
   align-self: flex-start;

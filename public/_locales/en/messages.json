@@ -502,5 +502,9 @@
   "exportCsvTitle": {
     "message": "Download the checked people (or everyone) as a CSV file",
     "description": "Tooltip"
+  },
+  "working": {
+    "message": "Working…",
+    "description": "Button label while its action runs"
   }
 }

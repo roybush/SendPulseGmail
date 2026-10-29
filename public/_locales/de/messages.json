@@ -376,5 +376,8 @@
   },
   "exportCsvTitle": {
     "message": "Markierte Personen (oder alle) als CSV-Datei herunterladen"
+  },
+  "working": {
+    "message": "Wird ausgeführt…"
   }
 }
