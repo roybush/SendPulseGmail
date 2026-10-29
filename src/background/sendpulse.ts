@@ -283,6 +283,16 @@ export class SendPulseClient {
     return data.map(withOrderedSteps);
   }
 
+  /**
+   * Starts Automation 360 flows listening to this event. Variables the flow doesn't use are ignored.
+   * Same endpoint as SendPulse's own SDKs (send_event / startEventAutomation360).
+   */
+  async sendEvent(eventName: string, variables: Record<string, string>): Promise<void> {
+    const name = eventName.trim();
+    if (!name) throw new SendPulseError('Event name is required', 400);
+    await this.request('POST', `/events/name/${encodeURIComponent(name)}`, variables);
+  }
+
   /** Which of the account's chatbots this email is subscribed to, across all channels. */
   async chatbotSubscriptions(email: string): Promise<ChatbotSubscription[]> {
     const bots = await this.chatbots();

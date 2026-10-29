@@ -313,5 +313,17 @@
   },
   "noMessengers": {
     "message": "Não está inscrito em nenhum dos seus chatbots"
+  },
+  "automationEvent": {
+    "message": "Evento A360"
+  },
+  "runAutomation": {
+    "message": "Iniciar fluxo"
+  },
+  "automationHint": {
+    "message": "Envia email, phone, first_name, last_name, company, title, website e linkedin"
+  },
+  "eventSent": {
+    "message": "Evento \"$1\" enviado para $2"
   }
 }

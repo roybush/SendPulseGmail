@@ -380,6 +380,17 @@ describe('SendPulseClient', () => {
       expect(new TextDecoder().decode(bytes)).toBe('пошта@приклад.укр');
     });
 
+    it('sends an Automation 360 event by name', async () => {
+      on('POST', '/events/name/new%20lead', () => json({ result: true }));
+
+      await client().sendEvent(' new lead ', { email: 'a@test.com', first_name: 'Ann' });
+      expect(JSON.parse(requestsTo('/events/name/new%20lead')[0][1].body)).toEqual({
+        email: 'a@test.com',
+        first_name: 'Ann',
+      });
+      await expect(client().sendEvent(' ', {})).rejects.toThrow('Event name is required');
+    });
+
     it('finds chatbot subscriptions across channels and caches the bots', async () => {
       routes.push((url, init) => {
         if (init.method !== 'GET') return undefined;

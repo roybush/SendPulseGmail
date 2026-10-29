@@ -39,6 +39,7 @@ export type Api = {
     result: void;
   };
   'contact.chatbots': { params: { email: string }; result: ChatbotSubscription[] };
+  'automation.event': { params: { event: string; variables: Record<string, string> }; result: void };
   'senders.list': { params: void; result: Sender[] };
   'contact.stats': { params: { email: string }; result: ContactStats };
   'contact.unsubscribe': { params: { bookId: number; email: string }; result: void };

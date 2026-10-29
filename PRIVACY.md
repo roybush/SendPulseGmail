@@ -46,6 +46,8 @@ The extension does not read other emails, your contact list, or anything outside
   the latest message (up to 1,500 characters), as a comment on the CRM contact;
 - when you click **Create task** — a reminder task with the person's name, the email's subject and
   link, linked to the CRM contact;
+- when you click **Start flow** — the person's email and the details shown in the panel (phone,
+  name, company, job title, website, LinkedIn), as an Automation 360 event you named;
 - when you click **Create deal** — the deal name, pipeline and stage you chose, and the checked
   contacts (email, name, phone), to SendPulse CRM;
 - your credentials, to obtain an access token, and requests to list your mailing lists, their

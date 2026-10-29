@@ -10,6 +10,8 @@ defineProps<{
   autocomplete?: string;
   hint?: string;
   warning?: string;
+  /** id of a <datalist> with suggestions */
+  list?: string;
 }>();
 const model = defineModel<string>({ required: true });
 const id = useId();
@@ -26,6 +28,7 @@ const id = useId();
         :required="required"
         :disabled="disabled"
         :autocomplete="autocomplete ?? 'off'"
+        :list="list"
         placeholder=" "
         :aria-describedby="warning || hint ? `${id}-hint` : undefined"
       />
