@@ -583,6 +583,52 @@ describe('SendPulseClient', () => {
     });
   });
 
+  describe('several accounts', () => {
+    const KEY_B = 'sp_apikey_FAKE_key_88888';
+
+    beforeEach(() => {
+      on('GET', '/addressbooks?limit=1', () => json([]));
+    });
+
+    it('remembers every account and switches between them', async () => {
+      const c = client();
+      await c.login(CREDS);
+      await c.login({ kind: 'apiKey', apiKey: KEY_B });
+
+      expect(await c.accounts()).toEqual([
+        { label: 'sp_id_…12345', method: 'oauth', active: false },
+        { label: 'sp_apikey_…88888', method: 'apiKey', active: true },
+      ]);
+
+      expect(await c.switchAccount('sp_id_…12345')).toEqual({
+        loggedIn: true,
+        method: 'oauth',
+        label: 'sp_id_…12345',
+      });
+      expect(await c.activeAccount()).toBe('sp_id_…12345');
+      expect(await tokens.get('token')).toBeUndefined();
+      await expect(c.switchAccount('nope')).rejects.toThrow('no longer connected');
+    });
+
+    it('logout moves to the next connected account', async () => {
+      const c = client();
+      await c.login(CREDS);
+      await c.login({ kind: 'apiKey', apiKey: KEY_B });
+
+      expect(await c.logout()).toEqual({ loggedIn: true, method: 'oauth', label: 'sp_id_…12345' });
+      expect(await c.logout()).toEqual({ loggedIn: false });
+      expect(await c.accounts()).toEqual([]);
+    });
+
+    it('treats credentials saved before multi-account support as the only account', async () => {
+      await credentials.set('credentials', { kind: 'apiKey', apiKey: KEY_B });
+
+      expect(await client().accounts()).toEqual([
+        { label: 'sp_apikey_…88888', method: 'apiKey', active: true },
+      ]);
+    });
+  });
+
   it('logout forgets credentials and token', async () => {
     const c = client();
     await c.login(CREDS);

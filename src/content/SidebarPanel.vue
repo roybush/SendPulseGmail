@@ -13,6 +13,7 @@ import {
 } from '../shared/fields';
 import { t, uiLanguage, type MessageKey } from '../shared/i18n';
 import type {
+  Account,
   AddressBook,
   BookVariable,
   ChatbotSubscription,
@@ -453,11 +454,35 @@ function statusText(row: Row): string {
   return prefix + t('inLists', names.join(', '));
 }
 
+const accounts = ref<Account[]>([]);
+const accountOptions = computed(() => accounts.value.map((a) => ({ value: a.label, label: a.label })));
+const activeAccount = computed(() => accounts.value.find((a) => a.active)?.label ?? null);
+
+async function switchAccount(label: string | null) {
+  if (!label || label === activeAccount.value) return;
+  busy.value = true;
+  try {
+    await call('auth.switch', { label });
+    // Everything below belongs to the previous account.
+    notice.value = '';
+    undo.value = null;
+    pipelines.value = null;
+    senders.value = null;
+    for (const row of rows) Object.assign(row, { stats: null, crmId: undefined, chatbots: null });
+    await init();
+  } catch (e) {
+    error.value = message(e);
+  } finally {
+    busy.value = false;
+  }
+}
+
 async function init() {
   error.value = '';
   try {
     loggedIn.value = (await call('auth.status')).loggedIn;
     if (!loggedIn.value) return;
+    accounts.value = await call('auth.accounts');
 
     const [allBooks, prefs] = await Promise.all([call('books.list'), call('prefs.get')]);
     books.value = allBooks;
@@ -628,6 +653,15 @@ async function add() {
       <p v-if="!rows.length" class="sp-muted">{{ t('noParticipants') }}</p>
 
       <template v-else>
+        <SpSelect
+          v-if="accounts.length > 1"
+          class="sp-account"
+          :model-value="activeAccount"
+          :label="t('account')"
+          :options="accountOptions"
+          :disabled="busy"
+          @update:model-value="switchAccount"
+        />
         <div v-if="bulk" class="sp-bulkbar">
           <span class="sp-muted">{{ t('selectedCount', selectedRows.length, rows.length) }}</span>
           <button type="button" class="sp-btn sp-btn--text sp-btn--small" @click="selectAll(true)">
@@ -1053,6 +1087,9 @@ async function add() {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 8px;
+}
+.sp-account {
+  margin: 4px 0 12px;
 }
 .sp-hint {
   margin: -6px 12px 0;

@@ -325,5 +325,17 @@
   },
   "eventSent": {
     "message": "$2 için \"$1\" olayı gönderildi"
+  },
+  "account": {
+    "message": "SendPulse hesabı"
+  },
+  "switchAccount": {
+    "message": "Geç"
+  },
+  "addAccount": {
+    "message": "Başka hesap ekle"
+  },
+  "cancel": {
+    "message": "İptal"
   }
 }

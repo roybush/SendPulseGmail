@@ -4,6 +4,7 @@
  * reach the Gmail page.
  */
 import type {
+  Account,
   AddressBook,
   AuthStatus,
   BookVariable,
@@ -29,6 +30,8 @@ export type Api = {
   'auth.status': { params: void; result: AuthStatus };
   'auth.login': { params: Credentials; result: AuthStatus };
   'auth.logout': { params: void; result: AuthStatus };
+  'auth.accounts': { params: void; result: Account[] };
+  'auth.switch': { params: { label: string }; result: AuthStatus };
   'books.list': { params: void; result: AddressBook[] };
   'books.variables': { params: { bookId: number }; result: BookVariable[] };
   'contact.find': { params: { email: string }; result: Membership[] };

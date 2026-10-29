@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
 import { call } from '../shared/messages';
-import type { AddressBook, AuthStatus, Credentials } from '../shared/types';
+import type { Account, AddressBook, AuthStatus, Credentials } from '../shared/types';
 import { t, uiLanguage } from '../shared/i18n';
 import SpTextField from '../shared/ui/SpTextField.vue';
 import '../shared/ui/buttons.css';
@@ -23,6 +23,9 @@ const apiKey = ref('');
 const clientId = ref('');
 const clientSecret = ref('');
 const books = ref<AddressBook[]>([]);
+const accounts = ref<Account[]>([]);
+/** Showing the connect form while already connected, to add another account. */
+const adding = ref(false);
 const busy = ref(false);
 const error = ref('');
 const root = ref<HTMLElement>();
@@ -47,6 +50,18 @@ async function loadBooks() {
   books.value = status.value?.loggedIn ? await call('books.list') : [];
 }
 
+async function refresh() {
+  accounts.value = await call('auth.accounts');
+  if (!embedded) await loadBooks();
+}
+
+const switchTo = (label: string) =>
+  run(async () => {
+    status.value = await call('auth.switch', { label });
+    notifyParent({ type: 'sendpulse:connected' });
+    await refresh();
+  });
+
 const connect = () =>
   run(async () => {
     const credentials: Credentials =
@@ -55,15 +70,16 @@ const connect = () =>
         : { kind: 'oauth', clientId: clientId.value, clientSecret: clientSecret.value };
     status.value = await call('auth.login', credentials);
     apiKey.value = clientSecret.value = '';
+    adding.value = false;
     notifyParent({ type: 'sendpulse:connected' });
-    if (!embedded) await loadBooks();
+    await refresh();
   });
 
 const disconnect = () =>
   run(async () => {
     status.value = await call('auth.logout');
-    books.value = [];
-    notifyParent({ type: 'sendpulse:disconnected' });
+    notifyParent({ type: status.value.loggedIn ? 'sendpulse:connected' : 'sendpulse:disconnected' });
+    await refresh();
   });
 
 // Let the Gmail panel size the iframe to its content.
@@ -76,7 +92,7 @@ onMounted(() => {
   run(async () => {
     version.value = await call('app.version');
     status.value = await call('auth.status');
-    if (!embedded) await loadBooks();
+    await refresh();
   });
 });
 onUnmounted(() => resizeObserver.disconnect());
@@ -91,7 +107,7 @@ onUnmounted(() => resizeObserver.disconnect());
 
     <p v-if="!status" class="muted">{{ t('loading') }}</p>
 
-    <section v-else-if="status.loggedIn" class="card">
+    <section v-else-if="status.loggedIn && !adding" class="card">
       <div class="row">
         <div>
           <div class="ok">● {{ t('connected') }}</div>
@@ -108,6 +124,23 @@ onUnmounted(() => resizeObserver.disconnect());
           {{ t('disconnect') }}
         </button>
       </div>
+
+      <ul v-if="accounts.length > 1" class="accounts">
+        <li v-for="a in accounts.filter((x) => !x.active)" :key="a.label">
+          <code>{{ a.label }}</code>
+          <button
+            type="button"
+            class="sp-btn sp-btn--text sp-btn--small"
+            :disabled="busy"
+            @click="switchTo(a.label)"
+          >
+            {{ t('switchAccount') }}
+          </button>
+        </li>
+      </ul>
+      <button type="button" class="sp-btn sp-btn--text sp-btn--small add-account" @click="adding = true">
+        + {{ t('addAccount') }}
+      </button>
 
       <template v-if="!embedded">
         <h2>{{ t('mailingLists') }}</h2>
@@ -166,6 +199,15 @@ onUnmounted(() => resizeObserver.disconnect());
 
       <button type="submit" class="sp-btn sp-btn--filled sp-btn--block" :disabled="busy">
         {{ busy ? t('connecting') : t('connect') }}
+      </button>
+      <button
+        v-if="adding"
+        type="button"
+        class="sp-btn sp-btn--text sp-btn--small"
+        :disabled="busy"
+        @click="adding = false"
+      >
+        {{ t('cancel') }}
       </button>
     </form>
 
@@ -287,6 +329,21 @@ form {
 form h2,
 form .tabs {
   margin-bottom: 0;
+}
+.accounts {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+.accounts li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-top: 1px solid var(--border);
+}
+.add-account {
+  margin: 8px 0 0 -12px;
 }
 .books {
   list-style: none;

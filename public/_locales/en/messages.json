@@ -434,5 +434,21 @@
   "eventSent": {
     "message": "Event «$1» sent for $2",
     "description": "$1 = event, $2 = email"
+  },
+  "account": {
+    "message": "SendPulse account",
+    "description": "Select label"
+  },
+  "switchAccount": {
+    "message": "Switch",
+    "description": "Button"
+  },
+  "addAccount": {
+    "message": "Add another account",
+    "description": "Button"
+  },
+  "cancel": {
+    "message": "Cancel",
+    "description": "Button"
   }
 }

@@ -346,6 +346,13 @@ M = {
     'eventSent': ('$1 = event, $2 = email', 'Event «$1» sent for $2', 'Подію «$1» надіслано для $2',
         'Evento «$1» enviado para $2', 'Ereignis „$1“ für $2 gesendet', 'Evento "$1" enviado para $2',
         'Wysłano zdarzenie „$1” dla $2', '$2 için "$1" olayı gönderildi', 'Événement « $1 » envoyé pour $2'),
+    # Several accounts
+    'account': ('Select label', 'SendPulse account', 'Акаунт SendPulse', 'Cuenta de SendPulse', 'SendPulse-Konto',
+        'Conta do SendPulse', 'Konto SendPulse', 'SendPulse hesabı', 'Compte SendPulse'),
+    'switchAccount': ('Button', 'Switch', 'Перейти', 'Cambiar', 'Wechseln', 'Trocar', 'Przełącz', 'Geç', 'Basculer'),
+    'addAccount': ('Button', 'Add another account', 'Додати ще акаунт', 'Añadir otra cuenta', 'Weiteres Konto hinzufügen',
+        'Adicionar outra conta', 'Dodaj kolejne konto', 'Başka hesap ekle', 'Ajouter un autre compte'),
+    'cancel': ('Button', 'Cancel', 'Скасувати', 'Cancelar', 'Abbrechen', 'Cancelar', 'Anuluj', 'İptal', 'Annuler'),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'

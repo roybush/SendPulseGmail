@@ -4,6 +4,7 @@
  */
 import type { KeyValueStore } from './storage';
 import type {
+  Account,
   AddressBook,
   AuthStatus,
   BookVariable,
@@ -23,7 +24,10 @@ import type {
 
 export const API_URL = 'https://api.sendpulse.com';
 
+/** The account requests go to. */
 const CREDENTIALS_KEY = 'credentials';
+/** Every connected account, so the user can switch without re-entering keys. */
+const ACCOUNTS_KEY = 'accounts';
 const TOKEN_KEY = 'token';
 // Refresh a bit before the real expiry so in-flight requests don't race it.
 const TOKEN_EXPIRY_MARGIN_MS = 60_000;
@@ -113,8 +117,7 @@ export class SendPulseClient {
       if (!apiKey) throw new SendPulseError('API key is required', 400);
       // Any cheap authenticated call proves the key works.
       await parse(await this.send('GET', '/addressbooks?limit=1', `Bearer ${apiKey}`));
-      await this.tokenStore.remove(TOKEN_KEY);
-      await this.credentialsStore.set(CREDENTIALS_KEY, { kind: 'apiKey', apiKey });
+      await this.activate({ kind: 'apiKey', apiKey });
       return this.status();
     }
 
@@ -127,25 +130,72 @@ export class SendPulseClient {
       throw new SendPulseError('Client ID and Client Secret are required', 400);
     }
     const token = await this.requestToken(clean);
-    await this.credentialsStore.set(CREDENTIALS_KEY, clean);
+    await this.activate(clean);
     await this.tokenStore.set(TOKEN_KEY, token);
     return this.status();
   }
 
+  /** Forgets the current account and switches to another connected one, if any. */
   async logout(): Promise<AuthStatus> {
+    const current = await this.credentials();
+    const rest = (await this.savedAccounts()).filter(
+      (c) => !current || accountLabel(c) !== accountLabel(current),
+    );
+    await this.credentialsStore.set(ACCOUNTS_KEY, rest);
+    if (rest.length) {
+      await this.activate(rest[0]);
+      return this.status();
+    }
     await this.credentialsStore.remove(CREDENTIALS_KEY);
     await this.tokenStore.remove(TOKEN_KEY);
     return { loggedIn: false };
   }
 
+  async accounts(): Promise<Account[]> {
+    const current = await this.credentials();
+    const active = current && accountLabel(current);
+    return (await this.savedAccounts()).map((c) => ({
+      label: accountLabel(c),
+      method: c.kind,
+      active: accountLabel(c) === active,
+    }));
+  }
+
+  async switchAccount(label: string): Promise<AuthStatus> {
+    const target = (await this.savedAccounts()).find((c) => accountLabel(c) === label);
+    if (!target) throw new SendPulseError('This account is no longer connected', 404);
+    await this.activate(target);
+    return this.status();
+  }
+
+  /** Label of the current account, to keep per-account settings apart. */
+  async activeAccount(): Promise<string | undefined> {
+    const current = await this.credentials();
+    return current && accountLabel(current);
+  }
+
+  private async savedAccounts(): Promise<Credentials[]> {
+    const saved = await this.credentialsStore.get<Credentials[]>(ACCOUNTS_KEY);
+    if (saved) return saved;
+    // Saved before multi-account support: the only account is the current one.
+    const current = await this.credentials();
+    return current ? [current] : [];
+  }
+
+  /** Makes `credentials` current and remembers them among the connected accounts. */
+  private async activate(credentials: Credentials): Promise<void> {
+    const label = accountLabel(credentials);
+    const others = (await this.savedAccounts()).filter((c) => accountLabel(c) !== label);
+    await this.credentialsStore.set(ACCOUNTS_KEY, [...others, credentials]);
+    await this.credentialsStore.set(CREDENTIALS_KEY, credentials);
+    await this.tokenStore.remove(TOKEN_KEY);
+    this.bots = undefined;
+  }
+
   async status(): Promise<AuthStatus> {
     const credentials = await this.credentials();
     if (!credentials) return { loggedIn: false };
-    return {
-      loggedIn: true,
-      method: credentials.kind,
-      label: mask(credentials.kind === 'apiKey' ? credentials.apiKey : credentials.clientId),
-    };
+    return { loggedIn: true, method: credentials.kind, label: accountLabel(credentials) };
   }
 
   async listAddressBooks(): Promise<AddressBook[]> {
@@ -486,6 +536,10 @@ export function confirmationLang(uiLang: string): string {
 /** btoa only takes Latin-1; addresses can have Unicode in them. */
 function base64(text: string): string {
   return btoa(String.fromCharCode(...new TextEncoder().encode(text)));
+}
+
+function accountLabel(credentials: Credentials): string {
+  return mask(credentials.kind === 'apiKey' ? credentials.apiKey : credentials.clientId);
 }
 
 function normalizeVariables(vars: MembershipDto['variables']): Record<string, string> {

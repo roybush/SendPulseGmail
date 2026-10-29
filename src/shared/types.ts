@@ -11,6 +11,13 @@ export type AuthStatus =
   | { loggedIn: false }
   | { loggedIn: true; method: Credentials['kind']; /** Masked key or client ID. */ label: string };
 
+/** A connected SendPulse account; `label` is the masked key or client ID and identifies it. */
+export type Account = {
+  label: string;
+  method: Credentials['kind'];
+  active: boolean;
+};
+
 export type AddressBook = {
   id: number;
   name: string;
