@@ -37,3 +37,8 @@ PLAYWRIGHT=/path/to/node_modules/playwright/index.mjs node store/src/render.mjs
 
 Дані на скриншотах вигадані; компоненти панелі й налаштувань — справжні з `src/`. Щоб перегенерувати
 лише деякі мови: `LANGS=uk,de node store/src/render.mjs`.
+
+## Інші магазини
+
+- Microsoft Edge Add-ons: [`EDGE.md`](EDGE.md) — той самий пакет.
+- Firefox (AMO): у гілці `roybush/firefox`.
