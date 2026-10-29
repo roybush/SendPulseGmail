@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
 import { call } from '../shared/messages';
-import type { Account, AddressBook, AuthStatus, Credentials } from '../shared/types';
+import { PROVIDER_ORIGINS } from '../background/enrichment';
+import type {
+  Account,
+  AddressBook,
+  AuthStatus,
+  Credentials,
+  EnrichmentProvider,
+  EnrichmentStatus,
+} from '../shared/types';
+import SpSelect from '../shared/ui/SpSelect.vue';
 import { t, uiLanguage } from '../shared/i18n';
 import SpTextField from '../shared/ui/SpTextField.vue';
 import '../shared/ui/buttons.css';
@@ -24,6 +33,37 @@ const clientId = ref('');
 const clientSecret = ref('');
 const books = ref<AddressBook[]>([]);
 const accounts = ref<Account[]>([]);
+// Optional enrichment provider (Hunter / Apollo) with the user's own key.
+const enrichment = ref<EnrichmentStatus>(null);
+const provider = ref<EnrichmentProvider>('hunter');
+const providerKey = ref('');
+const PROVIDERS: { value: EnrichmentProvider; label: string }[] = [
+  { value: 'hunter', label: 'Hunter' },
+  { value: 'apollo', label: 'Apollo' },
+];
+const providerName = (p: EnrichmentProvider) => PROVIDERS.find((x) => x.value === p)?.label ?? p;
+
+function saveEnrichment() {
+  // Permission prompts need the click's user gesture, so ask before any await.
+  const asked = chrome.permissions.request({ origins: [PROVIDER_ORIGINS[provider.value]] });
+  run(async () => {
+    if (!(await asked)) throw new Error(t('permissionDenied'));
+    enrichment.value = await call('enrich.configure', {
+      provider: provider.value,
+      apiKey: providerKey.value,
+    });
+    providerKey.value = '';
+  });
+}
+
+const removeEnrichment = () =>
+  run(async () => {
+    const current = enrichment.value;
+    await call('enrich.clear');
+    enrichment.value = null;
+    if (current) await chrome.permissions.remove({ origins: [PROVIDER_ORIGINS[current.provider]] });
+  });
+
 /** Showing the connect form while already connected, to add another account. */
 const adding = ref(false);
 const busy = ref(false);
@@ -52,6 +92,7 @@ async function loadBooks() {
 
 async function refresh() {
   accounts.value = await call('auth.accounts');
+  enrichment.value = await call('enrich.status');
   if (!embedded) await loadBooks();
 }
 
@@ -141,6 +182,29 @@ onUnmounted(() => resizeObserver.disconnect());
       <button type="button" class="sp-btn sp-btn--text sp-btn--small add-account" @click="adding = true">
         + {{ t('addAccount') }}
       </button>
+
+      <h2>{{ t('enrichment') }}</h2>
+      <div v-if="enrichment" class="row">
+        <div class="muted">
+          {{ providerName(enrichment.provider) }} <code>{{ enrichment.label }}</code>
+        </div>
+        <button
+          type="button"
+          class="sp-btn sp-btn--outlined sp-btn--small"
+          :disabled="busy"
+          @click="removeEnrichment"
+        >
+          {{ t('remove') }}
+        </button>
+      </div>
+      <form v-else class="enrich" @submit.prevent="saveEnrichment">
+        <p class="muted hint">{{ t('enrichmentHint') }}</p>
+        <SpSelect v-model="provider" :label="t('provider')" :options="PROVIDERS" />
+        <SpTextField v-model="providerKey" :label="t('providerKey')" type="password" required />
+        <button type="submit" class="sp-btn sp-btn--outlined sp-btn--small" :disabled="busy">
+          {{ t('save') }}
+        </button>
+      </form>
 
       <template v-if="!embedded">
         <h2>{{ t('mailingLists') }}</h2>
@@ -329,6 +393,12 @@ form {
 form h2,
 form .tabs {
   margin-bottom: 0;
+}
+.enrich {
+  margin-top: 8px;
+}
+.enrich .sp-btn {
+  align-self: flex-start;
 }
 .accounts {
   list-style: none;

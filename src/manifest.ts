@@ -33,6 +33,8 @@ export const manifest = {
   // `scripting` + Gmail host: InboxSDK injects its page-world script (pageWorld.js) into Gmail.
   permissions: ['storage', 'scripting'],
   host_permissions: ['https://api.sendpulse.com/*', 'https://mail.google.com/'],
+  // Asked for only when the user sets up enrichment with that provider.
+  optional_host_permissions: ['https://api.hunter.io/*', 'https://api.apollo.io/*'],
   // The settings page is embedded in the Gmail panel as an iframe so secrets never touch Gmail's DOM.
   web_accessible_resources: [
     { resources: ['icons/*', 'src/options/index.html'], matches: ['https://mail.google.com/*'] },

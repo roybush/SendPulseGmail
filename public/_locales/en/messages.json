@@ -450,5 +450,49 @@
   "cancel": {
     "message": "Cancel",
     "description": "Button"
+  },
+  "enrichment": {
+    "message": "Enrichment (optional)",
+    "description": "Settings heading"
+  },
+  "enrichmentHint": {
+    "message": "With your own Hunter or Apollo key, the panel can fill in company, job title and LinkedIn. The address is sent to that service only when you click the button.",
+    "description": "Settings"
+  },
+  "provider": {
+    "message": "Service",
+    "description": "Select label"
+  },
+  "providerKey": {
+    "message": "Service API key",
+    "description": "Field label"
+  },
+  "save": {
+    "message": "Save",
+    "description": "Button"
+  },
+  "remove": {
+    "message": "Remove",
+    "description": "Button"
+  },
+  "permissionDenied": {
+    "message": "Chrome did not allow access to this service.",
+    "description": "Chrome permission refused"
+  },
+  "fillFrom": {
+    "message": "Fill in from $1",
+    "description": "Button, $1 = Hunter or Apollo"
+  },
+  "fieldsFilled": {
+    "message": "Fields filled in: $1",
+    "description": "$1 = number of fields"
+  },
+  "nothingNew": {
+    "message": "Nothing new found",
+    "description": "Enrichment found only known data"
+  },
+  "nothingFound": {
+    "message": "The service knows nothing about this address",
+    "description": "Enrichment found nothing"
   }
 }

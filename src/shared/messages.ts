@@ -14,6 +14,9 @@ import type {
   CrmBoard,
   CrmContactInput,
   CrmPipeline,
+  EnrichedProfile,
+  EnrichmentProvider,
+  EnrichmentStatus,
   Membership,
   NewContact,
   NewDeal,
@@ -43,6 +46,10 @@ export type Api = {
   };
   'contact.chatbots': { params: { email: string }; result: ChatbotSubscription[] };
   'automation.event': { params: { event: string; variables: Record<string, string> }; result: void };
+  'enrich.status': { params: void; result: EnrichmentStatus };
+  'enrich.configure': { params: { provider: EnrichmentProvider; apiKey: string }; result: EnrichmentStatus };
+  'enrich.clear': { params: void; result: void };
+  'enrich.person': { params: { email: string }; result: EnrichedProfile | null };
   'senders.list': { params: void; result: Sender[] };
   'contact.stats': { params: { email: string }; result: ContactStats };
   'contact.unsubscribe': { params: { bookId: number; email: string }; result: void };

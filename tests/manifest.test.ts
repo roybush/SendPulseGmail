@@ -16,6 +16,10 @@ describe('manifest', () => {
   it('requests only the permissions we need', () => {
     expect(manifest.permissions).toEqual(['storage', 'scripting']);
     expect(manifest.host_permissions).toEqual(['https://api.sendpulse.com/*', 'https://mail.google.com/']);
+    expect(manifest.optional_host_permissions).toEqual([
+      'https://api.hunter.io/*',
+      'https://api.apollo.io/*',
+    ]);
   });
 
   it('exposes only icons and the settings page to Gmail', () => {

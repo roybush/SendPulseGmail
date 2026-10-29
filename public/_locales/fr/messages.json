@@ -337,5 +337,38 @@
   },
   "cancel": {
     "message": "Annuler"
+  },
+  "enrichment": {
+    "message": "Enrichissement (facultatif)"
+  },
+  "enrichmentHint": {
+    "message": "Avec votre propre clé Hunter ou Apollo, le panneau peut compléter l'entreprise, le poste et LinkedIn. L'adresse n'est envoyée à ce service que lorsque vous cliquez sur le bouton."
+  },
+  "provider": {
+    "message": "Service"
+  },
+  "providerKey": {
+    "message": "Clé API du service"
+  },
+  "save": {
+    "message": "Enregistrer"
+  },
+  "remove": {
+    "message": "Retirer"
+  },
+  "permissionDenied": {
+    "message": "Chrome n'a pas autorisé l'accès à ce service."
+  },
+  "fillFrom": {
+    "message": "Compléter avec $1"
+  },
+  "fieldsFilled": {
+    "message": "Champs complétés : $1"
+  },
+  "nothingNew": {
+    "message": "Rien de nouveau trouvé"
+  },
+  "nothingFound": {
+    "message": "Le service ne connaît pas cette adresse"
   }
 }

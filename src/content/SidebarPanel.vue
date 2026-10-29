@@ -20,6 +20,7 @@ import type {
   ContactStats,
   CrmPipeline,
   EmailNote,
+  EnrichmentStatus,
   Membership,
   Prefs,
   Sender,
@@ -454,6 +455,31 @@ function statusText(row: Row): string {
   return prefix + t('inLists', names.join(', '));
 }
 
+const enrichment = ref<EnrichmentStatus>(null);
+const PROVIDER_NAMES = { hunter: 'Hunter', apollo: 'Apollo' } as const;
+
+/** Fills only empty fields: what the email and SendPulse say wins over a provider's guess. */
+function enrichRow(row: Row) {
+  runAction(
+    `enrich:${row.email}`,
+    async () => {
+      const found = await call('enrich.person', { email: row.email });
+      if (!found) return t('nothingFound');
+      let filled = 0;
+      for (const key of ['firstName', 'lastName', ...DETAIL_FIELDS] as const) {
+        const value = found[key];
+        if (value && !row[key].trim()) {
+          row[key] = value;
+          filled++;
+        }
+      }
+      if (!row.displayName) row.displayName = `${row.firstName} ${row.lastName}`.trim();
+      return filled ? t('fieldsFilled', filled) : t('nothingNew');
+    },
+    false,
+  );
+}
+
 const accounts = ref<Account[]>([]);
 const accountOptions = computed(() => accounts.value.map((a) => ({ value: a.label, label: a.label })));
 const activeAccount = computed(() => accounts.value.find((a) => a.active)?.label ?? null);
@@ -483,6 +509,7 @@ async function init() {
     loggedIn.value = (await call('auth.status')).loggedIn;
     if (!loggedIn.value) return;
     accounts.value = await call('auth.accounts');
+    enrichment.value = await call('enrich.status').catch(() => null);
 
     const [allBooks, prefs] = await Promise.all([call('books.list'), call('prefs.get')]);
     books.value = allBooks;
@@ -719,6 +746,15 @@ async function add() {
                   >
                 </button>
                 <template v-if="row.detailsOpen">
+                  <button
+                    v-if="enrichment"
+                    type="button"
+                    class="sp-btn sp-btn--outlined sp-btn--small sp-enrich"
+                    :disabled="busy"
+                    @click="enrichRow(row)"
+                  >
+                    {{ t('fillFrom', PROVIDER_NAMES[enrichment.provider]) }}
+                  </button>
                   <SpTextField
                     v-for="f in DETAIL_FIELDS"
                     :key="f"
@@ -1119,6 +1155,9 @@ async function add() {
 .sp-bots {
   width: 100%;
   font-size: 12px;
+}
+.sp-enrich {
+  align-self: flex-start;
 }
 .sp-reminder {
   display: grid;

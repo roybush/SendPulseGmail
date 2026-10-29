@@ -1,5 +1,6 @@
 import type { Method, Params, Result, RpcRequest, RpcResponse } from '../shared/messages';
 import type { Prefs } from '../shared/types';
+import type { Enricher } from './enrichment';
 import type { SendPulseClient } from './sendpulse';
 import type { KeyValueStore } from './storage';
 
@@ -14,7 +15,16 @@ export function isRpcRequest(message: unknown): message is RpcRequest {
   return typeof (message as RpcRequest | undefined)?.method === 'string';
 }
 
-export function createRouter(client: SendPulseClient, app: AppInfo, prefs: KeyValueStore) {
+export function createRouter(
+  client: SendPulseClient,
+  app: AppInfo,
+  prefs: KeyValueStore,
+  enricher?: Enricher,
+) {
+  const enrichment = () => {
+    if (!enricher) throw new Error('Enrichment is not available');
+    return enricher;
+  };
   // Lists, pipelines and field setups belong to one SendPulse account, so prefs are kept per account.
   // Prefs saved before multi-account support (under the bare key) seed every account's prefs.
   const prefsKey = async () => {
@@ -45,6 +55,10 @@ export function createRouter(client: SendPulseClient, app: AppInfo, prefs: KeyVa
     'contact.update': (p) => client.updateVariables(p.bookId, p.email, p.variables),
     'contact.chatbots': (p) => client.chatbotSubscriptions(p.email),
     'automation.event': (p) => client.sendEvent(p.event, p.variables),
+    'enrich.status': async () => enricher?.status() ?? null,
+    'enrich.configure': (p) => enrichment().configure(p.provider, p.apiKey),
+    'enrich.clear': () => enrichment().clear(),
+    'enrich.person': (p) => enrichment().enrich(p.email),
     'senders.list': () => client.listSenders(),
     'contact.stats': (p) => client.contactStats(p.email),
     'contact.unsubscribe': (p) => client.unsubscribe(p.bookId, [p.email]),

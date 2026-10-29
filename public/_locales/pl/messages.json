@@ -337,5 +337,38 @@
   },
   "cancel": {
     "message": "Anuluj"
+  },
+  "enrichment": {
+    "message": "Wzbogacanie (opcjonalnie)"
+  },
+  "enrichmentHint": {
+    "message": "Z własnym kluczem Hunter lub Apollo panel uzupełni firmę, stanowisko i LinkedIn. Adres trafia do tej usługi dopiero po kliknięciu przycisku."
+  },
+  "provider": {
+    "message": "Usługa"
+  },
+  "providerKey": {
+    "message": "Klucz API usługi"
+  },
+  "save": {
+    "message": "Zapisz"
+  },
+  "remove": {
+    "message": "Usuń"
+  },
+  "permissionDenied": {
+    "message": "Chrome nie zezwolił na dostęp do tej usługi."
+  },
+  "fillFrom": {
+    "message": "Uzupełnij z $1"
+  },
+  "fieldsFilled": {
+    "message": "Uzupełnione pola: $1"
+  },
+  "nothingNew": {
+    "message": "Nie znaleziono nic nowego"
+  },
+  "nothingFound": {
+    "message": "Usługa nic nie wie o tym adresie"
   }
 }
