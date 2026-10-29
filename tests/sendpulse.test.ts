@@ -281,6 +281,17 @@ describe('SendPulseClient', () => {
       });
     });
 
+    it('reads CRM-style error bodies', async () => {
+      on('GET', '/crm/v1/pipelines', () =>
+        json({ success: false, errors: { name: ['Name is required'] } }, 422),
+      );
+      await expect(client().crmPipelines()).rejects.toThrow('Name is required');
+
+      routes.pop();
+      on('GET', '/crm/v1/pipelines', () => json({ error: 'Forbidden' }, 403));
+      await expect(client().crmPipelines()).rejects.toThrow('Forbidden');
+    });
+
     it('reports non-JSON responses', async () => {
       on('GET', '/addressbooks/1/variables', () => new Response('<html>Bad gateway</html>', { status: 502 }));
 

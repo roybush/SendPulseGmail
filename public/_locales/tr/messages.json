@@ -379,5 +379,8 @@
   },
   "working": {
     "message": "İşleniyor…"
+  },
+  "crmForbidden": {
+    "message": "SendPulse CRM erişimini reddetti. Bu hesabı Client ID ve Secret ile bağlayın (Ayarlar → Başka hesap ekle) ve SendPulse'ta CRM'in etkin olduğunu kontrol edin."
   }
 }

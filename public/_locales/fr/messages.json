@@ -379,5 +379,8 @@
   },
   "working": {
     "message": "En cours…"
+  },
+  "crmForbidden": {
+    "message": "SendPulse a refusé l'accès au CRM. Connectez ce compte avec Client ID et Secret (Paramètres → Ajouter un autre compte) et vérifiez que le CRM est activé dans SendPulse."
   }
 }

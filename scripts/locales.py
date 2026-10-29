@@ -401,6 +401,15 @@ M = {
         'Télécharger les personnes cochées (ou toutes) en fichier CSV'),
     'working': ('Button label while its action runs', 'Working…', 'Виконується…', 'Procesando…', 'Wird ausgeführt…',
         'Processando…', 'Trwa…', 'İşleniyor…', 'En cours…'),
+    'crmForbidden': ('CRM API refused access (HTTP 403)',
+        'SendPulse refused access to CRM. Connect this account with Client ID and Secret (Settings → Add another account) and check that CRM is enabled in SendPulse.',
+        'SendPulse не дав доступу до CRM. Підключіть цей акаунт через Client ID і Secret (Налаштування → Додати ще акаунт) і перевірте, що CRM увімкнена в SendPulse.',
+        'SendPulse denegó el acceso al CRM. Conecta esta cuenta con Client ID y Secret (Ajustes → Añadir otra cuenta) y comprueba que el CRM está activado en SendPulse.',
+        'SendPulse hat den Zugriff auf das CRM verweigert. Verbinden Sie dieses Konto mit Client ID und Secret (Einstellungen → Weiteres Konto hinzufügen) und prüfen Sie, ob das CRM in SendPulse aktiviert ist.',
+        'O SendPulse negou acesso ao CRM. Conecte esta conta com Client ID e Secret (Configurações → Adicionar outra conta) e verifique se o CRM está ativado no SendPulse.',
+        'SendPulse odmówił dostępu do CRM. Połącz to konto przez Client ID i Secret (Ustawienia → Dodaj kolejne konto) i sprawdź, czy CRM jest włączony w SendPulse.',
+        "SendPulse CRM erişimini reddetti. Bu hesabı Client ID ve Secret ile bağlayın (Ayarlar → Başka hesap ekle) ve SendPulse'ta CRM'in etkin olduğunu kontrol edin.",
+        "SendPulse a refusé l'accès au CRM. Connectez ce compte avec Client ID et Secret (Paramètres → Ajouter un autre compte) et vérifiez que le CRM est activé dans SendPulse."),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'

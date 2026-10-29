@@ -182,6 +182,15 @@ async function lookup(row: Row) {
 const confirming = ref('');
 let confirmTimer: ReturnType<typeof setTimeout> | undefined;
 
+// Actions that talk to SendPulse CRM, Automation 360 or chatbots rather than mailing lists.
+const CRM_ACTIONS = new Set(['crm', 'note', 'task', 'deal', 'event', 'bots']);
+
+/** A bare "HTTP 403" from CRM-side APIs means the account or key has no access to them. */
+function explain(key: string, e: unknown): string {
+  const text = message(e);
+  return CRM_ACTIONS.has(key.split(':')[0]) && /HTTP 40[13]\b/.test(text) ? t('crmForbidden') : text;
+}
+
 /** Key of the action in progress, so its button can say so. */
 const running = ref('');
 
@@ -213,8 +222,9 @@ async function runAction(key: string, action: () => Promise<string>, needsConfir
     if (row) row.feedback = text ? { text, error: false } : null;
     else notice.value = text;
   } catch (e) {
-    if (row) row.feedback = { text: message(e), error: true };
-    else error.value = message(e);
+    const text = explain(key, e);
+    if (row) row.feedback = { text, error: true };
+    else error.value = text;
   } finally {
     busy.value = false;
     running.value = '';
