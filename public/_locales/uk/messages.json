@@ -313,5 +313,17 @@
   },
   "noMessengers": {
     "message": "Не підписаний на жоден із ваших чат-ботів"
+  },
+  "automationEvent": {
+    "message": "Подія A360"
+  },
+  "runAutomation": {
+    "message": "Запустити ланцюжок"
+  },
+  "automationHint": {
+    "message": "Надсилає email, phone, first_name, last_name, company, title, website і linkedin"
+  },
+  "eventSent": {
+    "message": "Подію «$1» надіслано для $2"
   }
 }

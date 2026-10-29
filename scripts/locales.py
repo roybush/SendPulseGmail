@@ -330,6 +330,22 @@ M = {
         'Hat keinen Ihrer Chatbots abonniert', 'Não está inscrito em nenhum dos seus chatbots',
         'Nie subskrybuje żadnego z Twoich chatbotów', 'Sohbet botlarınızın hiçbirine abone değil',
         "N'est abonné à aucun de vos chatbots"),
+    # Automation 360
+    'automationEvent': ('Field label: Automation 360 event name', 'A360 event', 'Подія A360', 'Evento A360',
+        'A360-Ereignis', 'Evento A360', 'Zdarzenie A360', 'A360 olayı', 'Événement A360'),
+    'runAutomation': ('Button: send the event', 'Start flow', 'Запустити ланцюжок', 'Iniciar flujo', 'Flow starten',
+        'Iniciar fluxo', 'Uruchom scenariusz', 'Akışı başlat', 'Lancer le scénario'),
+    'automationHint': ('Tooltip', 'Sends email, phone, first_name, last_name, company, title, website and linkedin',
+        'Надсилає email, phone, first_name, last_name, company, title, website і linkedin',
+        'Envía email, phone, first_name, last_name, company, title, website y linkedin',
+        'Sendet email, phone, first_name, last_name, company, title, website und linkedin',
+        'Envia email, phone, first_name, last_name, company, title, website e linkedin',
+        'Wysyła email, phone, first_name, last_name, company, title, website i linkedin',
+        'email, phone, first_name, last_name, company, title, website ve linkedin gönderir',
+        'Envoie email, phone, first_name, last_name, company, title, website et linkedin'),
+    'eventSent': ('$1 = event, $2 = email', 'Event «$1» sent for $2', 'Подію «$1» надіслано для $2',
+        'Evento «$1» enviado para $2', 'Ereignis „$1“ für $2 gesendet', 'Evento "$1" enviado para $2',
+        'Wysłano zdarzenie „$1” dla $2', '$2 için "$1" olayı gönderildi', 'Événement « $1 » envoyé pour $2'),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'

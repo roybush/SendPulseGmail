@@ -418,5 +418,21 @@
   "noMessengers": {
     "message": "Not subscribed to any of your chatbots",
     "description": "No chatbot subscriptions"
+  },
+  "automationEvent": {
+    "message": "A360 event",
+    "description": "Field label: Automation 360 event name"
+  },
+  "runAutomation": {
+    "message": "Start flow",
+    "description": "Button: send the event"
+  },
+  "automationHint": {
+    "message": "Sends email, phone, first_name, last_name, company, title, website and linkedin",
+    "description": "Tooltip"
+  },
+  "eventSent": {
+    "message": "Event «$1» sent for $2",
+    "description": "$1 = event, $2 = email"
   }
 }

@@ -266,6 +266,37 @@ function updateContact(row: Row) {
   );
 }
 
+// Automation 360: event names are the user's own, typed once and then offered again.
+const MAX_SAVED_EVENTS = 5;
+const eventName = ref('');
+const savedEvents = ref<string[]>([]);
+
+/** Data an Automation 360 flow can use; email identifies the contact. */
+function eventVariables(row: Row): Record<string, string> {
+  const vars: Record<string, string> = {
+    email: row.email,
+    phone: row.phone.replace(/[\s().-]/g, ''),
+    first_name: row.firstName,
+    last_name: row.lastName,
+    company: row.company,
+    title: row.title,
+    website: row.website,
+    linkedin: row.linkedin,
+  };
+  return Object.fromEntries(Object.entries(vars).filter(([, v]) => v.trim()));
+}
+
+function sendEvent(row: Row) {
+  const event = eventName.value.trim();
+  if (!event) return;
+  runAction(`event:${row.email}`, async () => {
+    await call('automation.event', { event, variables: eventVariables(row) });
+    savedEvents.value = [event, ...savedEvents.value.filter((e) => e !== event)].slice(0, MAX_SAVED_EVENTS);
+    call('prefs.set', { automationEvents: savedEvents.value }).catch(() => {});
+    return t('eventSent', event, row.email);
+  });
+}
+
 function checkChatbots(row: Row) {
   runAction(
     `bots:${row.email}`,
@@ -431,6 +462,8 @@ async function init() {
     const [allBooks, prefs] = await Promise.all([call('books.list'), call('prefs.get')]);
     books.value = allBooks;
     savedMappings.value = prefs.mappings ?? {};
+    savedEvents.value = prefs.automationEvents ?? [];
+    eventName.value = savedEvents.value[0] ?? '';
     if (prefs.optInSender) {
       optInSender.value = prefs.optInSender;
       loadSenders();
@@ -732,26 +765,6 @@ async function add() {
                   >
                     {{ t('addToCrm') }}
                   </button>
-                  <button
-                    v-if="!row.chatbots"
-                    type="button"
-                    class="sp-btn sp-btn--outlined sp-btn--small"
-                    :disabled="busy"
-                    @click="checkChatbots(row)"
-                  >
-                    {{ t('checkMessengers') }}
-                  </button>
-                  <div v-else class="sp-bots">
-                    <template v-if="row.chatbots.length">
-                      <div v-for="b in row.chatbots" :key="b.channel + b.bot">
-                        {{ b.channel }} · {{ b.bot }} —
-                        <span :class="b.active ? 'sp-ok' : 'sp-muted'">{{
-                          b.active ? t('subscribed') : t('notSubscribed')
-                        }}</span>
-                      </div>
-                    </template>
-                    <span v-else class="sp-muted">{{ t('noMessengers') }}</span>
-                  </div>
                   <template v-if="email">
                     <button
                       type="button"
@@ -778,6 +791,45 @@ async function add() {
                       </button>
                     </div>
                   </template>
+                  <button
+                    v-if="!row.chatbots"
+                    type="button"
+                    class="sp-btn sp-btn--outlined sp-btn--small"
+                    :disabled="busy"
+                    @click="checkChatbots(row)"
+                  >
+                    {{ t('checkMessengers') }}
+                  </button>
+                  <div v-else class="sp-bots">
+                    <template v-if="row.chatbots.length">
+                      <div v-for="b in row.chatbots" :key="b.channel + b.bot">
+                        {{ b.channel }} · {{ b.bot }} —
+                        <span :class="b.active ? 'sp-ok' : 'sp-muted'">{{
+                          b.active ? t('subscribed') : t('notSubscribed')
+                        }}</span>
+                      </div>
+                    </template>
+                    <span v-else class="sp-muted">{{ t('noMessengers') }}</span>
+                  </div>
+                  <div class="sp-reminder">
+                    <SpTextField
+                      v-model="eventName"
+                      :label="t('automationEvent')"
+                      :list="`sp-events-${row.email}`"
+                    />
+                    <button
+                      type="button"
+                      class="sp-btn sp-btn--outlined sp-btn--small"
+                      :disabled="busy || !eventName.trim()"
+                      :title="t('automationHint')"
+                      @click="sendEvent(row)"
+                    >
+                      {{ confirmLabel(`event:${row.email}`, t('runAutomation')) }}
+                    </button>
+                    <datalist :id="`sp-events-${row.email}`">
+                      <option v-for="e in savedEvents" :key="e" :value="e" />
+                    </datalist>
+                  </div>
                 </div>
               </template>
             </div>

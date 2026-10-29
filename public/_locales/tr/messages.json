@@ -313,5 +313,17 @@
   },
   "noMessengers": {
     "message": "Sohbet botlarınızın hiçbirine abone değil"
+  },
+  "automationEvent": {
+    "message": "A360 olayı"
+  },
+  "runAutomation": {
+    "message": "Akışı başlat"
+  },
+  "automationHint": {
+    "message": "email, phone, first_name, last_name, company, title, website ve linkedin gönderir"
+  },
+  "eventSent": {
+    "message": "$2 için \"$1\" olayı gönderildi"
   }
 }

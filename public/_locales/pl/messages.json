@@ -313,5 +313,17 @@
   },
   "noMessengers": {
     "message": "Nie subskrybuje żadnego z Twoich chatbotów"
+  },
+  "automationEvent": {
+    "message": "Zdarzenie A360"
+  },
+  "runAutomation": {
+    "message": "Uruchom scenariusz"
+  },
+  "automationHint": {
+    "message": "Wysyła email, phone, first_name, last_name, company, title, website i linkedin"
+  },
+  "eventSent": {
+    "message": "Wysłano zdarzenie „$1” dla $2"
   }
 }

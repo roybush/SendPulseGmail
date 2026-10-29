@@ -107,6 +107,8 @@ export type OptIn = {
 export type Prefs = {
   lastBookId?: number;
   lastPipelineId?: number;
+  /** Automation 360 event names used before, most recent first. */
+  automationEvents?: string[];
   /** Mailing list chosen for each Gmail label, so bulk adds from a label go to the same list. */
   labelBooks?: Record<string, number>;
   /** Sender of confirmation emails; set = double opt-in is on. */

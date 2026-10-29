@@ -313,5 +313,17 @@
   },
   "noMessengers": {
     "message": "Hat keinen Ihrer Chatbots abonniert"
+  },
+  "automationEvent": {
+    "message": "A360-Ereignis"
+  },
+  "runAutomation": {
+    "message": "Flow starten"
+  },
+  "automationHint": {
+    "message": "Sendet email, phone, first_name, last_name, company, title, website und linkedin"
+  },
+  "eventSent": {
+    "message": "Ereignis „$1“ für $2 gesendet"
   }
 }
