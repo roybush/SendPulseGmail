@@ -47,8 +47,11 @@
 Задеклароване в маніфесті (`data_collection_permissions.required`), Firefox показує це при
 встановленні:
 
-- `personallyIdentifyingInfo` — імена, адреси й дані з підписів учасників листа йдуть у SendPulse;
-- `authenticationInfo` — API-ключ користувача йде в SendPulse для отримання токена.
+- `personallyIdentifyingInfo` — імена, адреси й дані з підписів учасників листа йдуть у SendPulse
+  (а якщо користувач додав свій ключ — адреса йде в Hunter чи Apollo за кліком «Дописати з …»);
+- `authenticationInfo` — API-ключ користувача йде в SendPulse для отримання токена;
+- `personalCommunications` — «Зберегти лист у CRM» надсилає тему, посилання й текст листа в CRM
+  SendPulse (лише за кліком).
 
 Не задекларовано: звіти про внутрішні помилки InboxSDK (`api.inboxsdk.com`). Firefox дозволяє
 `technicalAndInteraction` лише як опціональну категорію, яку користувач може вимкнути, а InboxSDK
