@@ -241,5 +241,23 @@
   },
   "edit": {
     "message": "Editar"
+  },
+  "doubleOptIn": {
+    "message": "Pedir confirmação (double opt-in)"
+  },
+  "doubleOptInHint": {
+    "message": "O SendPulse envia um link a cada novo contato; ele entra na lista após clicar."
+  },
+  "sender": {
+    "message": "Remetente"
+  },
+  "noSenders": {
+    "message": "Primeiro adicione e verifique um remetente no SendPulse (Configurações → Remetentes)."
+  },
+  "confirmationSent": {
+    "message": "E-mail de confirmação enviado para: $1"
+  },
+  "source": {
+    "message": "Origem (Gmail, data)"
   }
 }

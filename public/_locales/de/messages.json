@@ -241,5 +241,23 @@
   },
   "edit": {
     "message": "Bearbeiten"
+  },
+  "doubleOptIn": {
+    "message": "Bestätigung anfordern (Double-Opt-in)"
+  },
+  "doubleOptInHint": {
+    "message": "SendPulse schickt jedem neuen Kontakt einen Link; nach dem Klick ist er in der Liste."
+  },
+  "sender": {
+    "message": "Absender"
+  },
+  "noSenders": {
+    "message": "Fügen Sie zuerst in SendPulse eine Absenderadresse hinzu und bestätigen Sie sie (Einstellungen → Absender)."
+  },
+  "confirmationSent": {
+    "message": "Bestätigungs-E-Mail gesendet an: $1"
+  },
+  "source": {
+    "message": "Quelle (Gmail, Datum)"
   }
 }

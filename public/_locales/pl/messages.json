@@ -241,5 +241,23 @@
   },
   "edit": {
     "message": "Edytuj"
+  },
+  "doubleOptIn": {
+    "message": "Proś o potwierdzenie (double opt-in)"
+  },
+  "doubleOptInHint": {
+    "message": "SendPulse wyśle każdemu nowemu kontaktowi link; trafi na listę po kliknięciu."
+  },
+  "sender": {
+    "message": "Nadawca"
+  },
+  "noSenders": {
+    "message": "Najpierw dodaj i potwierdź adres nadawcy w SendPulse (Ustawienia → Nadawcy)."
+  },
+  "confirmationSent": {
+    "message": "Wysłano e-mail z potwierdzeniem: $1"
+  },
+  "source": {
+    "message": "Źródło (Gmail, data)"
   }
 }

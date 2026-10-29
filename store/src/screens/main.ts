@@ -52,6 +52,7 @@ const responses: Record<string, (params: any) => unknown> = {
     members[p.email]
       ? { sent: 14, opened: 9, clicked: 3, blacklisted: false }
       : { sent: 0, opened: 0, clicked: 0, blacklisted: false },
+  'senders.list': () => [{ name: 'Stone Labs', email: 'hello@stonelabs.io' }],
   'crm.findContact': (p) => (p.email === 'ann.lee@acme.com' ? 501 : null),
   'crm.pipelines': () => [
     {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { detectFieldMapping, fromVariables, toVariables } from '../src/shared/fields';
+import { detectFieldMapping, fromVariables, sourceLabel, toVariables } from '../src/shared/fields';
 
 const vars = (...names: string[]) => names.map((name) => ({ name }));
 const ann = { firstName: 'Ann', lastName: 'Lee' };
@@ -86,5 +86,21 @@ describe('fromVariables', () => {
 
   it('returns empty names when nothing matches', () => {
     expect(fromVariables({ city: 'Kyiv' })).toEqual({ firstName: '', lastName: '' });
+  });
+});
+
+describe('source', () => {
+  it('detects a source variable and labels it with the date', () => {
+    expect(detectFieldMapping([{ name: 'Джерело' }]).source).toBe('Джерело');
+    expect(sourceLabel(new Date('2026-10-29T12:00:00Z'))).toBe('Gmail, 2026-10-29');
+  });
+
+  it('saves the source only when mapped', () => {
+    const profile = { firstName: 'Ann', lastName: '' };
+    expect(toVariables(profile, { first: 'firstName', source: 'source' }, 'Gmail, 2026-10-29')).toEqual({
+      firstName: 'Ann',
+      source: 'Gmail, 2026-10-29',
+    });
+    expect(toVariables(profile, { first: 'firstName' }, 'Gmail, 2026-10-29')).toEqual({ firstName: 'Ann' });
   });
 });
