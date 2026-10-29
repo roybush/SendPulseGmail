@@ -81,6 +81,22 @@ export function toVariables(
   return vars;
 }
 
+export type VariableChange = { name: string; from: string; to: string };
+
+/**
+ * Variables whose new value differs from what SendPulse has. Empty new values never erase data.
+ * Phone is left out: it's a system field SendPulse doesn't change through variables.
+ */
+export function variableChanges(
+  next: Record<string, string>,
+  current: Record<string, string>,
+): VariableChange[] {
+  return Object.entries(next)
+    .filter(([name]) => name !== PHONE_VARIABLE)
+    .map(([name, to]) => ({ name, from: (current[name] ?? '').trim(), to: to.trim() }))
+    .filter((c) => c.to && c.to !== c.from);
+}
+
 /** Best-effort reverse of toVariables, for prefilling from data already in SendPulse. */
 export function fromVariables(variables: Record<string, string>): Profile {
   const mapping = detectFieldMapping(Object.keys(variables).map((name) => ({ name })));

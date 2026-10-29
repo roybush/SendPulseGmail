@@ -283,5 +283,14 @@
   },
   "noBoards": {
     "message": "In SendPulse CRM gibt es noch keine Aufgabenboards."
+  },
+  "newerDetails": {
+    "message": "Diese E-Mail enthält neuere Angaben:"
+  },
+  "updateInList": {
+    "message": "In $1 aktualisieren"
+  },
+  "contactUpdated": {
+    "message": "$1 aktualisiert"
   }
 }

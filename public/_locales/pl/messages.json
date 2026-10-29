@@ -283,5 +283,14 @@
   },
   "noBoards": {
     "message": "W SendPulse CRM nie ma jeszcze tablic zadań."
+  },
+  "newerDetails": {
+    "message": "Ten e-mail zawiera nowsze dane:"
+  },
+  "updateInList": {
+    "message": "Zaktualizuj w $1"
+  },
+  "contactUpdated": {
+    "message": "$1 zaktualizowano"
   }
 }

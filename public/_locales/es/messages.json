@@ -283,5 +283,14 @@
   },
   "noBoards": {
     "message": "Aún no hay tableros de tareas en SendPulse CRM."
+  },
+  "newerDetails": {
+    "message": "Este correo tiene datos más recientes:"
+  },
+  "updateInList": {
+    "message": "Actualizar en $1"
+  },
+  "contactUpdated": {
+    "message": "$1 actualizado"
   }
 }

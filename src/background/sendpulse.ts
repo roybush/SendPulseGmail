@@ -181,6 +181,14 @@ export class SendPulseClient {
     });
   }
 
+  /** Overwrites the given variables of a contact already in the book (one email per call). */
+  async updateVariables(bookId: number, email: string, variables: Record<string, string>): Promise<void> {
+    await this.request('POST', `/addressbooks/${bookId}/emails/variable`, {
+      email,
+      variables: Object.entries(variables).map(([name, value]) => ({ name, value })),
+    });
+  }
+
   /** Active sender addresses; only these can send confirmation emails. */
   async listSenders(): Promise<Sender[]> {
     const rows = await this.request<{ name: string; email: string; status?: string }[]>('GET', '/senders');

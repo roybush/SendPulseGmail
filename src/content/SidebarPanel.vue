@@ -6,6 +6,7 @@ import {
   detectFieldMapping,
   fromVariables,
   sourceLabel,
+  variableChanges,
   toVariables,
   type DetailField,
   type FieldMapping,
@@ -230,6 +231,29 @@ function addToCrm(row: Row) {
     async () => {
       row.crmId = (await call('crm.addContact', crmInput(row))).id;
       return t('addedToCrm', row.email);
+    },
+    false,
+  );
+}
+
+/** What this email would change for a person already in the selected book. */
+function changes(row: Row) {
+  const current = row.memberships?.find((m) => m.bookId === bookId.value)?.variables;
+  if (!current) return [];
+  // No source label here: it records when a contact was added, not edited.
+  return variableChanges(toVariables(row, mapping.value), current);
+}
+
+function updateContact(row: Row) {
+  const id = bookId.value;
+  if (id === null) return;
+  const variables = Object.fromEntries(changes(row).map((c) => [c.name, c.to]));
+  runAction(
+    `update:${row.email}`,
+    async () => {
+      await call('contact.update', { bookId: id, email: row.email, variables });
+      await lookup(row);
+      return t('contactUpdated', row.email);
     },
     false,
   );
@@ -591,6 +615,24 @@ async function add() {
                   </SpTextField>
                 </template>
               </div>
+              <div v-if="changes(row).length" class="sp-changes">
+                <div class="sp-muted">{{ t('newerDetails') }}</div>
+                <ul>
+                  <li v-for="c in changes(row)" :key="c.name">
+                    <b>{{ c.name }}:</b>
+                    <s v-if="c.from">{{ c.from }}</s> → {{ c.to }}
+                  </li>
+                </ul>
+                <button
+                  type="button"
+                  class="sp-btn sp-btn--outlined sp-btn--small"
+                  :disabled="busy"
+                  @click="updateContact(row)"
+                >
+                  {{ t('updateInList', book?.name ?? '') }}
+                </button>
+              </div>
+
               <template v-if="row.memberships && !row.lookupError">
                 <button
                   type="button"
@@ -869,6 +911,22 @@ async function add() {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 8px;
+}
+.sp-changes {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f1f4f9;
+  font-size: 12px;
+}
+.sp-changes ul {
+  margin: 4px 0 8px;
+  padding: 0;
+  list-style: none;
+  word-break: break-word;
+}
+.sp-changes s {
+  color: #5f6368;
 }
 .sp-reminder {
   display: grid;

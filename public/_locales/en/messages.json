@@ -378,5 +378,17 @@
   "noBoards": {
     "message": "There are no task boards in SendPulse CRM yet.",
     "description": "No task boards in CRM"
+  },
+  "newerDetails": {
+    "message": "This email has newer details:",
+    "description": "Heading above changed variables"
+  },
+  "updateInList": {
+    "message": "Update in $1",
+    "description": "$1 = list name"
+  },
+  "contactUpdated": {
+    "message": "$1 updated",
+    "description": "$1 = email"
   }
 }
