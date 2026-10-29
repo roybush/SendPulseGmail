@@ -214,5 +214,89 @@
   "connect": {
     "message": "Connect",
     "description": "Button"
+  },
+  "actions": {
+    "message": "Actions",
+    "description": "Toggle for per-contact actions"
+  },
+  "stats": {
+    "message": "Sent $1 · Opened $2 · Clicked $3",
+    "description": "Campaign history: $1 sent, $2 opened, $3 clicked"
+  },
+  "blacklisted": {
+    "message": "Blacklisted",
+    "description": "Status badge"
+  },
+  "unsubscribeFrom": {
+    "message": "Unsubscribe from $1",
+    "description": "$1 = list name"
+  },
+  "unsubscribedFrom": {
+    "message": "$1 unsubscribed from $2",
+    "description": "$1 = email, $2 = list name"
+  },
+  "addToBlacklist": {
+    "message": "Add to blacklist",
+    "description": "Button"
+  },
+  "removeFromBlacklist": {
+    "message": "Remove from blacklist",
+    "description": "Button"
+  },
+  "blacklistAdded": {
+    "message": "$1 added to the blacklist",
+    "description": "$1 = email"
+  },
+  "blacklistRemoved": {
+    "message": "$1 removed from the blacklist",
+    "description": "$1 = email"
+  },
+  "confirmAgain": {
+    "message": "Click again to confirm",
+    "description": "Second click confirms a destructive action"
+  },
+  "addToCrm": {
+    "message": "Add to CRM",
+    "description": "Button"
+  },
+  "inCrm": {
+    "message": "In CRM",
+    "description": "Status"
+  },
+  "addedToCrm": {
+    "message": "$1 added to CRM",
+    "description": "$1 = email"
+  },
+  "crmDeal": {
+    "message": "CRM deal",
+    "description": "Toggle for the deal form"
+  },
+  "pipeline": {
+    "message": "Pipeline",
+    "description": "Field label"
+  },
+  "stage": {
+    "message": "Stage",
+    "description": "Field label: pipeline step"
+  },
+  "dealName": {
+    "message": "Deal name",
+    "description": "Field label"
+  },
+  "dealHint": {
+    "message": "Checked people (up to 5) are linked to the deal.",
+    "description": "Below the deal form"
+  },
+  "createDeal": {
+    "message": "Create deal",
+    "description": "Button"
+  },
+  "dealCreated": {
+    "message": "Deal \"$1\" created",
+    "description": "$1 = deal name"
+  },
+  "noPipelines": {
+    "message": "There are no pipelines in SendPulse CRM yet.",
+    "description": "Deal form, CRM is empty"
   }
 }

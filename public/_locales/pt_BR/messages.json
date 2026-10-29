@@ -160,5 +160,68 @@
   },
   "connect": {
     "message": "Conectar"
+  },
+  "actions": {
+    "message": "Ações"
+  },
+  "stats": {
+    "message": "Enviados $1 · Abertos $2 · Cliques $3"
+  },
+  "blacklisted": {
+    "message": "Na lista negra"
+  },
+  "unsubscribeFrom": {
+    "message": "Descadastrar de $1"
+  },
+  "unsubscribedFrom": {
+    "message": "$1 descadastrado de $2"
+  },
+  "addToBlacklist": {
+    "message": "Adicionar à lista negra"
+  },
+  "removeFromBlacklist": {
+    "message": "Remover da lista negra"
+  },
+  "blacklistAdded": {
+    "message": "$1 adicionado à lista negra"
+  },
+  "blacklistRemoved": {
+    "message": "$1 removido da lista negra"
+  },
+  "confirmAgain": {
+    "message": "Clique de novo para confirmar"
+  },
+  "addToCrm": {
+    "message": "Adicionar ao CRM"
+  },
+  "inCrm": {
+    "message": "No CRM"
+  },
+  "addedToCrm": {
+    "message": "$1 adicionado ao CRM"
+  },
+  "crmDeal": {
+    "message": "Negócio no CRM"
+  },
+  "pipeline": {
+    "message": "Funil"
+  },
+  "stage": {
+    "message": "Etapa"
+  },
+  "dealName": {
+    "message": "Nome do negócio"
+  },
+  "dealHint": {
+    "message": "As pessoas marcadas (até 5) são vinculadas ao negócio."
+  },
+  "createDeal": {
+    "message": "Criar negócio"
+  },
+  "dealCreated": {
+    "message": "Negócio \"$1\" criado"
+  },
+  "noPipelines": {
+    "message": "Ainda não há funis no SendPulse CRM."
   }
 }

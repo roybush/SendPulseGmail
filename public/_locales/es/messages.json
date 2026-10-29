@@ -160,5 +160,68 @@
   },
   "connect": {
     "message": "Conectar"
+  },
+  "actions": {
+    "message": "Acciones"
+  },
+  "stats": {
+    "message": "Enviados $1 · Abiertos $2 · Clics $3"
+  },
+  "blacklisted": {
+    "message": "En la lista negra"
+  },
+  "unsubscribeFrom": {
+    "message": "Dar de baja de $1"
+  },
+  "unsubscribedFrom": {
+    "message": "$1 dado de baja de $2"
+  },
+  "addToBlacklist": {
+    "message": "Añadir a la lista negra"
+  },
+  "removeFromBlacklist": {
+    "message": "Quitar de la lista negra"
+  },
+  "blacklistAdded": {
+    "message": "$1 añadido a la lista negra"
+  },
+  "blacklistRemoved": {
+    "message": "$1 quitado de la lista negra"
+  },
+  "confirmAgain": {
+    "message": "Haz clic otra vez para confirmar"
+  },
+  "addToCrm": {
+    "message": "Añadir al CRM"
+  },
+  "inCrm": {
+    "message": "En el CRM"
+  },
+  "addedToCrm": {
+    "message": "$1 añadido al CRM"
+  },
+  "crmDeal": {
+    "message": "Negocio en el CRM"
+  },
+  "pipeline": {
+    "message": "Embudo"
+  },
+  "stage": {
+    "message": "Etapa"
+  },
+  "dealName": {
+    "message": "Nombre del negocio"
+  },
+  "dealHint": {
+    "message": "Las personas marcadas (hasta 5) se vinculan al negocio."
+  },
+  "createDeal": {
+    "message": "Crear negocio"
+  },
+  "dealCreated": {
+    "message": "Negocio «$1» creado"
+  },
+  "noPipelines": {
+    "message": "Aún no hay embudos en SendPulse CRM."
   }
 }

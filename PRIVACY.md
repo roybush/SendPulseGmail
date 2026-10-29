@@ -1,9 +1,9 @@
 # Privacy Policy — SendPulse Gmail Extension
 
-_Last updated: October 27, 2026_
+_Last updated: October 29, 2026_
 
 SendPulse Gmail Extension ("the extension") is a Chrome extension that helps you add people from your
-Gmail conversations to your SendPulse mailing lists. This policy explains what data the extension
+Gmail conversations to your SendPulse account (mailing lists and CRM). This policy explains what data the extension
 handles and where it goes.
 
 ## Summary
@@ -34,11 +34,17 @@ The extension does not read other emails, your contact list, or anything outside
 **To SendPulse (`api.sendpulse.com`), under your account:**
 
 - when you open an email — the participants' email addresses, to check which of your mailing lists
-  they are already in;
+  they are already in and, for people already in SendPulse, their campaign statistics (sent, opened,
+  clicked) and blacklist status;
 - when you click **Add** — the email addresses, names and contact details you chose to save, to the
   mailing list you selected;
-- your credentials, to obtain an access token, and requests to list your mailing lists and their
-  variables.
+- when you use **Actions** — the contact's email address, to unsubscribe it from the selected list,
+  add it to or remove it from your blacklist, or look it up in and add it to SendPulse CRM (with the
+  name and phone shown in the panel);
+- when you click **Create deal** — the deal name, pipeline and stage you chose, and the checked
+  contacts (email, name, phone), to SendPulse CRM;
+- your credentials, to obtain an access token, and requests to list your mailing lists, their
+  variables and your CRM pipelines.
 
 How SendPulse processes this data is governed by
 [SendPulse's privacy policy](https://sendpulse.com/legal/pp) and your agreement with SendPulse.
@@ -62,7 +68,7 @@ its own.
 | --------------------------------------- | ------------------------ | ---------------------------------------- |
 | SendPulse API key or client ID + secret | `chrome.storage.local`   | you click Disconnect or remove extension |
 | Access token (1 hour)                   | `chrome.storage.session` | browser closes or you click Disconnect   |
-| Last selected mailing list, field setup | `chrome.storage.local`   | you remove the extension                 |
+| Last selected list and pipeline, fields | `chrome.storage.local`   | you remove the extension                 |
 
 ## Limited use
 

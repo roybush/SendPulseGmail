@@ -7,9 +7,13 @@ import type {
   AddressBook,
   AuthStatus,
   BookVariable,
+  ContactStats,
   Credentials,
+  CrmContactInput,
+  CrmPipeline,
   Membership,
   NewContact,
+  NewDeal,
 } from '../shared/types';
 
 export const API_URL = 'https://api.sendpulse.com';
@@ -21,6 +25,9 @@ const TOKEN_EXPIRY_MARGIN_MS = 60_000;
 const PAGE_SIZE = 100;
 // Returned by GET /emails/{email} when the address is in no address book.
 const NO_SUCH_EMAIL_CODE = 502;
+// CRM API: https://login.sendpulse.com/api/crm-service/v1/openapi/en
+const CRM = '/crm/v1';
+export const MAX_DEAL_CONTACTS = 5;
 
 type Token = { value: string; expiresAt: number };
 
@@ -46,6 +53,20 @@ type AddressBookDto = {
   all_email_qty: number;
   active_email_qty: number;
 };
+
+type CampaignStatsDto = {
+  statistic?: { sent?: number; open?: number; link?: number };
+  blacklist?: boolean;
+};
+
+type PipelineDto = {
+  id: number;
+  name: string;
+  steps?: { id: number; name: string; order: number }[];
+};
+
+/** CRM endpoints wrap every payload. */
+type CrmResponse<T> = { success: boolean; data: T };
 
 type MembershipDto = {
   book_id: number | string;
@@ -154,6 +175,84 @@ export class SendPulseClient {
     await this.request('POST', `/addressbooks/${bookId}/emails/unsubscribe`, { emails });
   }
 
+  /** Sent / opened / clicked across all campaigns, and whether the address is blacklisted. */
+  async contactStats(email: string): Promise<ContactStats> {
+    try {
+      const dto = await this.request<CampaignStatsDto>(
+        'GET',
+        `/emails/${encodeURIComponent(email)}/campaigns`,
+      );
+      return {
+        sent: Number(dto.statistic?.sent ?? 0),
+        opened: Number(dto.statistic?.open ?? 0),
+        clicked: Number(dto.statistic?.link ?? 0),
+        blacklisted: !!dto.blacklist,
+      };
+    } catch (e) {
+      if (e instanceof SendPulseError && (e.code === NO_SUCH_EMAIL_CODE || e.status === 404)) {
+        return { sent: 0, opened: 0, clicked: 0, blacklisted: false };
+      }
+      throw e;
+    }
+  }
+
+  /** The blacklist API takes a Base64-encoded, comma-separated list. */
+  async setBlacklisted(emails: string[], blacklisted: boolean): Promise<void> {
+    await this.request(blacklisted ? 'POST' : 'DELETE', '/blacklist', { emails: base64(emails.join(',')) });
+  }
+
+  /** ID of the CRM contact with this email, if there is one. */
+  async crmFindContact(email: string): Promise<number | null> {
+    const res = await this.request<CrmResponse<{ list: { id: number; emails?: { email: string }[] }[] }>>(
+      'POST',
+      `${CRM}/contacts/get-list-by-email`,
+      { email, isEmailFullSearch: true },
+    );
+    const wanted = email.toLowerCase();
+    const match =
+      res.data.list.find((c) => c.emails?.some((e) => e.email.toLowerCase() === wanted)) ?? res.data.list[0];
+    return match?.id ?? null;
+  }
+
+  /** Finds the CRM contact by email or creates it with the given name and phone. */
+  async crmEnsureContact(input: CrmContactInput): Promise<{ id: number; created: boolean }> {
+    const existing = await this.crmFindContact(input.email);
+    if (existing !== null) return { id: existing, created: false };
+
+    const { data } = await this.request<CrmResponse<{ id: number }>>('POST', `${CRM}/contacts/create`, {
+      firstName: input.firstName || null,
+      lastName: input.lastName || null,
+    });
+    await this.request('POST', `${CRM}/contacts/${data.id}/emails`, {
+      emails: [{ email: input.email, isMain: true }],
+    });
+    if (input.phone) await this.request('POST', `${CRM}/contacts/${data.id}/phones`, { phone: input.phone });
+    return { id: data.id, created: true };
+  }
+
+  async crmPipelines(): Promise<CrmPipeline[]> {
+    const { data } = await this.request<CrmResponse<PipelineDto[]>>('GET', `${CRM}/pipelines`);
+    return data.map((p) => ({
+      id: p.id,
+      name: p.name,
+      steps: [...(p.steps ?? [])].sort((a, b) => a.order - b.order).map(({ id, name }) => ({ id, name })),
+    }));
+  }
+
+  /** Creates a deal and links its contacts, creating missing CRM contacts first. */
+  async crmCreateDeal(deal: NewDeal): Promise<{ id: number }> {
+    const contacts = [];
+    for (const c of deal.contacts.slice(0, MAX_DEAL_CONTACTS))
+      contacts.push((await this.crmEnsureContact(c)).id);
+    const { data } = await this.request<CrmResponse<{ id: number }>>('POST', `${CRM}/deals`, {
+      pipelineId: deal.pipelineId,
+      stepId: deal.stepId,
+      name: deal.name,
+      contact: contacts,
+    });
+    return { id: data.id };
+  }
+
   private async request<T>(method: string, path: string, body?: unknown, retried = false): Promise<T> {
     const credentials = await this.credentials();
     if (!credentials) throw new SendPulseError('Not logged in to SendPulse', 401);
@@ -239,6 +338,11 @@ async function parse<T>(res: Response): Promise<T> {
 export function mask(secret: string): string {
   const prefix = secret.match(/^sp_[a-z]+_/i)?.[0] ?? '';
   return `${prefix}…${secret.slice(-5)}`;
+}
+
+/** btoa only takes Latin-1; addresses can have Unicode in them. */
+function base64(text: string): string {
+  return btoa(String.fromCharCode(...new TextEncoder().encode(text)));
 }
 
 function normalizeVariables(vars: MembershipDto['variables']): Record<string, string> {

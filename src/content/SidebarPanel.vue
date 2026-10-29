@@ -10,7 +10,7 @@ import {
   type FieldMapping,
 } from '../shared/fields';
 import { t, type MessageKey } from '../shared/i18n';
-import type { AddressBook, BookVariable, Membership } from '../shared/types';
+import type { AddressBook, BookVariable, ContactStats, CrmPipeline, Membership } from '../shared/types';
 import SpSelect from '../shared/ui/SpSelect.vue';
 import SpTextField from '../shared/ui/SpTextField.vue';
 import '../shared/ui/buttons.css';
@@ -18,7 +18,7 @@ import FieldMappingEditor from './FieldMappingEditor.vue';
 import type { Participant } from './participants';
 import { websiteFromEmail } from './signature';
 
-const props = defineProps<{ participants: Participant[] }>();
+const props = defineProps<{ participants: Participant[]; subject?: string }>();
 
 type Row = {
   email: string;
@@ -32,6 +32,11 @@ type Row = {
     /** null while loading */
     memberships: Membership[] | null;
     lookupError: string;
+    /** Campaign history; only fetched for people already in SendPulse. */
+    stats: ContactStats | null;
+    actionsOpen: boolean;
+    /** undefined until checked, null if the CRM has no such contact */
+    crmId: number | null | undefined;
   };
 
 const loggedIn = ref<boolean | null>(null);
@@ -57,6 +62,9 @@ const rows = reactive<Row[]>(
     detailsOpen: false,
     memberships: null,
     lookupError: '',
+    stats: null,
+    actionsOpen: false,
+    crmId: undefined,
   })),
 );
 
@@ -95,6 +103,136 @@ async function lookup(row: Row) {
     row.memberships = [];
     row.lookupError = message(e);
   }
+  // Statistics are a nice-to-have: a failure here shouldn't hide the contact.
+  if (row.memberships.length) row.stats = await call('contact.stats', { email: row.email }).catch(() => null);
+}
+
+/** Unsubscribing and blacklisting take a second click, so a stray click can't do it. */
+const confirming = ref('');
+let confirmTimer: ReturnType<typeof setTimeout> | undefined;
+
+function confirmLabel(key: string, label: string) {
+  return confirming.value === key ? t('confirmAgain') : label;
+}
+
+async function runAction(key: string, action: () => Promise<string>, needsConfirm = true) {
+  if (needsConfirm && confirming.value !== key) {
+    confirming.value = key;
+    clearTimeout(confirmTimer);
+    confirmTimer = setTimeout(() => (confirming.value = ''), 4000);
+    return;
+  }
+  confirming.value = '';
+  busy.value = true;
+  error.value = '';
+  notice.value = '';
+  try {
+    notice.value = await action();
+  } catch (e) {
+    error.value = message(e);
+  } finally {
+    busy.value = false;
+  }
+}
+
+function unsubscribe(row: Row) {
+  const id = bookId.value;
+  if (id === null) return;
+  runAction(`unsub:${row.email}`, async () => {
+    await call('contact.unsubscribe', { bookId: id, email: row.email });
+    await lookup(row);
+    return t('unsubscribedFrom', row.email, bookNames.value.get(id) ?? '');
+  });
+}
+
+function toggleBlacklist(row: Row) {
+  const blacklisted = !row.stats?.blacklisted;
+  runAction(
+    `black:${row.email}`,
+    async () => {
+      await call('contact.blacklist', { email: row.email, blacklisted });
+      await lookup(row);
+      return t(blacklisted ? 'blacklistAdded' : 'blacklistRemoved', row.email);
+    },
+    blacklisted,
+  );
+}
+
+function crmInput(row: Row) {
+  return {
+    email: row.email,
+    firstName: row.firstName,
+    lastName: row.lastName,
+    phone: row.phone || undefined,
+  };
+}
+
+function addToCrm(row: Row) {
+  runAction(
+    `crm:${row.email}`,
+    async () => {
+      row.crmId = (await call('crm.addContact', crmInput(row))).id;
+      return t('addedToCrm', row.email);
+    },
+    false,
+  );
+}
+
+async function openActions(row: Row) {
+  row.actionsOpen = !row.actionsOpen;
+  if (row.actionsOpen && row.crmId === undefined) {
+    row.crmId = await call('crm.findContact', { email: row.email }).catch(() => null);
+  }
+}
+
+// CRM deal for the checked people. Pipelines load the first time the form opens.
+const dealOpen = ref(false);
+const pipelines = ref<CrmPipeline[] | null>(null);
+const pipelineId = ref<number | null>(null);
+const stepId = ref<number | null>(null);
+const dealName = ref(props.subject ?? '');
+const pipeline = computed(() => pipelines.value?.find((p) => p.id === pipelineId.value));
+const pipelineOptions = computed(() => (pipelines.value ?? []).map((p) => ({ value: p.id, label: p.name })));
+const stepOptions = computed(() =>
+  (pipeline.value?.steps ?? []).map((s) => ({ value: s.id, label: s.name })),
+);
+
+async function toggleDeal() {
+  dealOpen.value = !dealOpen.value;
+  if (!dealOpen.value || pipelines.value) return;
+  try {
+    const [list, prefs] = await Promise.all([call('crm.pipelines'), call('prefs.get')]);
+    pipelines.value = list;
+    pipelineId.value = list.some((p) => p.id === prefs.lastPipelineId)
+      ? prefs.lastPipelineId!
+      : (list[0]?.id ?? null);
+  } catch (e) {
+    error.value = message(e);
+  }
+}
+
+watch(pipelineId, (id, previous) => {
+  stepId.value = pipeline.value?.steps[0]?.id ?? null;
+  if (id !== null && previous !== null) call('prefs.set', { lastPipelineId: id }).catch(() => {});
+});
+
+function createDeal() {
+  if (pipelineId.value === null || stepId.value === null || !selectedRows.value.length) return;
+  const name = dealName.value.trim() || selectedRows.value[0].email;
+  const deal = {
+    pipelineId: pipelineId.value,
+    stepId: stepId.value,
+    name,
+    contacts: selectedRows.value.map(crmInput),
+  };
+  runAction(
+    'deal',
+    async () => {
+      await call('crm.createDeal', deal);
+      return t('dealCreated', name);
+    },
+    false,
+  );
 }
 
 /** SendPulse rejects the whole contact if Phone isn't in international format. */
@@ -119,6 +257,11 @@ function findOnLinkedin(row: Row) {
 
 function inBook(row: Row) {
   return !!row.memberships?.some((m) => m.bookId === bookId.value);
+}
+
+function statsText(row: Row): string {
+  const s = row.stats;
+  return s && s.sent ? t('stats', s.sent, s.opened, s.clicked) : '';
 }
 
 function statusText(row: Row): string {
@@ -275,6 +418,10 @@ async function add() {
               <div class="sp-status" :class="{ 'sp-error': row.lookupError, 'sp-ok': inBook(row) }">
                 {{ statusText(row) }}
               </div>
+              <div v-if="statsText(row) || row.stats?.blacklisted" class="sp-status">
+                <span v-if="row.stats?.blacklisted" class="sp-badge">{{ t('blacklisted') }}</span>
+                {{ statsText(row) }}
+              </div>
 
               <div v-if="row.selected" class="sp-fields">
                 <div class="sp-names">
@@ -314,6 +461,49 @@ async function add() {
                   </SpTextField>
                 </template>
               </div>
+              <template v-if="row.memberships && !row.lookupError">
+                <button
+                  type="button"
+                  class="sp-btn sp-btn--text sp-btn--small sp-toggle sp-actions-toggle"
+                  :aria-expanded="row.actionsOpen"
+                  @click="openActions(row)"
+                >
+                  {{ row.actionsOpen ? '▾' : '▸' }} {{ t('actions') }}
+                </button>
+                <div v-if="row.actionsOpen" class="sp-actions">
+                  <button
+                    v-if="inBook(row)"
+                    type="button"
+                    class="sp-btn sp-btn--outlined sp-btn--small"
+                    :disabled="busy"
+                    @click="unsubscribe(row)"
+                  >
+                    {{ confirmLabel(`unsub:${row.email}`, t('unsubscribeFrom', book?.name ?? '')) }}
+                  </button>
+                  <button
+                    type="button"
+                    class="sp-btn sp-btn--outlined sp-btn--small"
+                    :disabled="busy"
+                    @click="toggleBlacklist(row)"
+                  >
+                    {{
+                      row.stats?.blacklisted
+                        ? t('removeFromBlacklist')
+                        : confirmLabel(`black:${row.email}`, t('addToBlacklist'))
+                    }}
+                  </button>
+                  <span v-if="row.crmId" class="sp-muted sp-crm">✓ {{ t('inCrm') }}</span>
+                  <button
+                    v-else-if="row.crmId === null"
+                    type="button"
+                    class="sp-btn sp-btn--outlined sp-btn--small"
+                    :disabled="busy"
+                    @click="addToCrm(row)"
+                  >
+                    {{ t('addToCrm') }}
+                  </button>
+                </div>
+              </template>
             </div>
           </li>
         </ul>
@@ -347,6 +537,36 @@ async function add() {
           >
             {{ addLabel }}
           </button>
+
+          <button
+            type="button"
+            class="sp-btn sp-btn--text sp-btn--small sp-toggle"
+            :aria-expanded="dealOpen"
+            @click="toggleDeal"
+          >
+            {{ dealOpen ? '▾' : '▸' }} {{ t('crmDeal') }}
+          </button>
+          <template v-if="dealOpen && pipelines">
+            <p v-if="!pipelines.length" class="sp-muted">{{ t('noPipelines') }}</p>
+            <template v-else>
+              <SpSelect
+                v-model="pipelineId"
+                :label="t('pipeline')"
+                :options="pipelineOptions"
+                :disabled="busy"
+              />
+              <SpSelect v-model="stepId" :label="t('stage')" :options="stepOptions" :disabled="busy" />
+              <SpTextField v-model="dealName" :label="t('dealName')" :hint="t('dealHint')" />
+              <button
+                type="button"
+                class="sp-btn sp-btn--outlined sp-btn--block"
+                :disabled="busy || stepId === null || !selectedRows.length"
+                @click="createDeal"
+              >
+                {{ t('createDeal') }}
+              </button>
+            </template>
+          </template>
         </div>
       </template>
 
@@ -440,6 +660,25 @@ async function add() {
 .sp-back,
 .sp-footer {
   margin: 12px 0 0 -12px;
+}
+.sp-actions-toggle {
+  margin-top: 4px;
+}
+.sp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.sp-crm {
+  align-self: center;
+}
+.sp-badge {
+  margin-right: 4px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #fce8e6;
+  color: #c5221f;
 }
 .sp-ok {
   color: #146c2e;

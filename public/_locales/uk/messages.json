@@ -160,5 +160,68 @@
   },
   "connect": {
     "message": "Підключити"
+  },
+  "actions": {
+    "message": "Дії"
+  },
+  "stats": {
+    "message": "Надіслано $1 · Відкрито $2 · Кліків $3"
+  },
+  "blacklisted": {
+    "message": "У чорному списку"
+  },
+  "unsubscribeFrom": {
+    "message": "Відписати від $1"
+  },
+  "unsubscribedFrom": {
+    "message": "$1 відписано від $2"
+  },
+  "addToBlacklist": {
+    "message": "Додати в чорний список"
+  },
+  "removeFromBlacklist": {
+    "message": "Прибрати з чорного списку"
+  },
+  "blacklistAdded": {
+    "message": "$1 додано в чорний список"
+  },
+  "blacklistRemoved": {
+    "message": "$1 прибрано з чорного списку"
+  },
+  "confirmAgain": {
+    "message": "Натисніть ще раз для підтвердження"
+  },
+  "addToCrm": {
+    "message": "Додати в CRM"
+  },
+  "inCrm": {
+    "message": "Є в CRM"
+  },
+  "addedToCrm": {
+    "message": "$1 додано в CRM"
+  },
+  "crmDeal": {
+    "message": "Угода в CRM"
+  },
+  "pipeline": {
+    "message": "Воронка"
+  },
+  "stage": {
+    "message": "Етап"
+  },
+  "dealName": {
+    "message": "Назва угоди"
+  },
+  "dealHint": {
+    "message": "Позначені люди (до 5) прив’язуються до угоди."
+  },
+  "createDeal": {
+    "message": "Створити угоду"
+  },
+  "dealCreated": {
+    "message": "Угоду «$1» створено"
+  },
+  "noPipelines": {
+    "message": "У SendPulse CRM ще немає воронок."
   }
 }

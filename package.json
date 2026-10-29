@@ -1,6 +1,6 @@
 {
   "name": "sendpulse-gmail",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Add people from your Gmail conversations to SendPulse mailing lists in one click",
   "private": true,
   "type": "module",

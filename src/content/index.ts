@@ -4,7 +4,7 @@ import SidebarPanel from './SidebarPanel.vue';
 
 onThreadOpen((thread) => {
   const el = document.createElement('div');
-  const app = createApp(SidebarPanel, { participants: thread.participants });
+  const app = createApp(SidebarPanel, { participants: thread.participants, subject: thread.subject });
   app.mount(el);
   thread.showPanel(el);
   thread.onClose(() => app.unmount());

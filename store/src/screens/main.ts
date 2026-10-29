@@ -48,6 +48,21 @@ const responses: Record<string, (params: any) => unknown> = {
   ],
   'contact.find': (p) => members[p.email] ?? [],
   'contact.add': () => undefined,
+  'contact.stats': (p) =>
+    members[p.email]
+      ? { sent: 14, opened: 9, clicked: 3, blacklisted: false }
+      : { sent: 0, opened: 0, clicked: 0, blacklisted: false },
+  'crm.findContact': (p) => (p.email === 'ann.lee@acme.com' ? 501 : null),
+  'crm.pipelines': () => [
+    {
+      id: 1,
+      name: 'Sales',
+      steps: [
+        { id: 10, name: 'New lead' },
+        { id: 11, name: 'Proposal' },
+      ],
+    },
+  ],
 };
 
 (window as any).chrome = {
@@ -65,6 +80,7 @@ if (scene === 'connect') {
   createApp(SettingsApp).mount('#popup');
 } else {
   createApp(SidebarPanel, {
+    subject: 'Partnership proposal',
     participants: [
       {
         email: 'bob@stonelabs.io',

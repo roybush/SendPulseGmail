@@ -32,6 +32,13 @@ export function createRouter(client: SendPulseClient, app: AppInfo, prefs: KeyVa
     'books.variables': (p) => client.listBookVariables(p.bookId),
     'contact.find': (p) => client.findContact(p.email),
     'contact.add': (p) => client.addContacts(p.bookId, p.contacts),
+    'contact.stats': (p) => client.contactStats(p.email),
+    'contact.unsubscribe': (p) => client.unsubscribe(p.bookId, [p.email]),
+    'contact.blacklist': (p) => client.setBlacklisted([p.email], p.blacklisted),
+    'crm.findContact': (p) => client.crmFindContact(p.email),
+    'crm.addContact': (p) => client.crmEnsureContact(p),
+    'crm.pipelines': () => client.crmPipelines(),
+    'crm.createDeal': (p) => client.crmCreateDeal(p),
   };
 
   return async function route(request: RpcRequest): Promise<RpcResponse> {

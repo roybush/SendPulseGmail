@@ -30,9 +30,40 @@ export type Membership = {
   variables: Record<string, string>;
 };
 
+/** Campaign history of one address across the account. */
+export type ContactStats = {
+  sent: number;
+  opened: number;
+  clicked: number;
+  blacklisted: boolean;
+};
+
+export type CrmPipeline = {
+  id: number;
+  name: string;
+  steps: { id: number; name: string }[];
+};
+
+/** What the CRM needs to create a contact. */
+export type CrmContactInput = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+};
+
+export type NewDeal = {
+  pipelineId: number;
+  stepId: number;
+  name: string;
+  /** SendPulse links at most 5 contacts to a deal. */
+  contacts: CrmContactInput[];
+};
+
 /** Small UI preferences, kept by the service worker. */
 export type Prefs = {
   lastBookId?: number;
+  lastPipelineId?: number;
   /** Per address book (by id): which variable receives which profile field. */
   mappings?: Record<string, FieldMapping>;
 };

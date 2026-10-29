@@ -280,6 +280,160 @@ describe('SendPulseClient', () => {
 
       await expect(client().listBookVariables(1)).rejects.toThrow('HTTP 502');
     });
+
+    it('reads campaign statistics of a contact', async () => {
+      on('GET', '/emails/a%40test.com/campaigns', () =>
+        json({ statistic: { sent: 12, open: 5, link: 2 }, blacklist: true, addressbooks: [] }),
+      );
+
+      expect(await client().contactStats('a@test.com')).toEqual({
+        sent: 12,
+        opened: 5,
+        clicked: 2,
+        blacklisted: true,
+      });
+    });
+
+    it('reports empty statistics for an unknown email', async () => {
+      on('GET', '/emails/x%40test.com/campaigns', () =>
+        json({ error_code: 502, message: 'No such email' }, 400),
+      );
+
+      expect(await client().contactStats('x@test.com')).toEqual({
+        sent: 0,
+        opened: 0,
+        clicked: 0,
+        blacklisted: false,
+      });
+    });
+
+    it('unsubscribes from one book', async () => {
+      on('POST', '/addressbooks/7/emails/unsubscribe', () => json({ result: true }));
+
+      await client().unsubscribe(7, ['a@test.com']);
+      const [, init] = requestsTo('/addressbooks/7/emails/unsubscribe')[0];
+      expect(JSON.parse(init.body as string)).toEqual({ emails: ['a@test.com'] });
+    });
+
+    it('sends blacklist changes as Base64', async () => {
+      on('POST', '/blacklist', () => json({ result: true }));
+      on('DELETE', '/blacklist', () => json({ result: true }));
+
+      await client().setBlacklisted(['a@test.com', 'b@test.com'], true);
+      await client().setBlacklisted(['пошта@приклад.укр'], false);
+
+      const [add, remove] = requestsTo('/blacklist');
+      expect(add[1].method).toBe('POST');
+      expect(atob(JSON.parse(add[1].body).emails)).toBe('a@test.com,b@test.com');
+      expect(remove[1].method).toBe('DELETE');
+      const bytes = Uint8Array.from(atob(JSON.parse(remove[1].body).emails), (c) => c.charCodeAt(0));
+      expect(new TextDecoder().decode(bytes)).toBe('пошта@приклад.укр');
+    });
+
+    describe('CRM', () => {
+      const found = (list: unknown[]) => json({ success: true, data: { list, total: list.length } });
+
+      it('finds a contact by exact email', async () => {
+        on('POST', '/crm/v1/contacts/get-list-by-email', () =>
+          found([
+            { id: 1, emails: [{ email: 'ann.lee@test.com' }] },
+            { id: 2, emails: [{ email: 'Ann@Test.com' }] },
+          ]),
+        );
+
+        expect(await client().crmFindContact('ann@test.com')).toBe(2);
+      });
+
+      it('returns null when the CRM has no such contact', async () => {
+        on('POST', '/crm/v1/contacts/get-list-by-email', () => found([]));
+
+        expect(await client().crmFindContact('ann@test.com')).toBeNull();
+      });
+
+      it('reuses an existing contact', async () => {
+        on('POST', '/crm/v1/contacts/get-list-by-email', () => found([{ id: 9, emails: [] }]));
+
+        expect(
+          await client().crmEnsureContact({ email: 'a@test.com', firstName: 'Ann', lastName: '' }),
+        ).toEqual({ id: 9, created: false });
+        expect(requestsTo('/crm/v1/contacts/create')).toHaveLength(0);
+      });
+
+      it('creates a contact with its email and phone', async () => {
+        on('POST', '/crm/v1/contacts/get-list-by-email', () => found([]));
+        on('POST', '/crm/v1/contacts/create', () => json({ success: true, data: { id: 42 } }));
+        on('POST', '/crm/v1/contacts/42/emails', () => json({ success: true, data: {} }));
+        on('POST', '/crm/v1/contacts/42/phones', () => json({ success: true, data: {} }));
+
+        expect(
+          await client().crmEnsureContact({
+            email: 'a@test.com',
+            firstName: 'Ann',
+            lastName: '',
+            phone: '+380501234567',
+          }),
+        ).toEqual({ id: 42, created: true });
+
+        const body = (path: string) => JSON.parse(requestsTo(path)[0][1].body);
+        expect(body('/crm/v1/contacts/create')).toEqual({ firstName: 'Ann', lastName: null });
+        expect(body('/crm/v1/contacts/42/emails')).toEqual({
+          emails: [{ email: 'a@test.com', isMain: true }],
+        });
+        expect(body('/crm/v1/contacts/42/phones')).toEqual({ phone: '+380501234567' });
+      });
+
+      it('lists pipelines with ordered steps', async () => {
+        on('GET', '/crm/v1/pipelines', () =>
+          json({
+            success: true,
+            data: [
+              {
+                id: 3,
+                name: 'Sales',
+                steps: [
+                  { id: 11, name: 'Won', order: 2 },
+                  { id: 10, name: 'New', order: 1 },
+                ],
+              },
+            ],
+          }),
+        );
+
+        expect(await client().crmPipelines()).toEqual([
+          {
+            id: 3,
+            name: 'Sales',
+            steps: [
+              { id: 10, name: 'New' },
+              { id: 11, name: 'Won' },
+            ],
+          },
+        ]);
+      });
+
+      it('creates a deal linked to at most five contacts', async () => {
+        on('POST', '/crm/v1/contacts/get-list-by-email', (init) =>
+          found([{ id: Number(JSON.parse(init.body as string).email[0]), emails: [] }]),
+        );
+        on('POST', '/crm/v1/deals', () => json({ success: true, data: { id: 77 } }));
+
+        const contacts = [1, 2, 3, 4, 5, 6].map((n) => ({
+          email: `${n}@test.com`,
+          firstName: '',
+          lastName: '',
+        }));
+        expect(
+          await client().crmCreateDeal({ pipelineId: 3, stepId: 10, name: 'Re: offer', contacts }),
+        ).toEqual({ id: 77 });
+
+        expect(JSON.parse(requestsTo('/crm/v1/deals')[0][1].body)).toEqual({
+          pipelineId: 3,
+          stepId: 10,
+          name: 'Re: offer',
+          contact: [1, 2, 3, 4, 5],
+        });
+      });
+    });
   });
 
   it('logout forgets credentials and token', async () => {

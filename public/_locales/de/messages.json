@@ -160,5 +160,68 @@
   },
   "connect": {
     "message": "Verbinden"
+  },
+  "actions": {
+    "message": "Aktionen"
+  },
+  "stats": {
+    "message": "Gesendet $1 · Geöffnet $2 · Klicks $3"
+  },
+  "blacklisted": {
+    "message": "Auf der Sperrliste"
+  },
+  "unsubscribeFrom": {
+    "message": "Von $1 abmelden"
+  },
+  "unsubscribedFrom": {
+    "message": "$1 von $2 abgemeldet"
+  },
+  "addToBlacklist": {
+    "message": "Auf die Sperrliste setzen"
+  },
+  "removeFromBlacklist": {
+    "message": "Von der Sperrliste entfernen"
+  },
+  "blacklistAdded": {
+    "message": "$1 auf die Sperrliste gesetzt"
+  },
+  "blacklistRemoved": {
+    "message": "$1 von der Sperrliste entfernt"
+  },
+  "confirmAgain": {
+    "message": "Zum Bestätigen erneut klicken"
+  },
+  "addToCrm": {
+    "message": "Zum CRM hinzufügen"
+  },
+  "inCrm": {
+    "message": "Im CRM"
+  },
+  "addedToCrm": {
+    "message": "$1 zum CRM hinzugefügt"
+  },
+  "crmDeal": {
+    "message": "Deal im CRM"
+  },
+  "pipeline": {
+    "message": "Pipeline"
+  },
+  "stage": {
+    "message": "Phase"
+  },
+  "dealName": {
+    "message": "Name des Deals"
+  },
+  "dealHint": {
+    "message": "Markierte Personen (bis zu 5) werden mit dem Deal verknüpft."
+  },
+  "createDeal": {
+    "message": "Deal anlegen"
+  },
+  "dealCreated": {
+    "message": "Deal „$1“ angelegt"
+  },
+  "noPipelines": {
+    "message": "In SendPulse CRM gibt es noch keine Pipelines."
   }
 }
