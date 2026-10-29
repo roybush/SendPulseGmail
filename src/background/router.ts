@@ -15,19 +15,28 @@ export function isRpcRequest(message: unknown): message is RpcRequest {
 }
 
 export function createRouter(client: SendPulseClient, app: AppInfo, prefs: KeyValueStore) {
-  const getPrefs = async (): Promise<Prefs> => (await prefs.get<Prefs>(PREFS_KEY)) ?? {};
+  // Lists, pipelines and field setups belong to one SendPulse account, so prefs are kept per account.
+  // Prefs saved before multi-account support (under the bare key) seed every account's prefs.
+  const prefsKey = async () => {
+    const account = await client.activeAccount();
+    return account ? `${PREFS_KEY}:${account}` : PREFS_KEY;
+  };
+  const getPrefs = async (): Promise<Prefs> =>
+    (await prefs.get<Prefs>(await prefsKey())) ?? (await prefs.get<Prefs>(PREFS_KEY)) ?? {};
 
   const handlers: Handlers = {
     'app.version': async () => app.version,
     'prefs.get': getPrefs,
     'prefs.set': async (p) => {
       const next = { ...(await getPrefs()), ...p };
-      await prefs.set(PREFS_KEY, next);
+      await prefs.set(await prefsKey(), next);
       return next;
     },
     'auth.status': () => client.status(),
     'auth.login': (p) => client.login(p),
     'auth.logout': () => client.logout(),
+    'auth.accounts': () => client.accounts(),
+    'auth.switch': (p) => client.switchAccount(p.label),
     'books.list': () => client.listAddressBooks(),
     'books.variables': (p) => client.listBookVariables(p.bookId),
     'contact.find': (p) => client.findContact(p.email),

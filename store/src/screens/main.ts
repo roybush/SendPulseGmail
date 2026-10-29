@@ -52,6 +52,13 @@ const responses: Record<string, (params: any) => unknown> = {
     members[p.email]
       ? { sent: 14, opened: 9, clicked: 3, blacklisted: false }
       : { sent: 0, opened: 0, clicked: 0, blacklisted: false },
+  'auth.accounts': () =>
+    scene === 'bulk'
+      ? [
+          { label: 'sp_apikey_…4f2a1', method: 'apiKey', active: true },
+          { label: 'sp_apikey_…9c3d7', method: 'apiKey', active: false },
+        ]
+      : [{ label: 'sp_apikey_…4f2a1', method: 'apiKey', active: true }],
   'senders.list': () => [{ name: 'Stone Labs', email: 'hello@stonelabs.io' }],
   'crm.findContact': (p) => (p.email === 'ann.lee@acme.com' ? 501 : null),
   'crm.pipelines': () => [

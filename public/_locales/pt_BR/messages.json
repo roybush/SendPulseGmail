@@ -325,5 +325,17 @@
   },
   "eventSent": {
     "message": "Evento \"$1\" enviado para $2"
+  },
+  "account": {
+    "message": "Conta do SendPulse"
+  },
+  "switchAccount": {
+    "message": "Trocar"
+  },
+  "addAccount": {
+    "message": "Adicionar outra conta"
+  },
+  "cancel": {
+    "message": "Cancelar"
   }
 }

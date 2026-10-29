@@ -123,7 +123,7 @@ Options page (Vue 3): логін SendPulse, налаштування, мапін
 - [x] «Ярлик → список»: масове додавання з ярлика Gmail пам’ятає свій список (без фонового автододавання — свідомо)
 - [x] Чат-боти SendPulse: «Перевірити месенджери» — Telegram, Viber, WhatsApp, Instagram, Messenger, Live chat, TikTok
 - [x] Automation 360: подія з листа (назва події вводиться й запам’ятовується; змінні email, phone, first_name, last_name, company, title, website, linkedin)
-- [ ] Кілька акаунтів SendPulse
+- [x] Кілька акаунтів SendPulse: «Додати ще акаунт» у налаштуваннях, перемикач у панелі; налаштування (списки, поля, воронки) окремо для кожного акаунта
 - [ ] Збагачення через Hunter / Apollo за ключем користувача
 - [ ] Експорт учасників у CSV
 - [ ] Edge Add-ons; Firefox (гілка `roybush/firefox`); Outlook Web

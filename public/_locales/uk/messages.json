@@ -325,5 +325,17 @@
   },
   "eventSent": {
     "message": "Подію «$1» надіслано для $2"
+  },
+  "account": {
+    "message": "Акаунт SendPulse"
+  },
+  "switchAccount": {
+    "message": "Перейти"
+  },
+  "addAccount": {
+    "message": "Додати ще акаунт"
+  },
+  "cancel": {
+    "message": "Скасувати"
   }
 }
