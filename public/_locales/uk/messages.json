@@ -223,5 +223,23 @@
   },
   "noPipelines": {
     "message": "У SendPulse CRM ще немає воронок."
+  },
+  "bulkButton": {
+    "message": "Додати відправників у SendPulse"
+  },
+  "bulkTitle": {
+    "message": "SendPulse: відправники позначених листів"
+  },
+  "selectedCount": {
+    "message": "Вибрано: $1 з $2"
+  },
+  "selectAll": {
+    "message": "Усі"
+  },
+  "selectNone": {
+    "message": "Жодного"
+  },
+  "edit": {
+    "message": "Редагувати"
   }
 }

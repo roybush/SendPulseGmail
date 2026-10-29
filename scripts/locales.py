@@ -227,6 +227,22 @@ M = {
         'In SendPulse CRM gibt es noch keine Pipelines.', 'Ainda não há funis no SendPulse CRM.',
         'W SendPulse CRM nie ma jeszcze lejków.', "SendPulse CRM'de henüz satış hunisi yok.",
         "Il n'y a pas encore de pipeline dans SendPulse CRM."),
+    # Bulk add from a Gmail list
+    'bulkButton': ('Gmail toolbar button above checked threads', 'Add senders to SendPulse',
+        'Додати відправників у SendPulse', 'Añadir remitentes a SendPulse', 'Absender zu SendPulse hinzufügen',
+        'Adicionar remetentes ao SendPulse', 'Dodaj nadawców do SendPulse', "Gönderenleri SendPulse'a ekle",
+        'Ajouter les expéditeurs à SendPulse'),
+    'bulkTitle': ('Drawer title', 'SendPulse: senders of the checked emails', 'SendPulse: відправники позначених листів',
+        'SendPulse: remitentes de los correos marcados', 'SendPulse: Absender der markierten E-Mails',
+        'SendPulse: remetentes dos e-mails marcados', 'SendPulse: nadawcy zaznaczonych wiadomości',
+        'SendPulse: işaretli e-postaların gönderenleri', 'SendPulse : expéditeurs des e-mails cochés'),
+    'selectedCount': ('$1 selected of $2 people', 'Selected: $1 of $2', 'Вибрано: $1 з $2', 'Seleccionados: $1 de $2',
+        'Ausgewählt: $1 von $2', 'Selecionados: $1 de $2', 'Wybrano: $1 z $2', 'Seçilen: $1 / $2',
+        'Sélectionnés : $1 sur $2'),
+    'selectAll': ('Button', 'All', 'Усі', 'Todos', 'Alle', 'Todos', 'Wszystkie', 'Tümü', 'Tous'),
+    'selectNone': ('Button', 'None', 'Жодного', 'Ninguno', 'Keine', 'Nenhum', 'Żadne', 'Hiçbiri', 'Aucun'),
+    'edit': ('Toggle for name fields in bulk mode', 'Edit', 'Редагувати', 'Editar', 'Bearbeiten', 'Editar',
+        'Edytuj', 'Düzenle', 'Modifier'),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'

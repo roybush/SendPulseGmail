@@ -223,5 +223,23 @@
   },
   "noPipelines": {
     "message": "SendPulse CRM'de henüz satış hunisi yok."
+  },
+  "bulkButton": {
+    "message": "Gönderenleri SendPulse'a ekle"
+  },
+  "bulkTitle": {
+    "message": "SendPulse: işaretli e-postaların gönderenleri"
+  },
+  "selectedCount": {
+    "message": "Seçilen: $1 / $2"
+  },
+  "selectAll": {
+    "message": "Tümü"
+  },
+  "selectNone": {
+    "message": "Hiçbiri"
+  },
+  "edit": {
+    "message": "Düzenle"
   }
 }

@@ -17,8 +17,14 @@ import '../shared/ui/buttons.css';
 import FieldMappingEditor from './FieldMappingEditor.vue';
 import type { Participant } from './participants';
 import { websiteFromEmail } from './signature';
+import { forEachLimit } from '../shared/limit';
 
-const props = defineProps<{ participants: Participant[]; subject?: string }>();
+const props = defineProps<{
+  participants: Participant[];
+  subject?: string;
+  /** Many people from checked threads: name fields stay folded until asked for. */
+  bulk?: boolean;
+}>();
 
 type Row = {
   email: string;
@@ -29,6 +35,8 @@ type Row = {
 } & Record<DetailField, string> & {
     selected: boolean;
     detailsOpen: boolean;
+    /** Bulk mode: show the name fields for this person. */
+    editing: boolean;
     /** null while loading */
     memberships: Membership[] | null;
     lookupError: string;
@@ -60,6 +68,7 @@ const rows = reactive<Row[]>(
     linkedin: p.details.linkedin ?? '',
     selected: false,
     detailsOpen: false,
+    editing: false,
     memberships: null,
     lookupError: '',
     stats: null,
@@ -75,7 +84,12 @@ const DETAIL_LABELS: Record<DetailField, MessageKey> = {
   website: 'website',
   linkedin: 'linkedin',
 };
+const LOOKUP_CONCURRENCY = 4;
 const busy = ref(false);
+
+function selectAll(selected: boolean) {
+  for (const row of rows) row.selected = selected && !row.automated;
+}
 const error = ref('');
 const notice = ref('');
 
@@ -286,23 +300,21 @@ async function init() {
       ? prefs.lastBookId!
       : (allBooks[0]?.id ?? null);
 
-    await Promise.all(
-      rows.map(async (row) => {
-        await lookup(row);
-        // Fill gaps with what SendPulse already knows; fresh data from the email wins.
-        if (row.memberships?.length) {
-          const known = fromVariables(row.memberships[0].variables);
-          if (!row.firstName && !row.lastName) {
-            row.firstName = known.firstName;
-            row.lastName = known.lastName;
-            row.displayName ||= `${row.firstName} ${row.lastName}`.trim();
-          }
-          for (const f of DETAIL_FIELDS) if (!row[f] && known[f]) row[f] = known[f];
+    await forEachLimit(rows, LOOKUP_CONCURRENCY, async (row) => {
+      await lookup(row);
+      // Fill gaps with what SendPulse already knows; fresh data from the email wins.
+      if (row.memberships?.length) {
+        const known = fromVariables(row.memberships[0].variables);
+        if (!row.firstName && !row.lastName) {
+          row.firstName = known.firstName;
+          row.lastName = known.lastName;
+          row.displayName ||= `${row.firstName} ${row.lastName}`.trim();
         }
-        // Preselect real people who aren't in SendPulse yet; never robots.
-        row.selected = !row.automated && !row.lookupError && !row.memberships?.length;
-      }),
-    );
+        for (const f of DETAIL_FIELDS) if (!row[f] && known[f]) row[f] = known[f];
+      }
+      // Preselect real people who aren't in SendPulse yet; never robots.
+      row.selected = !row.automated && !row.lookupError && !row.memberships?.length;
+    });
   } catch (e) {
     error.value = message(e);
   }
@@ -401,6 +413,15 @@ async function add() {
       <p v-if="!rows.length" class="sp-muted">{{ t('noParticipants') }}</p>
 
       <template v-else>
+        <div v-if="bulk" class="sp-bulkbar">
+          <span class="sp-muted">{{ t('selectedCount', selectedRows.length, rows.length) }}</span>
+          <button type="button" class="sp-btn sp-btn--text sp-btn--small" @click="selectAll(true)">
+            {{ t('selectAll') }}
+          </button>
+          <button type="button" class="sp-btn sp-btn--text sp-btn--small" @click="selectAll(false)">
+            {{ t('selectNone') }}
+          </button>
+        </div>
         <ul class="sp-people">
           <li v-for="row in rows" :key="row.email">
             <input
@@ -423,7 +444,16 @@ async function add() {
                 {{ statsText(row) }}
               </div>
 
-              <div v-if="row.selected" class="sp-fields">
+              <button
+                v-if="bulk && row.selected"
+                type="button"
+                class="sp-btn sp-btn--text sp-btn--small sp-toggle sp-actions-toggle"
+                :aria-expanded="row.editing"
+                @click="row.editing = !row.editing"
+              >
+                {{ row.editing ? '▾' : '▸' }} {{ t('edit') }}
+              </button>
+              <div v-if="row.selected && (!bulk || row.editing)" class="sp-fields">
                 <div class="sp-names">
                   <SpTextField v-model="row.firstName" :label="t('firstName')" />
                   <SpTextField v-model="row.lastName" :label="t('lastName')" />
@@ -660,6 +690,16 @@ async function add() {
 .sp-back,
 .sp-footer {
   margin: 12px 0 0 -12px;
+}
+.sp-bulkbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.sp-bulkbar > .sp-muted {
+  flex: 1;
 }
 .sp-actions-toggle {
   margin-top: 4px;
