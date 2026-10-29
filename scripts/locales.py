@@ -399,6 +399,8 @@ M = {
         'Pobierz zaznaczone osoby (lub wszystkie) jako plik CSV',
         'İşaretli kişileri (veya herkesi) CSV dosyası olarak indir',
         'Télécharger les personnes cochées (ou toutes) en fichier CSV'),
+    'working': ('Button label while its action runs', 'Working…', 'Виконується…', 'Procesando…', 'Wird ausgeführt…',
+        'Processando…', 'Trwa…', 'İşleniyor…', 'En cours…'),
 }
 
 root = pathlib.Path(__file__).resolve().parent.parent / 'public' / '_locales'

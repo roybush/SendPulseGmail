@@ -376,5 +376,8 @@
   },
   "exportCsvTitle": {
     "message": "İşaretli kişileri (veya herkesi) CSV dosyası olarak indir"
+  },
+  "working": {
+    "message": "İşleniyor…"
   }
 }
