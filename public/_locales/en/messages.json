@@ -322,5 +322,29 @@
   "edit": {
     "message": "Edit",
     "description": "Toggle for name fields in bulk mode"
+  },
+  "doubleOptIn": {
+    "message": "Ask for confirmation (double opt-in)",
+    "description": "Checkbox"
+  },
+  "doubleOptInHint": {
+    "message": "SendPulse emails each new contact a link; they join the list after clicking it.",
+    "description": "Under the checkbox"
+  },
+  "sender": {
+    "message": "Sender",
+    "description": "Field label: From address of confirmation emails"
+  },
+  "noSenders": {
+    "message": "Add and verify a sender address in SendPulse first (Settings → Senders).",
+    "description": "No verified sender addresses"
+  },
+  "confirmationSent": {
+    "message": "Confirmation email sent to $1",
+    "description": "$1 = email or number of contacts"
+  },
+  "source": {
+    "message": "Source (Gmail, date)",
+    "description": "Field mapping row: where the contact came from"
   }
 }

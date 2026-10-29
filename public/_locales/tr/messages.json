@@ -241,5 +241,23 @@
   },
   "edit": {
     "message": "Düzenle"
+  },
+  "doubleOptIn": {
+    "message": "Onay iste (çift onay)"
+  },
+  "doubleOptInHint": {
+    "message": "SendPulse her yeni kişiye bir bağlantı gönderir; tıkladıktan sonra listeye eklenir."
+  },
+  "sender": {
+    "message": "Gönderen"
+  },
+  "noSenders": {
+    "message": "Önce SendPulse'ta bir gönderen adresi ekleyip doğrulayın (Ayarlar → Gönderenler)."
+  },
+  "confirmationSent": {
+    "message": "Onay e-postası gönderildi: $1"
+  },
+  "source": {
+    "message": "Kaynak (Gmail, tarih)"
   }
 }

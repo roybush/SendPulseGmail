@@ -14,7 +14,9 @@ import type {
   Membership,
   NewContact,
   NewDeal,
+  OptIn,
   Prefs,
+  Sender,
 } from './types';
 
 export type Api = {
@@ -27,7 +29,8 @@ export type Api = {
   'books.list': { params: void; result: AddressBook[] };
   'books.variables': { params: { bookId: number }; result: BookVariable[] };
   'contact.find': { params: { email: string }; result: Membership[] };
-  'contact.add': { params: { bookId: number; contacts: NewContact[] }; result: void };
+  'contact.add': { params: { bookId: number; contacts: NewContact[]; optIn?: OptIn }; result: void };
+  'senders.list': { params: void; result: Sender[] };
   'contact.stats': { params: { email: string }; result: ContactStats };
   'contact.unsubscribe': { params: { bookId: number; email: string }; result: void };
   'contact.blacklist': { params: { email: string; blacklisted: boolean }; result: void };

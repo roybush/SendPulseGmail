@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { API_URL, mask, SendPulseClient, SendPulseError } from '../src/background/sendpulse';
+import {
+  API_URL,
+  confirmationLang,
+  mask,
+  SendPulseClient,
+  SendPulseError,
+} from '../src/background/sendpulse';
 import { memoryStore, type KeyValueStore } from '../src/background/storage';
 
 const CREDS = {
@@ -281,6 +287,30 @@ describe('SendPulseClient', () => {
       await expect(client().listBookVariables(1)).rejects.toThrow('HTTP 502');
     });
 
+    it('asks SendPulse to send a confirmation email for double opt-in', async () => {
+      on('POST', '/addressbooks/7/emails', () => json({ result: true }));
+
+      await client().addContacts(7, [{ email: 'a@test.com' }], { senderEmail: 'me@co.com', lang: 'uk' });
+
+      expect(JSON.parse(requestsTo('/addressbooks/7/emails')[0][1].body)).toEqual({
+        emails: [{ email: 'a@test.com', variables: {} }],
+        confirmation: 'force',
+        sender_email: 'me@co.com',
+        message_lang: 'ua',
+      });
+    });
+
+    it('lists only active senders', async () => {
+      on('GET', '/senders', () =>
+        json([
+          { name: 'Me', email: 'me@co.com', status: 'Active' },
+          { name: 'New', email: 'new@co.com', status: 'Waiting for activation' },
+        ]),
+      );
+
+      expect(await client().listSenders()).toEqual([{ name: 'Me', email: 'me@co.com' }]);
+    });
+
     it('reads campaign statistics of a contact', async () => {
       on('GET', '/emails/a%40test.com/campaigns', () =>
         json({ statistic: { sent: 12, open: 5, link: 2 }, blacklist: true, addressbooks: [] }),
@@ -443,5 +473,14 @@ describe('SendPulseClient', () => {
     expect(await c.logout()).toEqual({ loggedIn: false });
     expect(await c.status()).toEqual({ loggedIn: false });
     expect(await tokens.get('token')).toBeUndefined();
+  });
+});
+
+describe('confirmationLang', () => {
+  it('maps UI languages to SendPulse confirmation email languages', () => {
+    expect(confirmationLang('uk')).toBe('ua');
+    expect(confirmationLang('pt-BR')).toBe('pt');
+    expect(confirmationLang('es-419')).toBe('es');
+    expect(confirmationLang('de')).toBe('en');
   });
 });

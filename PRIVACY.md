@@ -37,7 +37,8 @@ The extension does not read other emails, your contact list, or anything outside
   they are already in and, for people already in SendPulse, their campaign statistics (sent, opened,
   clicked) and blacklist status;
 - when you click **Add** — the email addresses, names and contact details you chose to save, to the
-  mailing list you selected;
+  mailing list you selected. With **Ask for confirmation** on, SendPulse first emails each new contact
+  a confirmation link from the sender address you chose;
 - when you use **Actions** — the contact's email address, to unsubscribe it from the selected list,
   add it to or remove it from your blacklist, or look it up in and add it to SendPulse CRM (with the
   name and phone shown in the panel);

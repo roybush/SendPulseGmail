@@ -14,6 +14,8 @@ import type {
   Membership,
   NewContact,
   NewDeal,
+  OptIn,
+  Sender,
 } from '../shared/types';
 
 export const API_URL = 'https://api.sendpulse.com';
@@ -165,10 +167,24 @@ export class SendPulseClient {
     }
   }
 
-  async addContacts(bookId: number, contacts: NewContact[]): Promise<void> {
+  /** With `optIn`, SendPulse sends each contact a confirmation email instead of adding them outright. */
+  async addContacts(bookId: number, contacts: NewContact[], optIn?: OptIn): Promise<void> {
     await this.request('POST', `/addressbooks/${bookId}/emails`, {
       emails: contacts.map((c) => ({ email: c.email, variables: c.variables ?? {} })),
+      ...(optIn && {
+        confirmation: 'force',
+        sender_email: optIn.senderEmail,
+        message_lang: confirmationLang(optIn.lang),
+      }),
     });
+  }
+
+  /** Active sender addresses; only these can send confirmation emails. */
+  async listSenders(): Promise<Sender[]> {
+    const rows = await this.request<{ name: string; email: string; status?: string }[]>('GET', '/senders');
+    return rows
+      .filter((s) => !s.status || /^active$/i.test(s.status))
+      .map(({ name, email }) => ({ name, email }));
   }
 
   async unsubscribe(bookId: number, emails: string[]): Promise<void> {
@@ -338,6 +354,20 @@ async function parse<T>(res: Response): Promise<T> {
 export function mask(secret: string): string {
   const prefix = secret.match(/^sp_[a-z]+_/i)?.[0] ?? '';
   return `${prefix}…${secret.slice(-5)}`;
+}
+
+/** SendPulse has confirmation emails in these languages only; it calls Ukrainian "ua". */
+const CONFIRMATION_LANGS: Record<string, string> = {
+  en: 'en',
+  ru: 'ru',
+  uk: 'ua',
+  tr: 'tr',
+  es: 'es',
+  pt: 'pt',
+};
+
+export function confirmationLang(uiLang: string): string {
+  return CONFIRMATION_LANGS[uiLang.toLowerCase().split(/[-_]/)[0]] ?? 'en';
 }
 
 /** btoa only takes Latin-1; addresses can have Unicode in them. */

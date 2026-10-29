@@ -5,12 +5,20 @@ import {
   DETAIL_FIELDS,
   detectFieldMapping,
   fromVariables,
+  sourceLabel,
   toVariables,
   type DetailField,
   type FieldMapping,
 } from '../shared/fields';
-import { t, type MessageKey } from '../shared/i18n';
-import type { AddressBook, BookVariable, ContactStats, CrmPipeline, Membership } from '../shared/types';
+import { t, uiLanguage, type MessageKey } from '../shared/i18n';
+import type {
+  AddressBook,
+  BookVariable,
+  ContactStats,
+  CrmPipeline,
+  Membership,
+  Sender,
+} from '../shared/types';
 import SpSelect from '../shared/ui/SpSelect.vue';
 import SpTextField from '../shared/ui/SpTextField.vue';
 import '../shared/ui/buttons.css';
@@ -84,6 +92,38 @@ const DETAIL_LABELS: Record<DetailField, MessageKey> = {
   website: 'website',
   linkedin: 'linkedin',
 };
+// Double opt-in: on when a sender is chosen; senders load the first time it's switched on.
+const optInSender = ref('');
+const senders = ref<Sender[] | null>(null);
+const senderOptions = computed(() =>
+  (senders.value ?? []).map((s) => ({ value: s.email, label: s.name ? `${s.name} <${s.email}>` : s.email })),
+);
+
+async function loadSenders() {
+  if (senders.value) return;
+  try {
+    senders.value = await call('senders.list');
+  } catch (e) {
+    senders.value = [];
+    error.value = message(e);
+  }
+}
+
+async function toggleOptIn(on: boolean) {
+  if (on) {
+    await loadSenders();
+    optInSender.value = senders.value?.[0]?.email ?? '';
+  } else {
+    optInSender.value = '';
+  }
+  call('prefs.set', { optInSender: optInSender.value || undefined }).catch(() => {});
+}
+
+function onSenderChange(email: string | null) {
+  optInSender.value = email ?? '';
+  call('prefs.set', { optInSender: optInSender.value || undefined }).catch(() => {});
+}
+
 const LOOKUP_CONCURRENCY = 4;
 const busy = ref(false);
 
@@ -296,6 +336,10 @@ async function init() {
     const [allBooks, prefs] = await Promise.all([call('books.list'), call('prefs.get')]);
     books.value = allBooks;
     savedMappings.value = prefs.mappings ?? {};
+    if (prefs.optInSender) {
+      optInSender.value = prefs.optInSender;
+      loadSenders();
+    }
     bookId.value = allBooks.some((b) => b.id === prefs.lastBookId)
       ? prefs.lastBookId!
       : (allBooks[0]?.id ?? null);
@@ -372,11 +416,14 @@ async function add() {
   notice.value = '';
   const added = [...selectedRows.value];
   try {
+    const source = sourceLabel(new Date());
     await call('contact.add', {
       bookId: bookId.value,
-      contacts: added.map((r) => ({ email: r.email, variables: toVariables(r, mapping.value) })),
+      contacts: added.map((r) => ({ email: r.email, variables: toVariables(r, mapping.value, source) })),
+      optIn: optInSender.value ? { senderEmail: optInSender.value, lang: uiLanguage() } : undefined,
     });
-    notice.value = t('addedTo', book.value?.name ?? '', added.length === 1 ? added[0].email : added.length);
+    const who = added.length === 1 ? added[0].email : added.length;
+    notice.value = optInSender.value ? t('confirmationSent', who) : t('addedTo', book.value?.name ?? '', who);
     added.forEach((r) => (r.selected = false));
     await Promise.all(added.map(lookup));
   } catch (e) {
@@ -558,6 +605,28 @@ async function add() {
               :disabled="busy"
               @update:model-value="onMappingChange"
             />
+            <label class="sp-optin">
+              <input
+                class="sp-checkbox"
+                type="checkbox"
+                :checked="!!optInSender"
+                :disabled="busy"
+                @change="toggleOptIn(($event.target as HTMLInputElement).checked)"
+              />
+              <span>
+                {{ t('doubleOptIn') }}
+                <span class="sp-muted sp-block">{{ t('doubleOptInHint') }}</span>
+              </span>
+            </label>
+            <SpSelect
+              v-if="optInSender && senders?.length"
+              :model-value="optInSender"
+              :label="t('sender')"
+              :options="senderOptions"
+              :disabled="busy"
+              @update:model-value="onSenderChange"
+            />
+            <p v-if="senders && !senders.length" class="sp-muted">{{ t('noSenders') }}</p>
           </template>
           <button
             type="button"
@@ -690,6 +759,18 @@ async function add() {
 .sp-back,
 .sp-footer {
   margin: 12px 0 0 -12px;
+}
+.sp-optin {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.sp-optin .sp-checkbox {
+  margin-top: 2px;
+}
+.sp-block {
+  display: block;
 }
 .sp-bulkbar {
   display: flex;

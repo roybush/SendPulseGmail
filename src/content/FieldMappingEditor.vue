@@ -19,6 +19,7 @@ const ROWS: { key: Key; label: MessageKey; newName?: string }[] = [
   { key: 'title', label: 'jobTitle', newName: 'title' },
   { key: 'website', label: 'website', newName: 'website' },
   { key: 'linkedin', label: 'linkedin', newName: 'linkedin' },
+  { key: 'source', label: 'source', newName: 'source' },
 ];
 
 const NOT_SAVED = '';

@@ -19,7 +19,7 @@ export type DetailField = 'phone' | 'company' | 'title' | 'website' | 'linkedin'
 export const DETAIL_FIELDS: DetailField[] = ['phone', 'company', 'title', 'website', 'linkedin'];
 
 /** Which book variable receives each part of the profile; missing key = not saved. */
-export type FieldMapping = Partial<Record<'first' | 'last' | 'full' | DetailField, string>>;
+export type FieldMapping = Partial<Record<'first' | 'last' | 'full' | DetailField | 'source', string>>;
 
 /** Used when the book has no name-like variable; SendPulse creates it on first add. */
 export const DEFAULT_NAME_VARIABLE = 'name';
@@ -35,7 +35,13 @@ const PATTERNS: Record<keyof FieldMapping, RegExp> = {
   title: /^(title|job[\s_-]?title|position|role|посада|должность)$/i,
   website: /^(website|web[\s_-]?site|site|web|url|сайт)$/i,
   linkedin: /^(linked[\s_-]?in|linked[\s_-]?in[\s_-]?url)$/i,
+  source: /^(source|lead[\s_-]?source|джерело|источник)$/i,
 };
+
+/** Where and when a contact came from, e.g. "Gmail, 2026-10-29". */
+export function sourceLabel(date: Date): string {
+  return `Gmail, ${date.toISOString().slice(0, 10)}`;
+}
 
 export function detectFieldMapping(variables: Pick<BookVariable, 'name'>[]): FieldMapping {
   const mapping: FieldMapping = {};
@@ -48,7 +54,11 @@ export function detectFieldMapping(variables: Pick<BookVariable, 'name'>[]): Fie
   return mapping;
 }
 
-export function toVariables(profile: Profile, mapping: FieldMapping): Record<string, string> {
+export function toVariables(
+  profile: Profile,
+  mapping: FieldMapping,
+  source?: string,
+): Record<string, string> {
   const first = profile.firstName.trim();
   const last = profile.lastName.trim();
   const full = [first, last].filter(Boolean).join(' ');
@@ -67,6 +77,7 @@ export function toVariables(profile: Profile, mapping: FieldMapping): Record<str
     const variable = mapping[field];
     if (variable && value) vars[variable] = value;
   }
+  if (mapping.source && source) vars[mapping.source] = source;
   return vars;
 }
 
